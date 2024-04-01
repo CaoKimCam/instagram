@@ -2,6 +2,8 @@
 
 instagram-backend
 
+# Folder video: https://www.youtube.com/watch?v=UhihFdEIkmc&list=PLnRJxWEhhmzriVI5YiYI01O4cSzR5AHH_&index=8
+
 1. Set up
 
 - Create a new instance
@@ -28,3 +30,5 @@ instagram-backend
 - Trạng thái status code,... để response data
 
 5. Get Product List
+
+- Tạo danh sách các product và get product từ response đã tạo

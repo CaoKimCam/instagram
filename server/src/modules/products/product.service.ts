@@ -1,10 +1,17 @@
 
 import {Injectable, Module} from '@nestjs/common'
+import { Product } from 'src/models/product.model';
 
 @Injectable()
 export class ProductService {
-    getProducts(): string{
-        return 'GET LIST PRODUCTS';
+
+    private products: Product[]=[
+        {id:1, categoryId:2, price:80000, productName: "Keyboard"},
+        {id:2, categoryId:3, price:90000, productName: "Ninedev"},
+    ]
+
+    getProducts(): Product[]{
+        return this.products;
     }
 
     createProduct(): string{
