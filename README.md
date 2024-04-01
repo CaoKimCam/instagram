@@ -32,3 +32,5 @@ instagram-backend
 5. Get Product List
 
 - Tạo danh sách các product và get product từ response đã tạo
+
+6. Get Detail Product

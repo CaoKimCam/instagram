@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put } from "@nestjs/common";
+import { Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
 import { ProductService } from "./product.service";
 import {ResponseData} from '../../global/globalClass'
 import { HttpMessage, HttpStatus } from "../../global/globalEnum";
@@ -27,11 +27,11 @@ export class ProductController{
     }
 
     @Get('/:id')
-    detailProduct(): ResponseData<string>{
+    detailProduct(@Param ('id') id:number): ResponseData<Product>{
         try{
-            return new ResponseData<string>(this.productService.detailProduct(), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
+            return new ResponseData<Product>(this.productService.detailProduct(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
         } catch(err){
-            return new ResponseData<string>(null, HttpStatus.ERROR, HttpMessage.ERROR);
+            return new ResponseData<Product>(null, HttpStatus.ERROR, HttpMessage.ERROR);
         }    
     }
 
