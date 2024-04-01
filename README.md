@@ -34,3 +34,7 @@ instagram-backend
 - Tạo danh sách các product và get product từ response đã tạo
 
 6. Get Detail Product
+7. Data Transfer Object (DTO)
+
+- để lấy data từ request client gửi lên server, ta phải có 1 cái DTO
+- nói đơn giản là dây sạc kết nối nguồn điện (client) với điện thoại (server)
