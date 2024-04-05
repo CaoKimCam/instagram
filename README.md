@@ -44,3 +44,4 @@ instagram-backend
 # npm i --save class-validator class-transformer
 
 - Ví dụ: MinLength, ...
+- Cách nữa: nếu muốn dùng gloabl:

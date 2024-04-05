@@ -19,7 +19,7 @@ export class ProductController{
     }
 
     @Post()
-    createProduct(@Body(new ValidationPipe) productDto: ProductDto): ResponseData<ProductDto>{
+    createProduct(@Body() productDto: ProductDto): ResponseData<ProductDto>{
         try{
             return new ResponseData<ProductDto>(productDto, HttpStatus.SUCCESS, HttpMessage.SUCCESS);
         } catch(err){
