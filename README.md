@@ -38,3 +38,9 @@ instagram-backend
 
 - để lấy data từ request client gửi lên server, ta phải có 1 cái DTO
 - nói đơn giản là dây sạc kết nối nguồn điện (client) với điện thoại (server)
+
+8. Pipes
+
+# npm i --save class-validator class-transformer
+
+- Ví dụ: MinLength, ...
