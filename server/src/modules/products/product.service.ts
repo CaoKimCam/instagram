@@ -1,47 +1,52 @@
 
 import {Injectable} from '@nestjs/common'
 import { ProductDto } from 'src/dto/product.dto';
-import { Product } from 'src/models/product.model';
+// import { Product } from 'src/models/product.model';
+import { MongoRepository, Repository } from 'typeorm';
+import {InjectRepository} from '@nestjs/typeorm'
+import {Product} from './product.entity' 
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class ProductService {
 
-    private products: Product[]=[
-        {id:1, categoryId:2, price:80000, productName: "Keyboard"},
-        {id:2, categoryId:3, price:90000, productName: "Ninedev"},
-    ]
+    constructor(
+        @InjectRepository(Product)
+        private readonly products: MongoRepository<Product>,
+    ){}
 
-    getProducts(): Product[]{
-        return this.products;
+    async getProducts(): Promise<Product[]>{
+        return await this.products.find();
     }
 
-    createProduct(productDto: ProductDto): Product{
-        const product: Product={
-            id: Math.random(),
-            ...productDto
-        };
-        this.products.push(product);
-        return product;
+    async createProduct(productDto: ProductDto): Promise<Product>{
+        const product = new Product();
+        product.id= productDto.id;
+        product.categoryId = productDto.categoryId;
+        product.name = productDto.name;
+        product.price=productDto.price;
+        // const product = this.products.create(productDto);
+        return await this.products.save(product);
     }
 
-    detailProduct(id:number): Product{
-        return this.products.find(item => item.id === Number(id));
+    async detailProduct(id:string): Promise<Product>{
+        return await this.products.findOneById(new ObjectId(id));
     }
 
-    updateProduct(productDto: ProductDto, id: number): Product{
-        const index = this.products.findIndex(item=> item.id === Number(id));
-        this.products[index].categoryId = productDto.categoryId;
-        this.products[index].productName = productDto.productName;
-        this.products[index].price = productDto.price;
-        return productDto;
+    async updateProduct(productDto: ProductDto, id: ObjectId): Promise<Product>{
+        let toUpdate = await this.products.findOneById(new ObjectId(id));
+        // await this.products.update(productid, productDto);
+        // delete toUpdate.name;
+        // delete toUpdate.price;
+        await this.products.delete({id:id})
+        let updated = Object.assign(toUpdate, productDto);
+        return await this.products.save(updated);
     }
 
-    deleteProduct(id:number): boolean{
-        const index = this.products.findIndex(item=> item.id === Number(id));
-        if (index !== -1){
-            this.products.splice(index,1);
-            return true;
-        }
-        return false;
+    async deleteProduct(id:ObjectId): Promise<boolean>{
+        // const id_string= id.toString();
+        const result = await this.products.delete({id:id});
+        return result.affected > 0;
     }
+    
 }

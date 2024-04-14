@@ -1,55 +1,41 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, ValidationPipe } from "@nestjs/common";
 import { ProductService } from "./product.service";
-import {ResponseData} from '../../global/globalClass'
-import { HttpMessage, HttpStatus } from "../../global/globalEnum";
-import {Product} from "src/models/product.model"
+// import {ResponseData} from '../../global/globalClass'
+// import { HttpMessage, HttpStatus } from "../../global/globalEnum";
+import { Product } from "./product.entity";
 import { ProductDto } from "src/dto/product.dto";
+import { ObjectId } from "typeorm";
 
 @Controller('products')
 export class ProductController{
 
     constructor(private readonly productService: ProductService){}
     @Get()
-    getProducts(): ResponseData<Product[]>{
-        try{
-            return new ResponseData<Product[]>(this.productService.getProducts(), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-        } catch(err){
-            return new ResponseData<Product[]>(null, HttpStatus.ERROR, HttpMessage.ERROR);
-        }
+    async getProducts(): Promise<Product[]>{
+        return await this.productService.getProducts();
     }
 
+
+    // @Body(new ValidationPipe)
     @Post()
-    createProduct(@Body(new ValidationPipe) productDto: ProductDto): ResponseData<ProductDto>{
-        try{
-            return new ResponseData<Product>(this.productService.createProduct(productDto), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-        } catch(err){
-            return new ResponseData<Product>(null, HttpStatus.ERROR, HttpMessage.ERROR);
-        }
+    async createProduct(@Body(new ValidationPipe) productDto: ProductDto): Promise<ProductDto>{
+        return await this.productService.createProduct(productDto);
     }
 
     @Get('/:id')
-    detailProduct(@Param ('id') id:number): ResponseData<Product>{
-        try{
-            return new ResponseData<Product>(this.productService.detailProduct(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-        } catch(err){
-            return new ResponseData<Product>(null, HttpStatus.ERROR, HttpMessage.ERROR);
-        }    
+    async detailProduct(@Param ('id') id:ObjectId): Promise<Product>{
+        const id_string= id.toString();
+        return await this.productService.detailProduct(id_string); 
     }
 
     @Put('/:id')
-    updateProduct(@Body() productDto: ProductDto, @Param('id') id: number): ResponseData<Product>{
-        try{
-            return new ResponseData<Product>(this.productService.updateProduct(productDto, id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-        } catch(err){
-            return new ResponseData<Product>(null, HttpStatus.ERROR, HttpMessage.ERROR);
-        }    }
+    async updateProduct(@Body() productDto: ProductDto, @Param('id') id: ObjectId): Promise<Product>{
+        // const id_string= id.toString();
+        return await this.productService.updateProduct(productDto, id);
+    }
 
     @Delete('/:id')
-    deleteProduct(@Param('id') id:number): ResponseData<boolean>{
-        try{
-            return new ResponseData<boolean>(this.productService.deleteProduct(id), HttpStatus.SUCCESS, HttpMessage.SUCCESS);
-        } catch(err){
-            return new ResponseData<boolean >(null, HttpStatus.ERROR, HttpMessage.ERROR);
-        }    
+    async deleteProduct(@Param('id') id:ObjectId): Promise<boolean>{
+        return await this.productService.deleteProduct(id);
     }
 }

@@ -1,11 +1,25 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProductModle } from './modules/products/product.module';
-
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductModule } from './modules/products/product.module';
 @Module({
-  imports: [ProductModle],
+  imports: [
+    TypeOrmModule.forRoot(
+      {
+        type: 'mongodb',
+        url:'mongodb://localhost:27017',
+        synchronize: true,
+        autoLoadEntities: true,
+        // useUnifiedTopolory: true,
+        entities: [__dirname+'src/**/*.entity{.ts,.js}'],    }
+    ),
+    ProductModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+
+
+// 'mongodb+srv://21520641:j9Mg5HyJxJ6tDQ71@cluster.dkpd6sl.mongodb.net/'
