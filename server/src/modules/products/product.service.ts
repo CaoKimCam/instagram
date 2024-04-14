@@ -25,7 +25,6 @@ export class ProductService {
         product.categoryId = productDto.categoryId;
         product.name = productDto.name;
         product.price=productDto.price;
-        // const product = this.products.create(productDto);
         return await this.products.save(product);
     }
 

@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModule } from './modules/products/product.module';
+import { UserModule } from './modules/user/user.module';
+import { PostModule } from './modules/poster/post.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(
@@ -15,6 +17,8 @@ import { ProductModule } from './modules/products/product.module';
         entities: [__dirname+'src/**/*.entity{.ts,.js}'],    }
     ),
     ProductModule,
+    UserModule,
+    PostModule
   ],
   controllers: [AppController],
   providers: [AppService],
