@@ -30,9 +30,10 @@ export class PostService {
 
     async updateProduct(productDto: PostDto, id: ObjectId): Promise<Poster>{
         let toUpdate = await this.postRepos.findOneById(new ObjectId(id));
-        await this.postRepos.delete({postId:id})
-        let updated = Object.assign(toUpdate, productDto);
-        return await this.postRepos.save(updated);
+        await this.postRepos.update(toUpdate, productDto);
+        return Object.assign(toUpdate, productDto);
+        // let updated = Object.assign(toUpdate, productDto);
+        // return await this.postRepos.save(updated);
     }
 
     async deleteProduct(id:ObjectId): Promise<boolean>{

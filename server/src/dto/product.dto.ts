@@ -2,8 +2,6 @@ import { IsNotEmpty, IsNumber, Min, MinLength } from "class-validator";
 import { ObjectId } from "typeorm";
 
 export class ProductDto{
-    id?:ObjectId;
-
     @IsNotEmpty()
     categoryId?: number;
 

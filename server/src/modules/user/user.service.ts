@@ -33,9 +33,10 @@ export class UserService{
         // await this.products.update(productid, productDto);
         // delete toUpdate.name;
         // delete toUpdate.price;
-        await this.userRepos.delete({id:id})
-        let updated = Object.assign(toUpdate, productDto);
-        return await this.userRepos.save(updated);
+        await this.userRepos.update(toUpdate, productDto);
+        return Object.assign(toUpdate, productDto);
+        // let updated = Object.assign(toUpdate, productDto);
+        // return await this.userRepos.save(updated);
     }
 
     async deleteProduct(id:ObjectId): Promise<boolean>{
