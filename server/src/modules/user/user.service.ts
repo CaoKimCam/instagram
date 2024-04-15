@@ -1,16 +1,59 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 import { MongoRepository } from "typeorm";
 import { UserDto } from "src/dto/user.dto";
 import { ObjectId } from "mongodb";
+import { JwtService } from "@nestjs/jwt";
+import { SignUpDto } from "src/dto/user/signup.dto";
+import { LoginDto } from "src/dto/user/login.dto";
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService{
     constructor(
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,
+        private jwtService: JwtService,
     ){}
+
+    async signUp(signUpDto: SignUpDto): Promise<{token:string}>{
+        const {name, email, password} = signUpDto;
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // const newUser = new User();
+        // newUser.userName=name;
+        // newUser.userEmail=email;
+        // newUser.userPassword=hashedPassword;
+        // this.userRepos.save(newUser);
+        const newUser = this.userRepos.create({
+            userName: name,
+            userEmail: email,
+            userPassword: hashedPassword
+        })
+        const savedUser = await this.userRepos.save(newUser);
+        const token=this.jwtService.sign({id: savedUser.id});
+        return {token};
+    }
+
+    async login(loginDto: LoginDto): Promise<{token:string}>{
+        const {email, password}= loginDto;
+        const user = await this.userRepos.findOne({
+            where:{userEmail: email}
+        });
+
+        if (!user){
+            throw new UnauthorizedException('Invalid user or email');
+        }
+        const isPasswordMatched = await bcrypt.compare(password, user.userPassword);
+
+        if (!isPasswordMatched){
+            throw new UnauthorizedException('Invalid email or password');
+        }
+        const token= this.jwtService.sign({id: user.id});
+        await this.userRepos.save(user);
+        return {token};
+    }
 
     async getAllUsers(): Promise<User[]>{
         return await this.userRepos.find();
@@ -30,13 +73,8 @@ export class UserService{
 
     async updateProduct(productDto: UserDto, id: ObjectId): Promise<User>{
         let toUpdate = await this.userRepos.findOneById(new ObjectId(id));
-        // await this.products.update(productid, productDto);
-        // delete toUpdate.name;
-        // delete toUpdate.price;
         await this.userRepos.update(toUpdate, productDto);
         return Object.assign(toUpdate, productDto);
-        // let updated = Object.assign(toUpdate, productDto);
-        // return await this.userRepos.save(updated);
     }
 
     async deleteProduct(id:ObjectId): Promise<boolean>{
@@ -44,4 +82,6 @@ export class UserService{
         const result = await this.userRepos.delete({id:id});
         return result.affected > 0;
     }
+
+
 }

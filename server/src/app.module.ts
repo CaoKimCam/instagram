@@ -5,8 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProductModule } from './modules/products/product.module';
 import { UserModule } from './modules/user/user.module';
 import { PostModule } from './modules/poster/post.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      envFilePath:'.env',
+      isGlobal: true,
+    }),
     TypeOrmModule.forRoot(
       {
         type: 'mongodb',

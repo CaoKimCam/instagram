@@ -47,5 +47,7 @@ export class ProductService {
         const result = await this.products.delete({id:id});
         return result.affected > 0;
     }
+
+    
     
 }

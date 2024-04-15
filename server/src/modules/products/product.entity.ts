@@ -4,11 +4,7 @@ import { Column, Entity, ObjectIdColumn, PrimaryColumn} from 'typeorm'
 @Entity('products')
 export class Product{
     @ObjectIdColumn()
-    // @PrimaryColumn()
     id: ObjectId;
-
-    // @PrimaryColumn()
-    // id:number;
 
     @Column()
     categoryId: number;
@@ -19,3 +15,10 @@ export class Product{
     @Column()
     price: number;
 }
+
+// export enum Category {
+//     ADVENTURE = 'Adventure',
+//     CALSSICS = 'Classics',
+//     CRIME = 'Crime',
+//     FANTASY = 'Fantasy',
+//   }

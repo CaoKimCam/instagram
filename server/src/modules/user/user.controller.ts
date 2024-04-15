@@ -4,10 +4,23 @@ import { User } from "./user.entity";
 import { ValidationPipe } from "src/validation.pipe";
 import { UserDto } from "src/dto/user.dto";
 import { ObjectId } from "mongodb";
+import { SignUpDto } from "src/dto/user/signup.dto";
+import { LoginDto } from "src/dto/user/login.dto";
 
 @Controller('users')
 export class UserController{
     constructor(private readonly productService: UserService){}
+
+    @Post('/signup')
+    async signUp(@Body() signUpDto: SignUpDto): Promise <{token: string}>{
+        return await this.productService.signUp(signUpDto);
+    }
+
+    @Get('/login')
+    async login(@Body() loginDto: LoginDto): Promise<{token: string}>{
+        return this.productService.login(loginDto);
+    }
+
     @Get()
     async getProducts(): Promise<User[]>{
         return await this.productService.getAllUsers();
