@@ -6,8 +6,10 @@ import { UserDto } from "src/dto/user.dto";
 import { ObjectId } from "mongodb";
 import { SignUpDto } from "src/dto/user/signup.dto";
 import { LoginDto } from "src/dto/user/login.dto";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller('users')
+@ApiTags('USERS')
 export class UserController{
     constructor(private readonly productService: UserService){}
 
@@ -41,7 +43,6 @@ export class UserController{
 
     @Put('/:id')
     async updateProduct(@Body() productDto: UserDto, @Param('id') id: ObjectId): Promise<User>{
-        // const id_string= id.toString();
         return await this.productService.updateProduct(productDto, id);
     }
 

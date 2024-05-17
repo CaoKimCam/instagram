@@ -1,6 +1,15 @@
-import { IsNotEmpty} from "class-validator";
+import { IsEmpty, IsNotEmpty, IsOptional} from "class-validator";
+import { ObjectId } from "mongodb";
+import { React } from "src/modules/React/react.entity";
+import { Comment } from "src/modules/comment/comment.entity";
 
 export class PostDto{
-    @IsNotEmpty()
+    @IsOptional()
     postContent?: string;
+
+    @IsOptional()
+    postImg?: string;
+
+    @IsOptional()
+    authorId: ObjectId;
 }

@@ -20,4 +20,22 @@ export class User{
 
     @Column()
     userBio: string;
+
+    @Column()
+    followers: ObjectId[]=[];
+
+    @Column()
+    followings: ObjectId[]=[];
+
+    @Column()
+    postSave: ObjectId[]=[];
+
+    @Column()
+    postIds: ObjectId[]=[];//bài post mình đăng
+
+    @Column()
+    likeIds: ObjectId[]=[];//post hoặc cmt mình like, có thể cân nhắc để 2 cột riêng
+
+    @Column()
+    commentIds: ObjectId[]=[];// comment mình comment
 }

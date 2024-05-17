@@ -4,8 +4,10 @@ import { PostDto } from "src/dto/post.dto";
 import { Poster } from "./post.entity";
 import { PostService } from "./post.service";
 import { ValidationPipe } from "src/validation.pipe";
+import { ApiTags } from "@nestjs/swagger";
 
 @Controller('posters')
+@ApiTags('POSTERS')
 export class PostController{
 
     constructor(private readonly productService: PostService){}

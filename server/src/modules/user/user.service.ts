@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 import { MongoRepository } from "typeorm";
@@ -11,6 +11,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService{
+    private readonly logger = new Logger(UserService.name);
+
     constructor(
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,
@@ -20,12 +22,6 @@ export class UserService{
     async signUp(signUpDto: SignUpDto): Promise<{token:string}>{
         const {name, email, password} = signUpDto;
         const hashedPassword = await bcrypt.hash(password, 10);
-
-        // const newUser = new User();
-        // newUser.userName=name;
-        // newUser.userEmail=email;
-        // newUser.userPassword=hashedPassword;
-        // this.userRepos.save(newUser);
         const newUser = this.userRepos.create({
             userName: name,
             userEmail: email,
@@ -64,17 +60,24 @@ export class UserService{
         newUser.userName = userDto.userName;
         newUser.userBio=userDto.userBio;
         // const product = this.products.create(productDto);
+        this.logger.log(newUser);
         return await this.userRepos.save(newUser);
     }
 
     async detailProduct(id:string): Promise<User>{
-        return await this.userRepos.findOneById(new ObjectId(id));
+        const user=await this.userRepos.findOneById(new ObjectId(id));
+        this.logger.log(user.id);
+        return user;
     }
 
-    async updateProduct(productDto: UserDto, id: ObjectId): Promise<User>{
-        let toUpdate = await this.userRepos.findOneById(new ObjectId(id));
-        await this.userRepos.update(toUpdate, productDto);
-        return Object.assign(toUpdate, productDto);
+    async updateProduct(userDto: UserDto, userId: ObjectId): Promise<User>{
+        let toUpdate = await this.userRepos.findOne({where: 
+            {id: userId}});
+        if (!toUpdate) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+            }
+        await this.userRepos.update({id: userId}, userDto);
+        return Object.assign(toUpdate, userDto);
     }
 
     async deleteProduct(id:ObjectId): Promise<boolean>{
@@ -82,6 +85,4 @@ export class UserService{
         const result = await this.userRepos.delete({id:id});
         return result.affected > 0;
     }
-
-
 }

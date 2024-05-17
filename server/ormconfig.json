@@ -3,7 +3,7 @@
     "host": "localhost",
     "port": 27017,
     "username": "kimcam",
-    "password": "xKqjVMVSFvhfcvCH",
+    "password": "j9Mg5HyJxJ6tDQ71",
     "database": "MyDatabase",
     "entities": ["src/**/*.entity{.ts,.js}"],
     "synchronize": true,
