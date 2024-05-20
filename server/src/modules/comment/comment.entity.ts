@@ -9,11 +9,11 @@ export class Comment{
     @Column()
     content:string;
 
-    @Column()//tác giả của cmt này
-    author: ObjectId;
-
     @Column()
-    commentTime: Date;
+    time: Date;
+
+    @Column()//tác giả của cmt này
+    authorId: ObjectId;
 
     @Column()//bài đăng gốc
     postId: ObjectId;

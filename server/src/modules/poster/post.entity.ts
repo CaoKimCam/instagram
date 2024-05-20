@@ -15,12 +15,12 @@ export class Poster{
     @Column()
     authorId: ObjectId;
 
-    @Column(() => ObjectId)
-    commentId: ObjectId[]=[];//để lấy like của cmt, từ đó lấy ra cả likeId
-    
-    @Column(() => ObjectId)
-    postLikeId: ObjectId[]=[];//lấy like của post
-
     @Column()
     state: boolean;//true: hiển, false: ẩn
+
+    @Column()
+    commentIds: ObjectId[]=[];//để lấy cmt, từ đó lấy ra cả likeId
+    
+    @Column()
+    postLikeId: ObjectId[]=[];//lấy like của post
 }

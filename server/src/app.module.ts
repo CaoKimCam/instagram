@@ -7,6 +7,7 @@ import { UserModule } from './modules/user/user.module';
 import { PostModule } from './modules/poster/post.module';
 import { ConfigModule } from '@nestjs/config';
 import { ReactModule } from './modules/React/react.module';
+import { CommentModule } from './modules/comment/comment.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -27,7 +28,8 @@ import { ReactModule } from './modules/React/react.module';
     ProductModule,
     UserModule,
     PostModule,
-    ReactModule
+    ReactModule, 
+    CommentModule
   ],
   controllers: [AppController],
   providers: [AppService],

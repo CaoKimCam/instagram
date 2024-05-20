@@ -7,25 +7,24 @@ import { ApiTags } from "@nestjs/swagger";
 import { Comment } from "./comment.entity";
 import { CommentDto } from "src/dto/comment.dto";
 
-@Controller('posters/comments')
+@Controller('/comments')
 @ApiTags('COMMENTS')
 export class CommentController{
 
     constructor(private readonly productService: CommentService){}
+
     @Get()
-    async getProducts(): Promise<Comment[]>{
+    async getComments(): Promise<Comment[]>{
         return await this.productService.getComments();
     }
 
-
-    // @Body(new ValidationPipe)
     @Post()
-    async createProduct(@Body(new ValidationPipe) cmtDto: CommentDto): Promise<Comment>{
+    async createComment(@Body(new ValidationPipe) cmtDto: CommentDto): Promise<Comment>{
         return await this.productService.createComment(cmtDto);
     }
 
     @Get('/:id')
-    async detailProduct(@Param ('id') id:ObjectId): Promise<Comment>{
+    async detailComment(@Param ('id') id:ObjectId): Promise<Comment>{
         const id_string= id.toString();
         return await this.productService.detailComment(id_string); 
     }
@@ -36,8 +35,8 @@ export class CommentController{
         return await this.productService.updateComment(productDto, id);
     }
 
-    // @Delete('/:id')
-    // async deleteProduct(@Param('id') id:ObjectId): Promise<boolean>{
-    //     return await this.productService.deleteProduct(id);
-    // }
+    @Delete('/:id')
+    async deleteProduct(@Param('id') id:ObjectId): Promise<any>{
+        return await this.productService.deleteComment(id);
+    }
 }

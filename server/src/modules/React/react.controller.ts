@@ -16,8 +16,6 @@ export class ReactController{
         return await this.productService.getReacts();
     }
 
-
-    // @Body(new ValidationPipe)
     @Post()
     async createProduct(@Body(new ValidationPipe) reactDto: ReactDto): Promise<React>{
         return await this.productService.createReacts(reactDto);

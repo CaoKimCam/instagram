@@ -12,8 +12,8 @@ export class React{
     @Column()
     time: Date;
     
-    @Column()
-    type: boolean=true; //true: post, false: cmt
+    @Column({default: true})
+    type: boolean; //true: post, false: cmt
 
     @Column()
     objectId: ObjectId;//đối tượng like: post hoặc cmt

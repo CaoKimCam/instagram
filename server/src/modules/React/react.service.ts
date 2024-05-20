@@ -28,13 +28,12 @@ export class ReactService {
         return await this.reactRepos.find();
     }
 
-    //like
     async createReacts(reactDto: ReactDto): Promise<any>{//React
         const newReact = new React();
-        if(reactDto.authorId)newReact.author=new ObjectId(reactDto.authorId);
-        if(reactDto.objectId)newReact.objectId=new ObjectId(reactDto.objectId);
-        if(reactDto.time)newReact.time=reactDto.time;
-        if(reactDto.type)newReact.type=reactDto.type;
+        newReact.author=new ObjectId(reactDto.authorId);
+        newReact.objectId=new ObjectId(reactDto.objectId);
+        newReact.time=reactDto.time;
+        newReact.type=reactDto.type;
         const saveReact = await this.reactRepos.save(newReact);
 
         //cập nhật lượt like của người dùng
@@ -47,7 +46,7 @@ export class ReactService {
         
         if (!reactDto.type){
         //cập nhật lên comment
-            const comment = await this.commentRepos.findOneById(new ObjectId(reactDto.objectId));
+            const comment = await this.commentRepos.findOneById(saveReact.objectId);
                 if (comment){
                     const newCmt= comment;
                     if(!newCmt.likeId) newCmt.likeId=[];
@@ -55,11 +54,16 @@ export class ReactService {
                     await this.commentRepos.update({id: saveReact.objectId},newCmt);
                     var saveCmt =Object.assign(comment, newCmt);
                     }
-            this.logger.log("comment");
+                // const post = await this.postRepos.findOneById(newCmt.postId);
+                // const newPost = post;
+                // if(!newPost.cmtLikeId) newPost.cmtLikeId=[];
+                // newPost.cmtLikeId.push(saveReact.id);
+                // await this.postRepos.update({postId:newCmt.postId},newPost);
+                // Object.assign(post, newPost);
         }
         else{
         //cập nhật lên bài đăng
-            const post = await this.postRepos.findOneById(new ObjectId(reactDto.objectId));
+            const post = await this.postRepos.findOneById(saveReact.objectId);
             if (post){
                 const newPost = post;
                 if(!newPost.postLikeId) newPost.postLikeId=[];
@@ -67,15 +71,10 @@ export class ReactService {
                 await this.postRepos.update({postId:saveReact.objectId},newPost);
                 var savePost = Object.assign(post, newPost);   
             }
-            this.logger.log("post");
+            this.logger.log(post);
         }
 
-        return {
-            saveReact,
-            saveUser,
-            saveCmt,
-            savePost
-        };
+        return saveReact;
     }
 
     //lấy thông tin của 1 bài đăng
@@ -86,58 +85,8 @@ export class ReactService {
         if(!react){
             throw new NotFoundException(`Post with ID ${reactId} not found`); // Kiểm tra nếu không tìm thấy bài viết
         }
-        return{
-            react
-        }
+        return react;
     }
-
-    // async updateReact(reactDto: ReactDto, id: ObjectId): Promise<React>{
-    //     const react = await this.reactRepos.findOneById(id);
-    //     if (!react) {
-    //         throw new NotFoundException(`Post with ID ${id} not found`);
-    //         }
-    //     const newReact=react;
-    //     newReact.time=reactDto.time;
-    //     newReact.type=reactDto.type;
-    //     await this.reactRepos.update({id:react.id},newReact);
-    //     const saveReact =Object.assign(react, newReact);
-    //     //cập nhật lượt like của người dùng
-    //     const user = await this.userRepos.findOneById(saveReact.author);
-    //         const newUser =user;
-    //         if (!user.likeIds) newUser.likeIds=[];
-    //         user.likeIds.push(saveReact.id);
-    //         await this.userRepos.update({id: user.id}, newUser);
-    //         Object.assign(user, newUser);
-        
-    //     if (!reactDto.type){
-
-    //     //cập nhật lên comment
-    //         const comment = await this.commentRepos.findOneById(reactDto.objectId);
-    //             const newCmt= comment;
-    //             if(!newCmt.likeId) newCmt.likeId=[];
-    //             newCmt.likeId.push(saveReact.id);
-    //             await this.commentRepos.update({id: saveReact.objectId},newCmt);
-    //             Object.assign(comment, newCmt);
-
-    //             // const post = await this.postRepos.findOneById(newCmt.postId);
-    //             // const newPost = post;
-    //             // if(!newPost.cmtLikeId) newPost.cmtLikeId=[];
-    //             // newPost.cmtLikeId.push(saveReact.id);
-    //             // await this.postRepos.update({postId:newCmt.postId},newPost);
-    //             // Object.assign(post, newPost);
-            
-    //     } else{
-
-    //     //cập nhật lên bài đăng
-    //         const post = await this.postRepos.findOneById(reactDto.objectId);
-    //             const newPost = post;
-    //             if(!newPost.postLikeId) newPost.postLikeId=[];
-    //             newPost.postLikeId.push(saveReact.id);
-    //             await this.postRepos.update({postId:saveReact.objectId},newPost);
-    //             Object.assign(post, newPost);
-    //     }
-    //     return saveReact;
-    // }
 
     async deleteReact(reactId:ObjectId): Promise<boolean>{
         // const id_string= id.toString();
@@ -160,7 +109,7 @@ export class ReactService {
             post.postLikeId=updateReactinPost;
             await this.postRepos.save(post);
         } else{
-            //unlike trong user trong cmt
+            //unlike trong cmt trong user 
             const cmt = await this.commentRepos.findOneById(react.objectId);
             const updateReactInCmt = cmt.likeId.filter(
                 (id) => !id.equals(react.id),
@@ -173,4 +122,17 @@ export class ReactService {
         return result.affected > 0;
     }
     
+    // async updateReact(reactDto: ReactDto, id: ObjectId): Promise<React>{
+    //     //có thể không dùng cập nhật
+    //     const react = await this.reactRepos.findOneById(new ObjectId(id));
+        
+    //     if (!react) {
+    //         throw new NotFoundException(`Post with ID ${id} not found`);
+    //         }
+    //     const newReact=react;
+    //     newReact.time=reactDto.time;
+    //     await this.reactRepos.update({id:react.id},newReact);
+    //     const saveReact =Object.assign(react, newReact);
+    //     return saveReact;
+    // }
 }

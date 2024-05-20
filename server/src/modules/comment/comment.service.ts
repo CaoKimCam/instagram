@@ -1,12 +1,11 @@
 import { Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Comment } from "./comment.entity";
-import { Like, MongoRepository } from "typeorm";
+import { In, Like, MongoRepository } from "typeorm";
 import { ObjectId } from "mongodb";import { CommentDto } from "src/dto/comment.dto";
 import { User } from "../user/user.entity";
 import { Poster } from "../poster/post.entity";
 import { React } from "../React/react.entity";
-;
 
 @Injectable()
 export class CommentService {
@@ -27,29 +26,31 @@ export class CommentService {
         return await this.commentRepos.find();
     }
 
-    //tạo ra 1 bài comment
+    //tạo ra 1 comment
     async createComment(commentDto: CommentDto): Promise<Comment>{
         const newCmt = new Comment();
-        newCmt.content = commentDto.commentContent;
-        newCmt.author= new ObjectId(commentDto.authorId);
-        newCmt.commentTime= commentDto.time;
-        const saveCmt = await this.commentRepos.save(newCmt);
+        newCmt.content = commentDto.content;
+        newCmt.authorId= new ObjectId(commentDto.authorId);
+        newCmt.time= commentDto.time;
+        newCmt.postId=commentDto.postId;
+        const saveCmt = await this.commentRepos.save(commentDto);
 
         //cập nhật lên người dùng
-        const user = await this.userRepos.findOneById(saveCmt.author);
+        const user = await this.userRepos.findOneById(saveCmt.authorId);
             const newUser =user;
             if (!user.commentIds) newUser.commentIds=[];
             user.commentIds.push(saveCmt.id);
             await this.userRepos.update({id: user.id}, newUser);
             Object.assign(user, newUser);
         //cập nhật lên post
-        const post = await this.postRepos.findOneById(commentDto.postId);
+        const post = await this.postRepos.findOneById(saveCmt.postId);
             const newPost=post;
-            if (!newPost.commentId) newPost.commentId=[];
-            newPost.commentId.push(saveCmt.id);
-            await this.postRepos.update({postId:commentDto.postId},newPost)
+            if (!newPost.commentIds) newPost.commentIds=[];
+            newPost.commentIds.push(saveCmt.id);
+            await this.postRepos.update({postId:post.postId},newPost);
             Object.assign(post, newPost);
-        return newCmt;
+
+        return saveCmt;
     }
 
     //lấy thông tin của 1 bài đăng
@@ -66,55 +67,40 @@ export class CommentService {
             throw new NotFoundException(`Post with ID ${id} not found`);
         }
         const newCmt =comment;
-        newCmt.content=cmtDto.commentContent;
-        newCmt.commentTime=cmtDto.time;
+        newCmt.content=cmtDto.content;
+        newCmt.time=cmtDto.time;
         await this.commentRepos.update({id: id}, newCmt);
         return Object.assign(comment, newCmt);
     }
 
-    async deleteComment(cmtId:ObjectId): Promise<boolean>{
-        // const id_string= id.toString();
-        const cmt = await this.commentRepos.findOne({
-            where: { cmt: cmtId },
-          });
+    async deleteComment(cmtId:ObjectId): Promise<any>{
+        const cmt = await this.commentRepos.findOneById(new ObjectId(cmtId));
 
         //cập nhật lên post: xoá cmt
         const post= await this.postRepos.findOneById(cmt.postId);
-        const updateCmtIdsInPost = post.commentId.filter(
-            (id) => !id.equals(cmtId)
-        )
-        post.commentId=updateCmtIdsInPost;
-        await this.postRepos.save(post);
+        if (post.commentIds){
+            const updateCmtIdsInPost = post.commentIds.filter(
+                (id) => !id.equals(new ObjectId(cmtId))
+            )
+            post.commentIds=updateCmtIdsInPost;
+            await this.postRepos.save(post);
+        }
+        //cập nhật lên likeRepos: xoá likeId
+        const user = await this.userRepos.findOneById(cmt.authorId);
+        const reactsInComment= cmt.likeId;
+        await this.reactRepos.delete({ id: In(reactsInComment) })
 
-        //cập nhật lên likeId: xoá likeId
-        var likes=await this.reactRepos.findByIds(cmt.likeId);
-        const updateCmtIdsInLike = likes.filter(
-            (like) =>{
-                this.reactRepos.delete({id: like.id});
-            }
-        )
-        likes=updateCmtIdsInLike;
-        await this.reactRepos.save(likes);
-
-        //cập nhật lên user
-        //xoá cmt
-        const user = await this.userRepos.findOneById(cmt.author);
+        // cập nhật lên user
+        // xoá cmt
         const updateCmtIds = user.commentIds.filter(
-            (id) => !id.equals(cmtId),
+            (id) => !id.equals(new ObjectId(cmtId)),
         );
-        user.postIds = updateCmtIds;
-
-        //xoá like
-        const updateDelLike=user.likeIds.filter(
-            (likeId)=>{
-                !likeId.equals(likeId)
-            }
-        )
-        user.likeIds=updateDelLike;
+        this.logger.log(updateCmtIds)
+        user.commentIds = updateCmtIds;
         await this.userRepos.save(user);
 
-        const result = await this.commentRepos.delete({id:cmtId});
+        const result = await this.commentRepos.delete({id:new ObjectId(cmtId)});
         return result.affected > 0;
+        // return user;
     }
-    
 }

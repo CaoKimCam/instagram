@@ -3,14 +3,14 @@ import { ObjectId } from "mongodb";
 
 export class CommentDto{
     @IsOptional()
-    commentContent?: string;
+    content?: string;
 
     @IsOptional()
-    time: Date;
+    time?: Date;
 
-    @IsEmpty()
-    postId: ObjectId;
+    // @IsEmpty()
+    postId?: ObjectId;
 
-    @IsEmpty()
-    authorId: ObjectId;
+    // @IsEmpty()
+    authorId?: ObjectId;
 }

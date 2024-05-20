@@ -21,14 +21,17 @@ export class User{
     @Column()
     userBio: string;
 
+
     @Column()
     followers: ObjectId[]=[];
 
     @Column()
     followings: ObjectId[]=[];
 
+
     @Column()
-    postSave: ObjectId[]=[];
+    postSaved: ObjectId[]=[];
+
 
     @Column()
     postIds: ObjectId[]=[];//bài post mình đăng
