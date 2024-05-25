@@ -16,7 +16,11 @@ export class Poster{
     authorId: ObjectId;
 
     @Column()
-    state: boolean;//true: hiển, false: ẩn
+    state: boolean;//tạo 1 enum
+    //các chế độ: private, public,...
+
+    @Column({default: true})
+    isShow: boolean;//ẩn, hiển
 
     @Column()
     commentIds: ObjectId[]=[];//để lấy cmt, từ đó lấy ra cả likeId

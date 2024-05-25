@@ -22,7 +22,7 @@ import { ConfigService } from "@nestjs/config";
             }
         }),
         TypeOrmModule.forFeature([User])
-    ], 
+    ],
     controllers: [UserController],
     providers: [UserService, JwtModule],
     exports:[JwtModule, PassportModule]

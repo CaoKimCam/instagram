@@ -16,6 +16,14 @@ async function bootstrap() {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
+
+
+  app.enableCors({
+    origin: 'http://localhost:3001', // URL của frontend
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: false,
+  });
+  
   await app.listen(3000);
 
   if (module.hot) {

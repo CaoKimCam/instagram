@@ -6,7 +6,7 @@ import { PostService } from "./post.service";
 import { ValidationPipe } from "src/validation.pipe";
 import { ApiTags } from "@nestjs/swagger";
 
-@Controller('posters')
+@Controller('/posters')
 @ApiTags('POSTERS')
 export class PostController{
 

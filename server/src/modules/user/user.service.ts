@@ -28,7 +28,7 @@ export class UserService{
             userPassword: hashedPassword
         })
         const savedUser = await this.userRepos.save(newUser);
-        const token=this.jwtService.sign({id: savedUser.id});
+        const token=this.jwtService.sign({ id: savedUser.id });
         return {token};
     }
 
@@ -59,7 +59,6 @@ export class UserService{
         const newUser = new User();
         newUser.userName = userDto.userName;
         newUser.userBio=userDto.userBio;
-        // const product = this.products.create(productDto);
         this.logger.log(newUser);
         return await this.userRepos.save(newUser);
     }
@@ -81,7 +80,6 @@ export class UserService{
     }
 
     async deleteProduct(id:ObjectId): Promise<boolean>{
-        // const id_string= id.toString();
         const result = await this.userRepos.delete({id:id});
         return result.affected > 0;
     }

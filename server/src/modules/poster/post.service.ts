@@ -5,10 +5,8 @@ import { In, MongoRepository } from "typeorm";
 import { PostDto } from "src/dto/post.dto";
 import { ObjectId } from "mongodb";
 import { User } from "../user/user.entity";
-import { React } from "../React/react.entity";
+import { React } from "../react/react.entity";
 import { Comment } from "../comment/comment.entity";
-import { CommentService } from "../comment/comment.service";
-import { ReactService } from "../React/react.service";
 
 @Injectable()
 export class PostService {
@@ -23,9 +21,6 @@ export class PostService {
         private readonly reactRepos: MongoRepository<React>,
         @InjectRepository(Comment)
         private readonly commentRepos: MongoRepository<Comment>,
-
-        private readonly cmtService: CommentService,
-        private readonly reactService: ReactService,
     ){}
 
     async getProducts(): Promise<Poster[]>{

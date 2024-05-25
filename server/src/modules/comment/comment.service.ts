@@ -5,7 +5,8 @@ import { In, Like, MongoRepository } from "typeorm";
 import { ObjectId } from "mongodb";import { CommentDto } from "src/dto/comment.dto";
 import { User } from "../user/user.entity";
 import { Poster } from "../poster/post.entity";
-import { React } from "../React/react.entity";
+import { React } from "../react/react.entity";
+import { error } from "console";
 
 @Injectable()
 export class CommentService {
@@ -15,7 +16,7 @@ export class CommentService {
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,
         @InjectRepository(Comment)
-        private readonly commentRepos: MongoRepository<Comment>,
+        private readonly cmtRepos: MongoRepository<Comment>,
         @InjectRepository(Poster)
         private readonly postRepos: MongoRepository<Poster>,
         @InjectRepository(React)
@@ -23,20 +24,15 @@ export class CommentService {
     ){}
 
     async getComments(): Promise<Comment[]>{
-        return await this.commentRepos.find();
+        return await this.cmtRepos.find();
     }
 
     //tạo ra 1 comment
     async createComment(commentDto: CommentDto): Promise<Comment>{
-        const newCmt = new Comment();
-        newCmt.content = commentDto.content;
-        newCmt.authorId= new ObjectId(commentDto.authorId);
-        newCmt.time= commentDto.time;
-        newCmt.postId=commentDto.postId;
-        const saveCmt = await this.commentRepos.save(commentDto);
-
-        //cập nhật lên người dùng
+        const saveCmt = await this.cmtRepos.save(commentDto);
+        //cập nhật lên người dùng đã tạo comment
         const user = await this.userRepos.findOneById(saveCmt.authorId);
+            if(!user) return null;
             const newUser =user;
             if (!user.commentIds) newUser.commentIds=[];
             user.commentIds.push(saveCmt.id);
@@ -44,37 +40,35 @@ export class CommentService {
             Object.assign(user, newUser);
         //cập nhật lên post
         const post = await this.postRepos.findOneById(saveCmt.postId);
+            if (!post) return null;
             const newPost=post;
             if (!newPost.commentIds) newPost.commentIds=[];
             newPost.commentIds.push(saveCmt.id);
             await this.postRepos.update({postId:post.postId},newPost);
             Object.assign(post, newPost);
-
+        //xử lý nếu người comment khác chủ status:
         return saveCmt;
     }
 
-    //lấy thông tin của 1 bài đăng
+    //lấy thông tin của 1 comment
     async detailComment(commentId:string): Promise<any>{
-        const cmtObjectId= new ObjectId(commentId);
-        const cmt = await this.commentRepos.findOneById(cmtObjectId);
-        return cmt;
+       return await this.cmtRepos.findOneById(new ObjectId(commentId));
     }
 
     async updateComment(cmtDto: CommentDto, id: ObjectId): Promise<Comment>{
-        const comment = await this.commentRepos.findOneById(id);
-
+        const comment = await this.cmtRepos.findOneById(id);
         if (!comment) {
             throw new NotFoundException(`Post with ID ${id} not found`);
         }
         const newCmt =comment;
         newCmt.content=cmtDto.content;
         newCmt.time=cmtDto.time;
-        await this.commentRepos.update({id: id}, newCmt);
+        await this.cmtRepos.update({id: id}, newCmt);
         return Object.assign(comment, newCmt);
     }
 
     async deleteComment(cmtId:ObjectId): Promise<any>{
-        const cmt = await this.commentRepos.findOneById(new ObjectId(cmtId));
+        const cmt = await this.cmtRepos.findOneById(new ObjectId(cmtId));
 
         //cập nhật lên post: xoá cmt
         const post= await this.postRepos.findOneById(cmt.postId);
@@ -85,13 +79,13 @@ export class CommentService {
             post.commentIds=updateCmtIdsInPost;
             await this.postRepos.save(post);
         }
-        //cập nhật lên likeRepos: xoá likeId
+        //cập nhật lên likeRepos: xoá likeId của comment
         const user = await this.userRepos.findOneById(cmt.authorId);
         const reactsInComment= cmt.likeId;
         await this.reactRepos.delete({ id: In(reactsInComment) })
 
         // cập nhật lên user
-        // xoá cmt
+        // xoá cmt trong list của người cmt
         const updateCmtIds = user.commentIds.filter(
             (id) => !id.equals(new ObjectId(cmtId)),
         );
@@ -99,7 +93,7 @@ export class CommentService {
         user.commentIds = updateCmtIds;
         await this.userRepos.save(user);
 
-        const result = await this.commentRepos.delete({id:new ObjectId(cmtId)});
+        const result = await this.cmtRepos.delete({id:new ObjectId(cmtId)});
         return result.affected > 0;
         // return user;
     }
