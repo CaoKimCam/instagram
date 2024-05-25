@@ -18,7 +18,7 @@ export class UserController{
         return await this.productService.signUp(signUpDto);
     }
 
-    @Get('/login')
+    @Post('/login')
     async login(@Body() loginDto: LoginDto): Promise<{token: string}>{
         return this.productService.login(loginDto);
     }
