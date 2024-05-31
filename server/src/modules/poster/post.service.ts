@@ -28,10 +28,13 @@ export class PostService {
     }
 
     //tạo ra 1 bài đăng
-    async createProduct(postDto: PostDto): Promise<Poster>{
+    async createProduct(postDto: PostDto, imageUrl: string): Promise<Poster>{
         const newPost = new Poster();
         newPost.postContent = postDto.postContent;
         newPost.authorId= new ObjectId(postDto.authorId);
+        // newPost.buffer=buffer;
+        // newPost.mimetype=mimetype;
+        newPost.postImg=imageUrl;
         const savePost = await this.postRepos.save(newPost);
         const user = await this.userRepos.findOneById(savePost.authorId);
         this.logger.log(user);

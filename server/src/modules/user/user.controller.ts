@@ -28,8 +28,6 @@ export class UserController{
         return await this.productService.getAllUsers();
     }
 
-
-    // @Body(new ValidationPipe)
     @Post()
     async createProduct(@Body(new ValidationPipe) productDto: UserDto): Promise<UserDto>{
         return await this.productService.createProduct(productDto);

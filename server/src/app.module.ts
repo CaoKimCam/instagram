@@ -1,13 +1,13 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProductModule } from './modules/products/product.module';
 import { UserModule } from './modules/user/user.module';
 import { PostModule } from './modules/poster/post.module';
 import { ConfigModule } from '@nestjs/config';
 import { ReactModule } from './modules/react/react.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -25,11 +25,11 @@ import { CommentModule } from './modules/comment/comment.module';
         // useUnifiedTopolory: true,
         entities: [__dirname+'src/**/*.entity{.ts,.js}'],    }
     ),
-    ProductModule,
     UserModule,
     PostModule,
     ReactModule, 
-    CommentModule
+    CommentModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -46,4 +46,10 @@ instagram-backend
 - Ví dụ: MinLength, ...
 - Cách nữa: nếu muốn dùng gloabl:
 
-9. Post Product
+9. Post
+
+10. Comment
+
+11. React
+
+12. User

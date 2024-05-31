@@ -9,11 +9,20 @@ export class Poster{
     @Column()
     postContent: string;
 
-    @Column()
+    @Column('text')
     postImg: string;
 
     @Column()
     authorId: ObjectId;
+
+    @Column()
+    postTime: Date;
+
+    @Column()
+    buffer: Buffer;
+
+    @Column()
+    mimetype: string;
 
     @Column()
     state: boolean;//tạo 1 enum
