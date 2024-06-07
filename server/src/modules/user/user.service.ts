@@ -1,0 +1,82 @@
+import { Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "./user.entity";
+import { MongoRepository } from "typeorm";
+import { UserDto } from "src/dto/user.dto";
+import { ObjectId } from "mongodb";
+import { JwtService } from "@nestjs/jwt";
+import { SignUpDto } from "src/dto/user/signup.dto";
+import { LoginDto } from "src/dto/user/login.dto";
+import * as bcrypt from 'bcrypt';
+
+@Injectable()
+export class UserService{
+    private readonly logger = new Logger(UserService.name);
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepos: MongoRepository<User>,
+        private jwtService: JwtService,
+    ){}
+
+    async signUp(signUpDto: SignUpDto): Promise<{token:string}>{
+        const {name, email, password} = signUpDto;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        if (this.isUsernameTaken(name)){throw new Error ("Username is already taken!!")}
+        if (this.isEmailTaken(email)){throw new Error ("Email is already taken!!")}
+        const newUser = this.userRepos.create({
+            userName: name,
+            userEmail: email,
+            userPassword: hashedPassword
+        })
+        const savedUser = await this.userRepos.save(newUser);
+        const token=this.jwtService.sign({ id: savedUser.id });
+        return {token};
+    }
+
+    async login(loginDto: LoginDto): Promise<{token:string}>{
+        const {email, password}= loginDto;
+        const user = await this.userRepos.findOne({where:{userEmail: email}});
+        if (!user){throw new UnauthorizedException('Invalid user or email');}
+        const isPasswordMatched = await bcrypt.compare(password, user.userPassword);
+        if (!isPasswordMatched){throw new UnauthorizedException('Invalid email or password');}
+        const token= this.jwtService.sign({id: user.id});
+        await this.userRepos.save(user);
+        return {token};
+    }
+
+    async getAllUsers(): Promise<User[]>{return await this.userRepos.find();}
+
+    async detailAccount(id:string): Promise<User>{
+        const user=await this.userRepos.findOneById(new ObjectId(id));
+        return user;
+    }
+
+    async updateAccount(userDto: UserDto, userId: ObjectId, avatar: string): Promise<User>{
+        const user = await this.userRepos.findOne({where:{id: userId}});
+        if (!user) {throw new NotFoundException(`User with ID ${userId} not found`);}
+        const newUser= user;
+        if (userDto.userName){
+            if (this.isUsernameTaken(userDto.userName)) throw new Error('Username is already taken!');
+            else newUser.userName=userDto.userName;
+        }
+        if (avatar) newUser.userAvatar=avatar;
+        if (userDto.userBio) newUser.userBio=userDto.userBio;
+        await this.userRepos.update({id: userId}, newUser);
+        return Object.assign(user, newUser);
+    }//cập nhật một trong các tt: tiểu sửl username, avatar
+
+    async deleteAccount(id:ObjectId): Promise<boolean>{
+        const result = await this.userRepos.delete({id:id});
+        return result.affected > 0;
+    }
+
+    // hàm phụ
+    async isUsernameTaken(username: string): Promise<boolean>{
+        const existingUser = await this.userRepos.findOne({where:{userName:username}})
+        return !!existingUser;
+    }
+    async isEmailTaken(email: string): Promise<boolean>{
+        const existingEmail = await this.userRepos.findOne({where:{userEmail:email}})
+        return !!existingEmail;
+    }
+}
