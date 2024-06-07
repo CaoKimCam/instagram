@@ -120,18 +120,4 @@ export class ReactService {
         const result = await this.reactRepos.delete({id:new ObjectId(reactId)});
         return result.affected > 0;
     }
-    
-    // async updateReact(reactDto: ReactDto, id: ObjectId): Promise<React>{
-    //     //có thể không dùng cập nhật
-    //     const react = await this.reactRepos.findOneById(new ObjectId(id));
-        
-    //     if (!react) {
-    //         throw new NotFoundException(`Post with ID ${id} not found`);
-    //         }
-    //     const newReact=react;
-    //     newReact.time=reactDto.time;
-    //     await this.reactRepos.update({id:react.id},newReact);
-    //     const saveReact =Object.assign(react, newReact);
-    //     return saveReact;
-    // }
 }
