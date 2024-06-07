@@ -21,20 +21,12 @@ export class ReactService {
         @InjectRepository(Poster)
         private readonly postRepos: MongoRepository<Poster>,
         @InjectRepository(React)
-        private readonly reactRepos: MongoRepository<React>
-    ){}
+        private readonly reactRepos: MongoRepository<React>){}
 
-    async getReacts(): Promise<React[]>{
-        return await this.reactRepos.find();
-    }
+    async getReacts(): Promise<React[]>{return await this.reactRepos.find();}
 
     async createReacts(reactDto: ReactDto): Promise<any>{//React
-        const newReact = new React();
-        newReact.author=new ObjectId(reactDto.authorId);
-        newReact.objectId=new ObjectId(reactDto.objectId);
-        newReact.time=reactDto.time;
-        newReact.type=reactDto.type;
-        const saveReact = await this.reactRepos.save(newReact);
+        const saveReact = await this.reactRepos.save(reactDto);
 
         //cập nhật lượt like của người dùng
         const user = await this.userRepos.findOneById(new ObjectId(saveReact.author));
@@ -44,22 +36,16 @@ export class ReactService {
             await this.userRepos.update({id: user.id}, newUser);
             const saveUser= Object.assign(user, newUser);
         
-        if (!reactDto.type){
+        if (!reactDto.type){//type=false: comment
         //cập nhật lên comment
             const comment = await this.commentRepos.findOneById(saveReact.objectId);
-                if (comment){
-                    const newCmt= comment;
-                    if(!newCmt.likeId) newCmt.likeId=[];
-                    newCmt.likeId.push(saveReact.id);
-                    await this.commentRepos.update({id: saveReact.objectId},newCmt);
-                    var saveCmt =Object.assign(comment, newCmt);
-                    }
-                // const post = await this.postRepos.findOneById(newCmt.postId);
-                // const newPost = post;
-                // if(!newPost.cmtLikeId) newPost.cmtLikeId=[];
-                // newPost.cmtLikeId.push(saveReact.id);
-                // await this.postRepos.update({postId:newCmt.postId},newPost);
-                // Object.assign(post, newPost);
+            if (comment){
+                const newCmt= comment;
+                if(!newCmt.likeId) newCmt.likeId=[];
+                newCmt.likeId.push(saveReact.id);
+                await this.commentRepos.update({id: saveReact.objectId},newCmt);
+                var saveCmt =Object.assign(comment, newCmt);
+                }
         }
         else{
         //cập nhật lên bài đăng
@@ -73,11 +59,10 @@ export class ReactService {
             }
             this.logger.log(post);
         }
-
         return saveReact;
     }
 
-    //lấy thông tin của 1 bài đăng
+    //lấy thông tin của 1 react
     async detailReacts(reactId:string): Promise<any>{
         const reactObjectId= new ObjectId(reactId);
         const react = await this.reactRepos.findOneById(reactObjectId);
@@ -91,7 +76,7 @@ export class ReactService {
     async deleteReact(reactId:ObjectId): Promise<boolean>{
         const react = await this.reactRepos.findOneById(new ObjectId(reactId));
       
-        //update user react
+        //unlike react in user
         const user = await this.userRepos.findOneById(react.author);
         const updateReactInUser = user.likeIds.filter(
             (id) => !id.equals(react.id),
@@ -108,7 +93,7 @@ export class ReactService {
             post.postLikeId=updateReactinPost;
             await this.postRepos.save(post);
         } else{
-            //unlike trong cmt trong user 
+            //unlike trong cmt
             const cmt = await this.commentRepos.findOneById(react.objectId);
             const updateReactInCmt = cmt.likeId.filter(
                 (id) => !id.equals(react.id),

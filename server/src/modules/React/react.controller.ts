@@ -8,13 +8,13 @@ import { React } from "./react.entity";
 import { JwtAuthGuard } from "../user/jwt-auth.guard";
 
 @Controller('/likes')
-@ApiTags('LIKES')
+@ApiTags('REACTS')
 export class ReactController{
 
     constructor(private readonly productService: ReactService){}
     
     @UseGuards(JwtAuthGuard)
-    @Get()
+    @Get()//all reacts only by admin
     async getReacts(): Promise<React[]>{
         return await this.productService.getReacts();
     }

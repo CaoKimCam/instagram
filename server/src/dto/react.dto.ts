@@ -9,7 +9,7 @@ export class ReactDto{
     time?:Date;
 
     @IsOptional()
-    authorId: ObjectId;//người like
+    author: ObjectId;//người like
 
     @IsOptional()
     objectId: ObjectId;//đối tượng được like: post hoặc bài viết
