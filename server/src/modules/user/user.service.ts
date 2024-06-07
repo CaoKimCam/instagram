@@ -12,7 +12,6 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService{
     private readonly logger = new Logger(UserService.name);
-
     constructor(
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,
@@ -22,6 +21,8 @@ export class UserService{
     async signUp(signUpDto: SignUpDto): Promise<{token:string}>{
         const {name, email, password} = signUpDto;
         const hashedPassword = await bcrypt.hash(password, 10);
+        if (this.isUsernameTaken(name)){throw new Error ("Username is already taken!!")}
+        if (this.isEmailTaken(email)){throw new Error ("Email is already taken!!")}
         const newUser = this.userRepos.create({
             userName: name,
             userEmail: email,
@@ -34,53 +35,48 @@ export class UserService{
 
     async login(loginDto: LoginDto): Promise<{token:string}>{
         const {email, password}= loginDto;
-        const user = await this.userRepos.findOne({
-            where:{userEmail: email}
-        });
-
-        if (!user){
-            throw new UnauthorizedException('Invalid user or email');
-        }
+        const user = await this.userRepos.findOne({where:{userEmail: email}});
+        if (!user){throw new UnauthorizedException('Invalid user or email');}
         const isPasswordMatched = await bcrypt.compare(password, user.userPassword);
-
-        if (!isPasswordMatched){
-            throw new UnauthorizedException('Invalid email or password');
-        }
+        if (!isPasswordMatched){throw new UnauthorizedException('Invalid email or password');}
         const token= this.jwtService.sign({id: user.id});
         await this.userRepos.save(user);
         return {token};
     }
 
-    async getAllUsers(): Promise<User[]>{
-        return await this.userRepos.find();
-    }
+    async getAllUsers(): Promise<User[]>{return await this.userRepos.find();}
 
-    async createProduct(userDto: UserDto): Promise<User>{
-        const newUser = new User();
-        newUser.userName = userDto.userName;
-        newUser.userBio=userDto.userBio;
-        this.logger.log(newUser);
-        return await this.userRepos.save(newUser);
-    }
-
-    async detailProduct(id:string): Promise<User>{
+    async detailAccount(id:string): Promise<User>{
         const user=await this.userRepos.findOneById(new ObjectId(id));
-        this.logger.log(user.id);
         return user;
     }
 
-    async updateProduct(userDto: UserDto, userId: ObjectId): Promise<User>{
-        let toUpdate = await this.userRepos.findOne({where: 
-            {id: userId}});
-        if (!toUpdate) {
-            throw new NotFoundException(`User with ID ${userId} not found`);
-            }
-        await this.userRepos.update({id: userId}, userDto);
-        return Object.assign(toUpdate, userDto);
-    }
+    async updateAccount(userDto: UserDto, userId: ObjectId, avatar: string): Promise<User>{
+        const user = await this.userRepos.findOne({where:{id: userId}});
+        if (!user) {throw new NotFoundException(`User with ID ${userId} not found`);}
+        const newUser= user;
+        if (userDto.userName){
+            if (this.isUsernameTaken(userDto.userName)) throw new Error('Username is already taken!');
+            else newUser.userName=userDto.userName;
+        }
+        if (avatar) newUser.userAvatar=avatar;
+        if (userDto.userBio) newUser.userBio=userDto.userBio;
+        await this.userRepos.update({id: userId}, newUser);
+        return Object.assign(user, newUser);
+    }//cập nhật một trong các tt: tiểu sửl username, avatar
 
-    async deleteProduct(id:ObjectId): Promise<boolean>{
+    async deleteAccount(id:ObjectId): Promise<boolean>{
         const result = await this.userRepos.delete({id:id});
         return result.affected > 0;
+    }
+
+    // hàm phụ
+    async isUsernameTaken(username: string): Promise<boolean>{
+        const existingUser = await this.userRepos.findOne({where:{userName:username}})
+        return !!existingUser;
+    }
+    async isEmailTaken(email: string): Promise<boolean>{
+        const existingEmail = await this.userRepos.findOne({where:{userEmail:email}})
+        return !!existingEmail;
     }
 }

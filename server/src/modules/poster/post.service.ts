@@ -32,8 +32,6 @@ export class PostService {
         const newPost = new Poster();
         newPost.postContent = postDto.postContent;
         newPost.authorId= new ObjectId(postDto.authorId);
-        // newPost.buffer=buffer;
-        // newPost.mimetype=mimetype;
         newPost.postImg=imageUrl;
         const savePost = await this.postRepos.save(newPost);
         const user = await this.userRepos.findOneById(savePost.authorId);
@@ -90,13 +88,14 @@ export class PostService {
 
         //1.Xoá postId trong user
         const user = await this.userRepos.findOneById(new ObjectId(post.authorId));
-        this.logger.log(user);
-        if (user.postIds){//nếu khác null thì mới filter
-            const updatePostIds = user.postIds.filter(
-            (id) => !id.equals(new ObjectId(postId)));
-            user.postIds = updatePostIds;
-            await this.userRepos.save(user);
-        }
+        if (user){//nếu khác null thì mới filter
+           if (user.postIds){
+                const updatePostIds = user.postIds.filter(
+                (id) => !id.equals(new ObjectId(postId)));
+                user.postIds = updatePostIds;
+                await this.userRepos.save(user);
+           }
+        } else throw new Error ("Fail to find author of this user!");
         //2. Xoá comment trong post
         const commentIds= await this.commentRepos.findByIds(post.commentIds);
         if (commentIds)
@@ -147,7 +146,10 @@ export class PostService {
                 //update user react
                 const user = this.userRepos.findOneById(like.author);
                 const updateReactInUser = (await user).likeIds.filter(
-                    (id) => !id.equals(like.id),
+                    (id) => 
+                        !id.equals(like.id)
+                        // this.reactRepos.delete(id);
+                    
                 );
                 (await user).likeIds=updateReactInUser;
                 this.userRepos.save(await user);
@@ -175,9 +177,7 @@ export class PostService {
         })}
 
         const result = await this.postRepos.delete({postId:new ObjectId(postId)});
-        // this.logger.log(user.postIds);
         return result.affected > 0;
-        // return true;
     }
     
 }

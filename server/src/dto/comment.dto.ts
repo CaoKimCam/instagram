@@ -1,4 +1,4 @@
-import { IsEmpty, IsNotEmpty, IsOptional} from "class-validator";
+import { IsOptional} from "class-validator";
 import { ObjectId } from "mongodb";
 
 export class CommentDto{

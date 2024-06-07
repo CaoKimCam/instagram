@@ -6,13 +6,17 @@ import { ObjectId } from "mongodb";import { CommentDto } from "src/dto/comment.d
 import { User } from "../user/user.entity";
 import { Poster } from "../poster/post.entity";
 import { React } from "../react/react.entity";
-import { error } from "console";
+import { ReactService } from "../react/react.service";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class CommentService {
 
     private readonly logger = new Logger(CommentService.name);
     constructor(
+
+        private readonly reactService: ReactService,
+        private readonly userService: UserService,
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,
         @InjectRepository(Comment)
@@ -21,10 +25,13 @@ export class CommentService {
         private readonly postRepos: MongoRepository<Poster>,
         @InjectRepository(React)
         private readonly reactRepos: MongoRepository<React>,
+
+        
     ){}
 
-    async getComments(): Promise<Comment[]>{
-        return await this.cmtRepos.find();
+    async getComments(): Promise<any>{
+        // return await this.cmtRepos.find();
+        return this.reactService.deleteReact(new ObjectId('666096a3f80422e61dece3ce'))
     }
 
     //tạo ra 1 comment

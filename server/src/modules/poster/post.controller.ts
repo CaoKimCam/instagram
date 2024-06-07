@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Logger, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { ObjectId } from "mongodb";
 import { PostDto } from "src/dto/post.dto";
 import { Poster } from "./post.entity";
@@ -9,6 +9,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { UploadedFile } from "@nestjs/common";
 import { UseInterceptors } from "@nestjs/common";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
+import { JwtAuthGuard } from "../user/jwt-auth.guard";
 
 @Controller('/posters')
 @ApiTags('POSTERS')
@@ -19,6 +20,8 @@ export class PostController{
         private readonly productService: PostService,
         private readonly cloudinaryService: CloudinaryService,
         ){}
+
+    // @UseGuards(JwtAuthGuard)
     @Get()
     async getProducts(): Promise<Poster[]>{
         return await this.productService.getProducts();
@@ -27,8 +30,6 @@ export class PostController{
     @Post()
     @UseInterceptors(FileInterceptor('file'))
     async createProduct(@UploadedFile() file: Express.Multer.File, @Body(new ValidationPipe) postDto: PostDto): Promise<any>{
-        // const imageUrl=file? `/uploads/${file.originalname}`:'';
-        // return await this.productService.createProduct(postDto, file.buffer, file.mimetype);
         const imageUrl= (await this.cloudinaryService.uploadFile(file)).secure_url;
         return await this.productService.createProduct(postDto, imageUrl);
     }

@@ -14,7 +14,7 @@ export class CommentController{
     constructor(private readonly productService: CommentService){}
 
     @Get()
-    async getComments(): Promise<Comment[]>{
+    async getComments(): Promise<any>{
         return await this.productService.getComments();
     }
 

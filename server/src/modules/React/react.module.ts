@@ -11,6 +11,7 @@ import { ReactController } from "./react.controller";
     imports: [TypeOrmModule.forFeature([Poster,User, React, Comment])],
     controllers: [ReactController],
     providers: [ReactService],
+    exports:[ReactService]
 })
 
 export class ReactModule{};

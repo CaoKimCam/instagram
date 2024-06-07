@@ -6,6 +6,9 @@ import { UserController } from "./user.controller";
 import { PassportModule } from "@nestjs/passport";
 import { JwtModule } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
+import { JwtStategy } from "./jwt.strategy";
+import { CloudinaryProvider } from "../cloudinary/cloudinary";
+import { CloudinaryService } from "../cloudinary/cloudinary.service";
 
 @Module({
     imports: [
@@ -24,8 +27,8 @@ import { ConfigService } from "@nestjs/config";
         TypeOrmModule.forFeature([User])
     ],
     controllers: [UserController],
-    providers: [UserService, JwtModule],
-    exports:[JwtModule, PassportModule]
+    providers: [UserService, JwtStategy, CloudinaryService, CloudinaryProvider],
+    exports:[JwtModule, PassportModule, UserService]
 })
 
 export class UserModule{};

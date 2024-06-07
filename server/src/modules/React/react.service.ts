@@ -89,7 +89,6 @@ export class ReactService {
     }
 
     async deleteReact(reactId:ObjectId): Promise<boolean>{
-        // const id_string= id.toString();
         const react = await this.reactRepos.findOneById(new ObjectId(reactId));
       
         //update user react

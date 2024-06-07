@@ -17,6 +17,7 @@ import { CloudinaryProvider } from "../cloudinary/cloudinary";
     ],
     controllers: [PostController],
     providers: [PostService, CloudinaryService, CloudinaryProvider],
+    exports:[PostService]
 })
 
 export class PostModule{};

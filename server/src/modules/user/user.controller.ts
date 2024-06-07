@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "./user.entity";
 import { ValidationPipe } from "src/validation.pipe";
@@ -7,45 +7,71 @@ import { ObjectId } from "mongodb";
 import { SignUpDto } from "src/dto/user/signup.dto";
 import { LoginDto } from "src/dto/user/login.dto";
 import { ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "./jwt-auth.guard";
+import { ResponseData } from "src/global/globalClass";
+import { HttpMessage, HttpStatus } from "src/global/globalEnum";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { CloudinaryService } from "../cloudinary/cloudinary.service";
 
 @Controller('users')
 @ApiTags('USERS')
 export class UserController{
-    constructor(private readonly productService: UserService){}
+    constructor(
+        private readonly userService: UserService,
+        private readonly cloudinaryService: CloudinaryService,
+    ){}
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/test')
+    async get(@Request() req):Promise<any>{
+        const user = req.user;
+        return await user;
+    }
 
     @Post('/signup')
     async signUp(@Body() signUpDto: SignUpDto): Promise <{token: string}>{
-        return await this.productService.signUp(signUpDto);
+        return await this.userService.signUp(signUpDto);
     }
 
     @Post('/login')
     async login(@Body() loginDto: LoginDto): Promise<{token: string}>{
-        return this.productService.login(loginDto);
+        return this.userService.login(loginDto);
     }
 
-    @Get()
-    async getProducts(): Promise<User[]>{
-        return await this.productService.getAllUsers();
+    @UseGuards(JwtAuthGuard)
+    @Get('/all')
+    async getUsers(@Request() req): Promise<any>{
+        const user =req.user;
+        if (user.id==='123ac')
+        return await this.userService.getAllUsers();
+        else return new ResponseData([], HttpStatus.ERROR, HttpMessage.FORBIDDEN);
     }
 
-    @Post()
-    async createProduct(@Body(new ValidationPipe) productDto: UserDto): Promise<UserDto>{
-        return await this.productService.createProduct(productDto);
+    @UseGuards(JwtAuthGuard)
+    @Get('/account')
+    async detailAccount(@Request() req): Promise<User>{
+        const user=req.user;
+        const id_string=user.id.toString();
+        return await this.userService.detailAccount(id_string); 
     }
 
-    @Get('/:id')
-    async detailProduct(@Param ('id') id:ObjectId): Promise<User>{
-        const id_string= id.toString();
-        return await this.productService.detailProduct(id_string); 
+    @UseGuards(JwtAuthGuard)
+    @Put()
+    @UseInterceptors(FileInterceptor('avatar'))
+    async updateAccount(@Body() userDto: UserDto, @Request() req, @UploadedFile() avatar: Express.Multer.File): Promise<User>{
+        let avatarUrl;
+        if (avatar) {
+            avatarUrl = (await (this.cloudinaryService.uploadFile(avatar))).secure_url;
+        }
+        const id=req.user.id;
+        return await this.userService.updateAccount(userDto, id, avatarUrl);
     }
 
-    @Put('/:id')
-    async updateProduct(@Body() productDto: UserDto, @Param('id') id: ObjectId): Promise<User>{
-        return await this.productService.updateProduct(productDto, id);
-    }
-
-    @Delete('/:id')
-    async deleteProduct(@Param('id') id:ObjectId): Promise<boolean>{
-        return await this.productService.deleteProduct(id);
+    @UseGuards(JwtAuthGuard)
+    @Delete()
+    async deleteAccount(@Request() req): Promise<any>{
+        const user=req.user;
+        const id=user.id;
+        return await this.userService.deleteAccount(new ObjectId(id));
     }
 }
