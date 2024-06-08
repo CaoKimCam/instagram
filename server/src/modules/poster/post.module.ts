@@ -6,14 +6,15 @@ import { PostController } from "./post.controller";
 import { User } from "../user/user.entity";
 import { React } from "../react/react.entity";
 import { Comment } from "../comment/comment.entity";
-import { MulterModule } from "@nestjs/platform-express";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
-import { CloudinaryModule } from "../cloudinary/cloudinary.module";
 import { CloudinaryProvider } from "../cloudinary/cloudinary";
+import { CommentModule } from "../comment/comment.module";
+import { ReactModule } from "../react/react.module";
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Poster, User, React, Comment]),
+        CommentModule, ReactModule
     ],
     controllers: [PostController],
     providers: [PostService, CloudinaryService, CloudinaryProvider],

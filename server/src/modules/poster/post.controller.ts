@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Logger, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Logger, Param, Post, Put, Request, UseGuards } from "@nestjs/common";
 import { ObjectId } from "mongodb";
 import { PostDto } from "src/dto/post.dto";
 import { Poster } from "./post.entity";
@@ -15,38 +15,43 @@ import { JwtAuthGuard } from "../user/jwt-auth.guard";
 @ApiTags('POSTERS')
 export class PostController{
     private readonly logger= new Logger(PostController.name);
-
     constructor(
         private readonly productService: PostService,
         private readonly cloudinaryService: CloudinaryService,
         ){}
 
-    // @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard)
     @Get()
     async getProducts(): Promise<Poster[]>{
-        return await this.productService.getProducts();
+        return await this.productService.getPosts();
     }
 
+    @UseGuards(JwtAuthGuard)
     @Post()
     @UseInterceptors(FileInterceptor('file'))
-    async createProduct(@UploadedFile() file: Express.Multer.File, @Body(new ValidationPipe) postDto: PostDto): Promise<any>{
-        const imageUrl= (await this.cloudinaryService.uploadFile(file)).secure_url;
-        return await this.productService.createProduct(postDto, imageUrl);
+    async createProduct(@UploadedFile() file: Express.Multer.File, @Body(new ValidationPipe) postDto: PostDto, @Request() req): Promise<any>{
+        postDto.authorId=req.user.id;
+        const postImg= (await this.cloudinaryService.uploadFile(file)).secure_url;
+        return await this.productService.createPost(postDto, postImg);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async detailProduct(@Param ('id') id:ObjectId): Promise<Poster>{
         const id_string= id.toString();
-        return await this.productService.detailProduct(id_string); 
+        return await this.productService.detailPost(id_string); 
     }
 
+    @UseGuards(JwtAuthGuard)
     @Put('/:id')
-    async updateProduct(@Body() productDto: PostDto, @Param('id') id: ObjectId): Promise<Poster>{
-        return await this.productService.updateProduct(productDto, id);
+    async updateProduct(@Body() postDto: PostDto, @Param('id') id: ObjectId, @Request() req): Promise<Poster>{
+        postDto.authorId=req.user.id;
+        return await this.productService.updatePost(postDto, id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Delete('/:id')
     async deleteProduct(@Param('id') id:ObjectId): Promise<boolean>{
-        return await this.productService.deleteProduct(id);
+        return await this.productService.deletePost(id);
     }
 }

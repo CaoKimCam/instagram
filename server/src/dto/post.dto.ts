@@ -11,7 +11,10 @@ export class PostDto{
     @IsOptional()
     postTime?:Date;
 
-    @ApiProperty({description: 'The authorId of this post',})
+    @ApiProperty({description: 'The authorId of this post should not be sent by front end!',})
     @IsOptional()
-    authorId: ObjectId;
+    authorId?: ObjectId;
+
+    @IsOptional()
+    postImg?:string;
 }

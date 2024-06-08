@@ -7,7 +7,6 @@ import { Poster } from "../poster/post.entity";
 import { React } from "./react.entity";
 import { ReactDto } from "src/dto/react.dto";
 import { Comment } from "../comment/comment.entity";
-;
 
 @Injectable()
 export class ReactService {
@@ -96,7 +95,7 @@ export class ReactService {
             //unlike trong cmt
             const cmt = await this.commentRepos.findOneById(react.objectId);
             const updateReactInCmt = cmt.likeId.filter(
-                (id) => !id.equals(react.id),
+                (id) => !(new ObjectId(id)).equals(new ObjectId(react.id)),
             );
             cmt.likeId=updateReactInCmt;
             await this.commentRepos.save(cmt);
