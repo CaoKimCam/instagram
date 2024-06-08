@@ -1,0 +1,81 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI';
+    letter-spacing: 0.1px;
+}
+
+#post {
+    width: 100px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+}
+
+.post-header {
+    width: 500px;
+    display: flex;
+    flex-direction: row;
+}
+
+.post-header .avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 100px;
+    margin: 10px 10px 10px 0;
+}
+
+.image {
+    width: 500px;
+    height: 500px;
+    border-radius: 10px;
+}
+
+.post-header .username,
+.post-header .dot,
+.post-header .time {
+    margin-top: 10px;
+    margin-left: 10px;
+    line-height: 50px;
+}
+
+.post-header .more {
+    margin-left: auto;
+}
+
+.post-footer {
+    margin-top: 10px;
+}
+
+.react {
+    width: 500px;
+}
+
+.heart,
+.comment,
+.share {
+    width: 35px;
+    margin: 0 10px 0 0;
+}
+
+.save {
+    width: 35px;
+    float: right;
+}
+
+.comment-user {
+    width: 500px;
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#post .comment .user-comment {
+    margin-left: 10px;
+}
+
+#post .more {
+    width: 20px;
+    display: inline;
+}

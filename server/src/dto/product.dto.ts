@@ -2,7 +2,7 @@ import { IsNotEmpty, IsNumber, Min, MinLength } from "class-validator";
 import { ObjectId } from "typeorm";
 
 export class ProductDto{
-    @IsNotEmpty()
+    // @IsNotEmpty()
     categoryId?: number;
 
     // ít nhất 5 ký tự
