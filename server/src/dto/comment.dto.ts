@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsOptional} from "class-validator";
+import { IsNotEmpty, IsOptional} from "class-validator";
 import { ObjectId } from "mongodb";
 
 export class CommentDto{
@@ -12,10 +12,10 @@ export class CommentDto{
     time?: Date;
 
     @ApiProperty({description: 'The postId of this comment',})
-    // @IsEmpty()
+    // @IsNotEmpty()
     postId?: ObjectId;
 
-    // @IsEmpty()
+    // @IsNotEmpty()
     @ApiProperty({description: 'The author of this comment',})
-    authorId?: ObjectId;
+    authorId?: ObjectId;//không gửi lên: tự động lấy từ token
 }

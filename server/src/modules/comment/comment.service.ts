@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, Logger, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Comment } from "./comment.entity";
 import { In, Like, MongoRepository } from "typeorm";
@@ -14,28 +14,23 @@ export class CommentService {
 
     private readonly logger = new Logger(CommentService.name);
     constructor(
-
+        @Inject(forwardRef(() => ReactService))
         private readonly reactService: ReactService,
-        private readonly userService: UserService,
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,
         @InjectRepository(Comment)
         private readonly cmtRepos: MongoRepository<Comment>,
         @InjectRepository(Poster)
-        private readonly postRepos: MongoRepository<Poster>,
-        @InjectRepository(React)
-        private readonly reactRepos: MongoRepository<React>,
-
-        
+        private readonly postRepos: MongoRepository<Poster>
     ){}
 
     async getComments(): Promise<any>{
-        // return await this.cmtRepos.find();
-        return this.reactService.deleteReact(new ObjectId('666096a3f80422e61dece3ce'))
+        return this.cmtRepos.find();
     }
 
     //tạo ra 1 comment
     async createComment(commentDto: CommentDto): Promise<Comment>{
+        if (!(commentDto.authorId && commentDto.postId)) throw new Error ('Not found author or post in dto!!')
         const saveCmt = await this.cmtRepos.save(commentDto);
         //cập nhật lên người dùng đã tạo comment
         const user = await this.userRepos.findOneById(saveCmt.authorId);
@@ -76,6 +71,13 @@ export class CommentService {
 
     async deleteComment(cmtId:ObjectId): Promise<any>{
         const cmt = await this.cmtRepos.findOneById(new ObjectId(cmtId));
+        const user = await this.userRepos.findOneById(cmt.authorId);
+
+        //cập nhật lên likeRepos: xoá tất cả likeId của comment dùng service
+        const reactsInComment= cmt.likeId;//xoá tất cả reactId này
+        reactsInComment.filter(
+            (id)=> this.reactService.deleteReact(new ObjectId(id))
+        )
 
         //cập nhật lên post: xoá cmt
         const post= await this.postRepos.findOneById(cmt.postId);
@@ -86,10 +88,6 @@ export class CommentService {
             post.commentIds=updateCmtIdsInPost;
             await this.postRepos.save(post);
         }
-        //cập nhật lên likeRepos: xoá likeId của comment
-        const user = await this.userRepos.findOneById(cmt.authorId);
-        const reactsInComment= cmt.likeId;
-        await this.reactRepos.delete({ id: In(reactsInComment) })
 
         // cập nhật lên user
         // xoá cmt trong list của người cmt
@@ -102,6 +100,5 @@ export class CommentService {
 
         const result = await this.cmtRepos.delete({id:new ObjectId(cmtId)});
         return result.affected > 0;
-        // return user;
     }
 }

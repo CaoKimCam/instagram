@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { Inject, Injectable, Logger, NotFoundException, UnauthorizedException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 import { MongoRepository } from "typeorm";
@@ -8,11 +8,20 @@ import { JwtService } from "@nestjs/jwt";
 import { SignUpDto } from "src/dto/user/signup.dto";
 import { LoginDto } from "src/dto/user/login.dto";
 import * as bcrypt from 'bcrypt';
+import { CommentService } from "../comment/comment.service";
+import { ReactService } from "../react/react.service";
+import { PostService } from "../poster/post.service";
 
 @Injectable()
 export class UserService{
     private readonly logger = new Logger(UserService.name);
     constructor(
+        @Inject(forwardRef(() => CommentService))
+        private readonly cmtService: CommentService,
+        @Inject(forwardRef(() => ReactService))
+        private readonly reactService: ReactService,
+        @Inject(forwardRef(() => PostService))
+        private readonly postService: PostService,
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,
         private jwtService: JwtService,
@@ -26,8 +35,7 @@ export class UserService{
         const newUser = this.userRepos.create({
             userName: name,
             userEmail: email,
-            userPassword: hashedPassword
-        })
+            userPassword: hashedPassword})
         const savedUser = await this.userRepos.save(newUser);
         const token=this.jwtService.sign({ id: savedUser.id });
         return {token};
@@ -66,10 +74,27 @@ export class UserService{
     }//cập nhật một trong các tt: tiểu sửl username, avatar
 
     async deleteAccount(id:ObjectId): Promise<boolean>{
+        const user = this.userRepos.findOneById(new ObjectId(id));
+        if ((await user).likeIds){
+            (await user).likeIds.filter((likeId)=>{
+                this.reactService.deleteReact(likeId)
+            })
+        }
+        if ((await user).commentIds){
+            (await user).commentIds.filter((cmtId)=>{
+                this.cmtService.deleteComment(cmtId)
+            })
+        }
+        if ((await user).postIds){
+            (await user).postIds.filter((postId)=>{
+                this.postService.deletePost(postId)
+            })
+        }
         const result = await this.userRepos.delete({id:id});
         return result.affected > 0;
     }
 
+    
     // hàm phụ
     async isUsernameTaken(username: string): Promise<boolean>{
         const existingUser = await this.userRepos.findOne({where:{userName:username}})
