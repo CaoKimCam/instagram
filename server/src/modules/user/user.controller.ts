@@ -29,7 +29,7 @@ export class UserController{
     }
 
     @Post('/signup')
-    async signUp(@Body() signUpDto: SignUpDto): Promise <{token: string}>{
+    async signUp(@Body() signUpDto: SignUpDto){
         return await this.userService.signUp(signUpDto);
     }
 
