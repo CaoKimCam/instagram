@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { Poster } from "./post.entity";
 import { PostService } from "./post.service";
@@ -10,11 +10,12 @@ import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { CloudinaryProvider } from "../cloudinary/cloudinary";
 import { CommentModule } from "../comment/comment.module";
 import { ReactModule } from "../react/react.module";
+import { UserModule } from "../user/user.module";
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Poster, User, React, Comment]),
-        CommentModule, ReactModule
+        forwardRef(()=>CommentModule), forwardRef(()=>ReactModule), forwardRef(()=>UserModule)
     ],
     controllers: [PostController],
     providers: [PostService, CloudinaryService, CloudinaryProvider],

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, Logger, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Comment } from "./comment.entity";
 import { In, Like, MongoRepository } from "typeorm";
@@ -14,7 +14,7 @@ export class CommentService {
 
     private readonly logger = new Logger(CommentService.name);
     constructor(
-
+        @Inject(forwardRef(() => ReactService))
         private readonly reactService: ReactService,
         @InjectRepository(User)
         private readonly userRepos: MongoRepository<User>,

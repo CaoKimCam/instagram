@@ -22,8 +22,9 @@ export class PostController{
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getProducts(): Promise<Poster[]>{
-        return await this.productService.getPosts();
+    async getPosts(@Request() req): Promise<Poster[]>{
+        const id=req.user.id;
+        return await this.productService.getPosts(id);
     }
 
     @UseGuards(JwtAuthGuard)

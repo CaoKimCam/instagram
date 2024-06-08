@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, Logger, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Poster } from "./post.entity";
 import { In, MongoRepository } from "typeorm";
@@ -14,7 +14,9 @@ export class PostService {
 
     private readonly logger = new Logger(PostService.name);
     constructor(
+        @Inject(forwardRef(() => CommentService))
         private readonly cmtService: CommentService,
+        @Inject(forwardRef(() => ReactService))
         private readonly reactService: ReactService,
         @InjectRepository(Poster)
         private readonly postRepos: MongoRepository<Poster>,
@@ -26,8 +28,14 @@ export class PostService {
         private readonly commentRepos: MongoRepository<Comment>,
     ){}
 
-    async getPosts(): Promise<Poster[]>{
+    async getAllPosts(): Promise<Poster[]>{
         return await this.postRepos.find();
+    }
+    async getPosts(id:string): Promise<Poster[]>{
+        const user = await this.userRepos.findOneById(new ObjectId(id));
+        const postIds=user.postIds;
+        const posts=await this.postRepos.findByIds(postIds);
+        return posts;
     }
 
     //tạo ra 1 bài đăng
