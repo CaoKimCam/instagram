@@ -9,10 +9,10 @@ const userApi = {
     const url = '/users/login';
     return axiosClient.post(url, data);
   },
-  // getUserInfo: () => {
-  //   const url = '/users/me';
-  //   return axiosClient.get(url); // Token sẽ tự động được gắn vào header
-  // },
+  account: () => {
+    const url = '/users/account';
+    return axiosClient.get(url);
+  },
   // Các phương thức khác như updateUser, deleteUser, v.v. có thể thêm vào đây
 };
 

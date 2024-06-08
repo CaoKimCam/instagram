@@ -3,9 +3,10 @@ import "./style.css";
 import { useDropzone } from "react-dropzone";
 import { createPost } from '../../api/posterApi';
 
-function CreatePost({ onClose, refreshHomepage }) { // Thêm tham số refreshHomepage
+function CreatePost({ onClose, refreshHomepage }) {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [postContent, setPostContent] = useState("");
+  // const [postTime, setPostTime] = useState("");
   const authorId = '66640ade927e340c8c024bdf';
 
   const { getRootProps, getInputProps, open: openFileDialog } = useDropzone({
@@ -29,9 +30,11 @@ function CreatePost({ onClose, refreshHomepage }) { // Thêm tham số refreshHo
   const handlePost = async () => {
     if (postContent && uploadedFile) {
       try {
-        await createPost(postContent, uploadedFile, authorId);
+        const postTime = new Date().toISOString();
+        await createPost(postContent, uploadedFile, authorId, postTime);
+        console.log(postTime);
         console.log('Create post successfully!');
-        refreshHomepage(); // Gọi hàm refreshHomepage để làm mới trang
+        refreshHomepage();
         onClose();
       } catch (error) {
         console.error('Error creating post:', error);
@@ -45,7 +48,6 @@ function CreatePost({ onClose, refreshHomepage }) { // Thêm tham số refreshHo
     <div className="overlay" onClick={onClose}>
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         <div id="create">
-          {/* Header */}
           <div className="header">
             <div style={{ margin: "auto", transform: "translateX(100%)" }}>
               Create new post
@@ -65,8 +67,6 @@ function CreatePost({ onClose, refreshHomepage }) { // Thêm tham số refreshHo
               Post
             </div>
           </div>
-
-          {/* Content */}
           <div className="content">
             <div style={{ maxWidth: 476, borderRight: "1px solid #ccc", position: "relative" }}>
               <div {...getRootProps({ className: "dropzone", style: { width: 476 } })}>
@@ -82,7 +82,6 @@ function CreatePost({ onClose, refreshHomepage }) { // Thêm tham số refreshHo
                 />
               )}
             </div>
-
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
                 <div className="createAvatar"></div>

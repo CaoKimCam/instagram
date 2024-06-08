@@ -7,14 +7,17 @@ import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
 import { getPosts } from "../../api/posterApi";
+import userApi from "../../api/userApi";
 
 function Homepage() {
   const [data, setData] = useState(null);
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
+  const [userName, setUserName] = useState("");
   
   useEffect(() => {
     fetchData();
+    fetchAccount();
   }, []);
 
   const fetchData = async () => {
@@ -24,6 +27,16 @@ function Homepage() {
       console.log("Data from API:", posts);
     } catch (error) {
       console.error("Error fetching data:", error);
+    }
+  };
+
+  const fetchAccount = async () => {
+    try {
+      const response = await userApi.account();
+      setUserName(response.data.userName);
+      console.log("UserName from API:", response.data.userName);
+    } catch (error) {
+      console.error("Error fetching user name:", error);
     }
   };
 
@@ -45,6 +58,27 @@ function Homepage() {
     setShowSearchBox(!showSearchBox);
   };
 
+  const calculatePostTime = (postTime) => {
+    const currentTime = new Date().getTime();
+    const postTimeInMs = new Date(postTime).getTime();
+    const diffInMs = currentTime - postTimeInMs;
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+
+    if (diffInHours < 24) {
+      if (diffInHours === 0) {
+        return `${diffInMinutes} minutes ago`;
+      } else {
+        return `${diffInHours} hours ago`;
+      }
+    } else if (diffInHours >= 24 && diffInHours < 48) {
+      return "yesterday";
+    } else {
+      const postDate = new Date(postTime);
+      return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
+  };
+
   return (
     <div id="main">
       <Grid container spacing={10}>
@@ -63,6 +97,8 @@ function Homepage() {
                 key={post.postId}
                 image={post.postImg}
                 caption={post.postContent}
+                postTime={calculatePostTime(post.postTime)}
+                userName={userName}
               />
             ))}
         </Grid>

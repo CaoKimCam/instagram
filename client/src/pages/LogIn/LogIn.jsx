@@ -1,8 +1,28 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "./LogIn.css";
-import handleLogIn from "../../api/handleLogIn";
+import userApi from "../../api/userApi";
 
-function LogIn() {
+const LogIn = () => {
+  const navigate = useNavigate();
+
+  const handleLogIn = async (event) => {
+    event.preventDefault();
+    const email = event.target.elements.email.value;
+    const password = event.target.elements.password.value;
+
+    try {
+      const response = await userApi.login({ email, password });
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      console.log('Login successful, token saved');
+      navigate('/');
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+      // Hiển thị thông báo lỗi cho người dùng
+    }
+  };
+
   return (
     <div>
       <div id="rec1">
@@ -12,7 +32,7 @@ function LogIn() {
           className="logo"
         />
         <form className="form" onSubmit={handleLogIn}>
-          <input type="text" name="email" className="email"placeholder="Email" autoComplete="email"/>
+          <input type="text" name="email" className="email" placeholder="Email" autoComplete="email" />
           <br />
           <input type="password" name="password" className="password" placeholder="Password" />
           <br />
@@ -24,7 +44,6 @@ function LogIn() {
           <div className="line2" />
           <p className="or">OR</p>
         </div>
-        {/* <button className="facebook">Log in with facebook</button> */}
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/b9fc92c344badde3e4fbdccf80d8d58751a1bda82e852a18cac56314b58f794f?"
           alt="logo-facebook"

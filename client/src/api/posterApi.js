@@ -23,11 +23,12 @@ export const getPostDetail = async (postId) => {
 };
 
 // Hàm tạo một bài viết mới
-export const createPost = async (postContent, imageUrl, authorId) => {
+export const createPost = async (postContent, imageUrl, authorId, postTime) => {
   try {
     const formData = new FormData();
     formData.append('postContent', postContent);
     formData.append('authorId', authorId);
+    formData.append('postTime', postTime);
     formData.append('file', imageUrl);
 
     const response = await axiosClient.post('/posters', formData, {
