@@ -1,0 +1,10 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: Segoe UI;
+    letter-spacing: 0.1px;
+}
+
+#main {
+    width: 100%;
+}

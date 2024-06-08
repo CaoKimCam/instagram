@@ -1,0 +1,39 @@
+* {
+    padding: 0;
+    margin: 0;
+    font-family: Segoe UI;
+    letter-spacing: 0.1px;
+}
+
+.grid-post {
+    border-top: 2px solid #ccc;
+    margin-top: 50px;
+}
+
+.tab {
+    display: flex;
+    flex-direction: row;
+}
+
+.tabPosts {
+    margin-left: auto;
+    margin-right: 30px;
+    margin-bottom: 10px;
+}
+
+.tabSaved {
+    margin-right: auto;
+    margin-bottom: 10px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: auto auto auto;
+}
+
+.grid .post {
+    margin: 3px;
+    border-radius: 2px;
+    height: 300px;
+    background-color: #ccc;
+}
