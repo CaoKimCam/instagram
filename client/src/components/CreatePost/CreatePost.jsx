@@ -3,10 +3,10 @@ import "./style.css";
 import { useDropzone } from "react-dropzone";
 import { createPost } from '../../api/posterApi';
 
-function CreatePost({ onClose }) {
-  const [uploadedFile, setUploadedFile] = useState(null); // Lưu trữ tệp thay vì URL
-  const [postContent, setPostContent] = useState(""); // Lưu trữ nội dung bài đăng
-  const authorId = '665206d770e753cc35236afb';
+function CreatePost({ onClose, refreshHomepage }) { // Thêm tham số refreshHomepage
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [postContent, setPostContent] = useState("");
+  const authorId = '66640ade927e340c8c024bdf';
 
   const { getRootProps, getInputProps, open: openFileDialog } = useDropzone({
     accept: {
@@ -21,7 +21,7 @@ function CreatePost({ onClose }) {
         })
       );
       if (filesWithPreview.length > 0) {
-        setUploadedFile(filesWithPreview[0]); // Lưu trữ tệp thay vì URL
+        setUploadedFile(filesWithPreview[0]);
       }
     },
   });
@@ -29,9 +29,9 @@ function CreatePost({ onClose }) {
   const handlePost = async () => {
     if (postContent && uploadedFile) {
       try {
-        await createPost(postContent, uploadedFile, authorId); // Truyền tệp gốc thay vì URL
+        await createPost(postContent, uploadedFile, authorId);
         console.log('Create post successfully!');
-        console.log(postContent);
+        refreshHomepage(); // Gọi hàm refreshHomepage để làm mới trang
         onClose();
       } catch (error) {
         console.error('Error creating post:', error);
@@ -76,7 +76,7 @@ function CreatePost({ onClose }) {
               {uploadedFile && (
                 <img
                   id="createImage"
-                  src={uploadedFile.preview} // Sử dụng preview để hiển thị ảnh
+                  src={uploadedFile.preview}
                   alt=""
                   className="createImage"
                 />

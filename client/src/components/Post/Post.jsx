@@ -1,21 +1,21 @@
 import React from "react";
 import "./style.css";
 
-function Post({avatar, username, time, image, numberLike, userComment}) {
+function Post({ image, caption }) {
   return (
     <div className="post">
       <div className="post-header">
-        <img src={avatar} alt="avatar" className="avatar" />
-        <h4 className="username" style={{ fontWeight: 600 }}>{username}</h4>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?" alt="avatar" className="avatar" />
+        <h4 className="username" style={{ fontWeight: 600 }}>username</h4>
         <div className="dot">‧</div>
-        <span className="time">{time} minutes</span>
+        <span className="time">5 minutes</span>
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
           alt=""
           className="more"
         />
       </div>
-      <img src={image} alt="" className="image" />
+      <img src={image} alt="" className="image" style={{ objectFit: "cover", objectPosition: "50% 50%" }}/>
       <div className="post-footer">
         <div className="react">
           <img
@@ -40,14 +40,14 @@ function Post({avatar, username, time, image, numberLike, userComment}) {
           />
         </div>
         <h4 className="number-like" style={{ fontWeight: 600 }}>
-          {numberLike} likes
+          5 likes
         </h4>
-        <div className="comment">
-          <div className="comment-user" style={{ display:"flex", flexDirection: "row" }}>
+        <div className="caption">
+          <div className="caption-user" style={{ display:"flex", flexDirection: "row" }}>
             <h4 className="user-name" style={{ fontWeight: 600, marginRight: 10 }}>
-              {username}
+              username
             </h4>
-            <div className="user-comment">{userComment}</div>
+            <div className="user-caption">{caption}</div>
           </div>
         </div>
       </div>

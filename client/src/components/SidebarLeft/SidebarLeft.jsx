@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "./style.css";
 import CreatePost from "../CreatePost/CreatePost";
 
-function SidebarLeft({ toggleSidebar, toggleSearchBox }) {
+function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
   const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
 
   const openCreatePopup = () => {
@@ -123,7 +123,7 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox }) {
         </div>
       </div>
       {/* Pop-up */}
-      {isCreatePopupOpen && <CreatePost onClose={closeCreatePopup} />}
+      {isCreatePopupOpen && <CreatePost onClose={closeCreatePopup} refreshHomepage={refreshHomepage} />}
     </div>
   );
 }

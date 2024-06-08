@@ -65,13 +65,13 @@
     float: right;
 }
 
-.comment-user {
+.caption-user {
     width: 500px;
     display: flex;
     margin-bottom: 20px;
 }
 
-#post .comment .user-comment {
+#post .caption .user-caption {
     margin-left: 10px;
 }
 

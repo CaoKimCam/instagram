@@ -3,37 +3,46 @@ import "./Homepage.css";
 import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 import Post from "../../components/Post/Post";
 import Grid from "@mui/material/Grid";
-import axios from "axios";
 import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
+import { getPosts } from "../../api/posterApi";
 
 function Homepage() {
   const [data, setData] = useState(null);
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
+  
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "https://661b85d965444945d04fa64d.mockapi.io/posts"
-        );
-        setData(response.data);
-        console.log("Data from API:", response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
     fetchData();
   }, []);
 
+  const fetchData = async () => {
+    try {
+      const posts = await getPosts();
+      setData(posts.reverse());
+      console.log("Data from API:", posts);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  const refreshHomepage = async () => {
+    try {
+      const posts = await getPosts();
+      setData(posts.reverse());
+      console.log("Homepage refreshed:", posts);
+    } catch (error) {
+      console.error("Error refreshing homepage:", error);
+    }
+  };
+
   const toggleSidebar = () => {
-    setShowSidebarLeft(!showSidebarLeft); // Chuyển giữa hiển thị SidebarLeft và SidebarSimple khi nhấn nút Search
+    setShowSidebarLeft(!showSidebarLeft);
   };
 
   const toggleSearchBox = () => {
-    setShowSearchBox(!showSearchBox); // Chuyển đổi trạng thái hiển thị của SearchBox
+    setShowSearchBox(!showSearchBox);
   };
 
   return (
@@ -41,7 +50,7 @@ function Homepage() {
       <Grid container spacing={10}>
         <Grid item xs={3.5}>
           {showSidebarLeft ? (
-            <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
+            <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} refreshHomepage={refreshHomepage} />
           ) : (
             <SidebarSimple toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
           )}
@@ -51,13 +60,9 @@ function Homepage() {
           {data &&
             data.map((post) => (
               <Post
-                key={post.id}
-                avatar={post.avatar}
-                username={post.username}
-                time={post.time}
-                image={post.image}
-                numberLike={post.numberLike}
-                userComment={post.userComment}
+                key={post.postId}
+                image={post.postImg}
+                caption={post.postContent}
               />
             ))}
         </Grid>
