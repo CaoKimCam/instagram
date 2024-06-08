@@ -56,6 +56,12 @@ export class UserController{
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('/:id')
+    async detailFriend(@Param('id') id:string): Promise<User>{
+        return await this.userService.detailAccount(id); 
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Put()
     @UseInterceptors(FileInterceptor('avatar'))
     async updateAccount(@Body() userDto: UserDto, @Request() req, @UploadedFile() avatar: Express.Multer.File): Promise<User>{
