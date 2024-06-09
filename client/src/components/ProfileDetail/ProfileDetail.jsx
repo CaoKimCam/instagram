@@ -1,7 +1,7 @@
 import React from "react";
 import "./style.css";
 
-function ProfileDetail() {
+function ProfileDetail({ userName }) {
   return (
     <div style={{ backgroundColor: "#fefefe" }}>
       <div id="profile">
@@ -18,7 +18,7 @@ function ProfileDetail() {
           ></div>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div className="row1">
-              <h1 className="profileUsername">username</h1>
+              <h1 className="profileUsername">{userName}</h1>
               <button className="editProfile">Edit profile</button>
               <button className="logout">Log out</button>
             </div>

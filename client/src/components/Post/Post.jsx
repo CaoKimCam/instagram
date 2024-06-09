@@ -3,7 +3,7 @@ import "./style.css";
 
 function Post({ image, caption, userName, postTime }) {
   return (
-    <div className="post" style={{ borderBottom: "1px solid #ccc"}}>
+    <div className="post">
       <div className="post-header">
         <img
           src="https://res.cloudinary.com/dpqnzt8qq/image/upload/v1717835313/ufomkmr3jiqjek6acvob.png"

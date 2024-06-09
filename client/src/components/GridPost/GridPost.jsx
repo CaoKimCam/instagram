@@ -1,23 +1,19 @@
 import React from 'react';
 import './style.css';
 
-function GridPost() {
+function GridPost({ images }) {
     return (
         <div className='grid-post'>
 
-            <div class="tab">
+            <div className="tab">
                 <div className="tabPosts" style={{ borderTop: "2px solid #000" }}>POSTS</div>
                 <div className="tabSaved" style={{ borderTop: "2px solid #fff" }}>SAVED</div>
             </div>
 
-            <div class="grid">
-                <div className="post"></div>
-                <div className="post"></div>
-                <div className="post"></div>
-                <div className="post"></div>
-                <div className="post"></div>
-                <div className="post"></div>
-                <div className="post"></div>
+            <div className="grid">
+                {images.map((image, index) => (
+                    <img key={index} src={image} alt={`Post ${index}`} className='gridImage' />
+                ))}
             </div>
 
         </div>

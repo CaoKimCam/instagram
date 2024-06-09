@@ -6,12 +6,9 @@
     letter-spacing: 0.1px;
 }
 
-#post {
-    width: 100px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
+.post {
+    width: 500px;
+    border-bottom: 1px solid #ccc;
 }
 
 .post-header {
