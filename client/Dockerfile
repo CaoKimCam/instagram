@@ -1,23 +1,23 @@
-FROM node:latest AS builder
+# Sử dụng image node với phiên bản cụ thể
+FROM node:20-alpine
 
-#thiết lập thư mục làm việc
+# Thiết lập thư mục làm việc trong container
 WORKDIR /app
 
-#copy package.json, package-lock.json vào thư mục làm việc
-COPY package*.json ./
-
-#cài đặt các dependencies
-RUN npm install
-
-#sao chép các tệp còn lại vào thư mục làm việc
+# Sao chép mã nguồn vào thư mục làm việc
 COPY . .
 
-#Build ứng dụng
-RUN npm run build
+# Chạy lệnh chown để đảm bảo quyền sở hữu của thư mục làm việc
+# RUN chown -Rh node:node /var/www/client
 
-#Sử dụng nginx image để serve ứng dụng đã build
-FROM nginx:alpine
+# Đổi user sang node để chạy các lệnh sau với quyền hạn tối thiểu
+# USER node
 
-COPY --from=builder /app/build /usr/share/nginx/html
+# Cài đặt các dependencies từ file package.json và package-lock.json
+RUN npm install
 
+# Thông báo rằng container sẽ lắng nghe trên cổng 80
 EXPOSE 80
+
+# Lệnh để khởi động ứng dụng
+CMD ["npm","start"]
