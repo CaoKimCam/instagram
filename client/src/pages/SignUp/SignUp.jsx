@@ -1,8 +1,40 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import "./SignUp.css";
-import handleSignUp from '../../api/handleSignUp';
+import userApi from '../../api/userApi';
 
 function SignUp() {
+  const navigate = useNavigate();
+
+  const handleSignUp = async (event) => {
+    event.preventDefault();
+
+    // Lấy các phần tử input từ form
+    const { email, name, password } = event.target.elements;
+
+    if (!email || !name || !password) {
+      console.error("Some input elements are missing in the form");
+      return;
+    }
+
+    const emailValue = email.value;
+    const nameValue = name.value;
+    const passwordValue = password.value;
+
+    try {
+      const response = await userApi.signup({
+        email: emailValue,
+        name: nameValue,
+        password: passwordValue,
+      });
+      console.log(response.data);
+      navigate('/login');
+    } catch (error) {
+      console.error(error.response?.data || error.message);
+      // Hiển thị thông báo lỗi cho người dùng (có thể cập nhật UI để hiển thị lỗi)
+    }
+  };
+
   return (
     <div>
       <form onSubmit={handleSignUp}>

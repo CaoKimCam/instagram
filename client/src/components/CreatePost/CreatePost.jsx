@@ -1,13 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 import { useDropzone } from "react-dropzone";
 import { createPost } from '../../api/posterApi';
+import userApi from "../../api/userApi";
 
 function CreatePost({ onClose, refreshHomepage }) {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [postContent, setPostContent] = useState("");
-  // const [postTime, setPostTime] = useState("");
   const authorId = '66640ade927e340c8c024bdf';
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    fetchAccount();
+  }, []);
+
+  const fetchAccount = async () => {
+    try {
+      const response = await userApi.account();
+      setUserName(response.data.userName);
+      console.log("UserName from API:", response.data.userName);
+    } catch (error) {
+      console.error("Error fetching user name:", error);
+    }
+  };
 
   const { getRootProps, getInputProps, open: openFileDialog } = useDropzone({
     accept: {
@@ -85,7 +100,7 @@ function CreatePost({ onClose, refreshHomepage }) {
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
                 <div className="createAvatar"></div>
-                <div className="createUsername">username</div>
+                <div className="createUsername">{userName}</div>
               </div>
               <textarea
                 id="postContent"
