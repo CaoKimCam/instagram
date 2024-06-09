@@ -1,9 +1,6 @@
-import { Inject, Injectable, Logger, NotFoundException, forwardRef } from "@nestjs/common";
+import { Injectable, Logger, NotFoundException, forwardRef } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
-import { CommentService } from "../comment/comment.service";
-import { ReactService } from "../react/react.service";
-import { PostService } from "../poster/post.service";
 import { ObjectId } from "mongodb";
 import { MongoRepository } from "typeorm";
 
@@ -30,7 +27,6 @@ export class FollowService{
     }
 
     async deletefollowInQueue(followerId: ObjectId, followingId:ObjectId){
-        //follower là người đang thực hiện theo dõi.
         const follower = await this.userRepos.findOneById(followerId);
         const following = await this.userRepos.findOneById(followingId);
         if(!follower || !following){
@@ -42,6 +38,7 @@ export class FollowService{
         
         await this.userRepos.save(follower);
         await this.userRepos.save(following);
+        return true;
     }
 
     async acceptFollow(followerId: ObjectId, followingId:ObjectId){
