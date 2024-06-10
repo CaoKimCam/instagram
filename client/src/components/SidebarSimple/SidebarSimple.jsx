@@ -1,19 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
 import logoIcon from "../../assets/logo-icon.gif";
-import CreatePost from "../../components/CreatePost/CreatePost";
 
 function SidebarSimple({ toggleSidebar,toggleSearchBox }) {
-  const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
-
-  const openCreatePopup = () => {
-    setIsCreatePopupOpen(true);
-  };
-
-  const closeCreatePopup = () => {
-    setIsCreatePopupOpen(false);
-  };    
-
   const handleSearchClick = () => {
     toggleSidebar();
     toggleSearchBox();
@@ -59,7 +48,7 @@ function SidebarSimple({ toggleSidebar,toggleSearchBox }) {
         </div>
 
         {/* Create */}
-        <div className="icon" onClick={openCreatePopup}>
+        <div className="icon">
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/461acdfcd36914838f13cc932028dc4ebb142f7d899dfcd00325a1ed09fc0ecf?"
             alt="create"
@@ -87,8 +76,6 @@ function SidebarSimple({ toggleSidebar,toggleSearchBox }) {
           />
         </div>
       </div>
-      {/* Pop-up */}
-      {isCreatePopupOpen && <CreatePost onClose={closeCreatePopup} />}
     </div>
   );
 }

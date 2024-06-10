@@ -59,7 +59,6 @@ function SearchBox() {
                 sugaringbananaa
               </a>
             </p>
-            <p className="fullName">HNBC</p>
           </div>
         </div>
       </div>
