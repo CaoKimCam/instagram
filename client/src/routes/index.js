@@ -3,8 +3,7 @@ import Profile from "../pages/Profile/Profile"
 import NotFound from "../pages/NotFound/NotFound"
 import SignUp from "../pages/SignUp/SignUp"
 import LogIn from "../pages/LogIn/LogIn"
-import SearchBox from "../components/SearchBox/SearchBox"
-import CreatePost from "../components/CreatePost/CreatePost"
+import EditPost from "../components/EditPost/EditPost"
 
 export const routes = [
     {
@@ -28,13 +27,8 @@ export const routes = [
         isShowHeader: true
     },
     {
-        path: '/search',
-        page: SearchBox,
-        isShowHeader: true
-    },
-    {
-        path: '/create-post',
-        page: CreatePost,
+        path: '/edit-post',
+        page: EditPost,
         isShowHeader: true
     },
     {

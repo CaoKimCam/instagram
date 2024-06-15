@@ -7,7 +7,7 @@ import userApi from "../../api/userApi";
 function CreatePost({ onClose, refreshHomepage }) {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [postContent, setPostContent] = useState("");
-  const authorId = '66640ade927e340c8c024bdf';
+  const authorId = '';
   const [userName, setUserName] = useState("");
 
   useEffect(() => {

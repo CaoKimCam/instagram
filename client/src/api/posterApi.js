@@ -45,19 +45,11 @@ export const createPost = async (postContent, imageUrl, authorId, postTime) => {
 };
 
 // Hàm cập nhật một bài viết
-export const updatePost = async (postId, postContent, imageUrl, state) => {
-  try {
-    const response = await axiosClient.put(`/posters/${postId}`, {
-      postContent,
-      imageUrl,
-      state,
-    });
-    return response.data;
-  } catch (error) {
-    console.error(`Error updating post with ID ${postId}:`, error);
-    throw error;
-  }
+export const updatePost = (id, postData) => {
+  const url = `/posters/${id}`;
+  return axiosClient.put(url, postData);
 };
+
 
 // Hàm xóa một bài viết
 export const deletePost = async (postId) => {

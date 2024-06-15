@@ -40,33 +40,33 @@ function SidebarRight() {
   return (
     <div id="sidebarRight" style={{ position: "relative" }}>
       {/* Profile */}
-      <a href="./profile" style={{ textDecoration: "none", color: "#000", cursor: "pointer" }}>
-        <div className="profile">
-          <div
-            className="avt"
-            style={{
-              width: 50,
-              height: 50,
-              background: "#D9D9D9",
-              borderRadius: 100,
-              zIndex: -1,
-            }}
-          />
+      <div className="profile">
+        <div
+          className="avt"
+          style={{
+            width: 50,
+            height: 50,
+            background: "#D9D9D9",
+            borderRadius: 100,
+            zIndex: -1,
+          }}
+        />
 
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              margin: "auto 0",
-              transform: "translateY(-5%)",
-            }}
-          >
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            margin: "auto 0",
+            transform: "translateY(-5%)",
+          }}
+        >
+          <a href="./profile" style={{ textDecoration: "none", color: "#000", cursor: "pointer" }}>
             <p className="userName">
               {userName}
             </p>
-          </div>
+          </a>
         </div>
-      </a>
+      </div>
 
       {/* Suggested for you */}
       {/* <h2 style={{ marginLeft: 50 }}>Suggested for you</h2>
@@ -97,7 +97,7 @@ function SidebarRight() {
           </div>
         ))}
       </div> */}
-    </div>
+    </div >
   );
 }
 

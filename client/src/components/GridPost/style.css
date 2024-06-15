@@ -28,14 +28,15 @@
 
 .grid {
     display: grid;
-    grid-template-columns: auto auto auto;
+    grid-template-columns: 323px 323px 323px;
     gap: 5px;
 }
 
 .gridImage {
+    max-width: 323px;
     border-radius: 2px;
     height: 300px;
-    width: 100%;
+    /* width: 100%; */
     object-fit: cover;
     background-color: #ccc;
 }
