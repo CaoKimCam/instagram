@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { routes } from "./routes";
+import PrivateRoute from "../src/components/PrivateRoute";
 
 function App() {
   return (
@@ -13,7 +14,15 @@ function App() {
               <Route
                 key={route.path}
                 path={route.path}
-                element={<Page />}
+                element={
+                  route.isPrivate ? (
+                    <PrivateRoute>
+                      <Page />
+                    </PrivateRoute>
+                  ) : (
+                    <Page />
+                  )
+                }
               />
             );
           })}

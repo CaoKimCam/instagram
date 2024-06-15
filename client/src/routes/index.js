@@ -9,12 +9,14 @@ export const routes = [
     {
         path: '/',
         page: Homepage,
-        isShowHeader: true
+        isShowHeader: true,
+        isPrivate: true
     },
     {
         path: '/profile',
         page: Profile,
-        isShowHeader: true
+        isShowHeader: true,
+        isPrivate: true
     },
     {
         path: '/login',
@@ -29,10 +31,11 @@ export const routes = [
     {
         path: '/edit-post',
         page: EditPost,
-        isShowHeader: true
+        isShowHeader: true,
+        isPrivate: true
     },
     {
         path: '*',
         page: NotFound
     }
-]
+];

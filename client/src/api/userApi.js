@@ -13,7 +13,7 @@ const userApi = {
     const url = '/users/account';
     return axiosClient.get(url);
   },
-  // Các phương thức khác như updateUser, deleteUser, v.v. có thể thêm vào đây
+  // Các phương thức khác như updateUser, deleteUser...
 };
 
 export default userApi;
