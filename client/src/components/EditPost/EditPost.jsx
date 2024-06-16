@@ -3,11 +3,12 @@ import "./style.css";
 import userApi from "../../api/userApi";
 import { getPostDetail, updatePost } from "../../api/posterApi";
 
-function EditPost({ postId, onClose }) {
-  const [postContent, setPostContent] = useState("");
+function EditPost({ postId, initialContent, onClose, onEditComplete }) {
+  // const [postContent, setPostContent] = useState("");
+  const [postContent, setPostContent] = useState(initialContent);
   const [userName, setUserName] = useState("");
   const [postImage, setPostImage] = useState("");
-  const authorId = '66640ade927e340c8c024bdf';
+  // const authorId = '66640ade927e340c8c024bdf';
 
   useEffect(() => {
     fetchAccount();
@@ -36,16 +37,13 @@ function EditPost({ postId, onClose }) {
 
   const handleUpdatePost = async () => {
     try {
-      const updatedPost = {
-        postContent,
-        postImg: postImage,
-        authorId,
-      };
-      const response = await updatePost(postId, updatedPost);
-      console.log("Post updated successfully:", response.data);
+      await updatePost(postId, postContent);
+      alert('Post updated successfully');
       onClose();
+      onEditComplete();
     } catch (error) {
-      console.error(`Error updating post with ID ${postId}:`, error);
+      console.error('Error updating post:', error);
+      alert('Failed to update post');
     }
   };
 

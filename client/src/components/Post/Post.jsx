@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./style.css";
-import EditPost from "../EditPost/EditPost"; // Import component EditPost
-import { deletePost } from "../../api/posterApi"; // Import hàm deletePost
+import EditPost from "../EditPost/EditPost";
+import { deletePost } from "../../api/posterApi";
 
 function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
   const [showOptions, setShowOptions] = useState(false);
@@ -16,7 +16,7 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
       await deletePost(postId);
       alert("Post deleted successfully");
       setShowOptions(false);
-      refreshHomepage(); // Làm mới lại trang chủ sau khi xóa bài viết
+      refreshHomepage();
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete post");
@@ -24,12 +24,20 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
   };
 
   const handleEdit = () => {
-    setShowEditPost(true); // Hiển thị popup EditPost
+    setShowEditPost(true);
     setShowOptions(false);
   };
 
   const handleCopyLink = () => {
-    alert("Copy link");
+    const link = `${window.location.origin}/posts/${postId}`;
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        alert("Link copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Error copying link:", err);
+        alert("Failed to copy link");
+      });
     setShowOptions(false);
   };
 
@@ -39,6 +47,11 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
 
   const handleCloseEditPost = () => {
     setShowEditPost(false);
+  };
+
+  const handleEditComplete = () => {
+    setShowEditPost(false);
+    refreshHomepage();
   };
 
   return (
@@ -129,6 +142,13 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
         <EditPost
           postId={postId}
           onClose={handleCloseEditPost}
+        />
+      )}
+      {showEditPost && (
+        <EditPost
+          postId={postId}
+          onClose={handleCloseEditPost}
+          onEditComplete={handleEditComplete}
         />
       )}
     </div>

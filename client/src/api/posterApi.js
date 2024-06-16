@@ -44,10 +44,15 @@ export const createPost = async (postContent, imageUrl, authorId, postTime) => {
   }
 };
 
-// Hàm cập nhật một bài viết
-export const updatePost = (id, postData) => {
-  const url = `/posters/${id}`;
-  return axiosClient.put(url, postData);
+// Hàm cập nhật một bài viết chỉ với nội dung
+export const updatePost = async (postId, postContent) => {
+  try {
+    const response = await axiosClient.put(`/posters/${postId}`, { postContent });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating post with ID ${postId}:`, error);
+    throw error;
+  }
 };
 
 
