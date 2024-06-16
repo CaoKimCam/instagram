@@ -15,6 +15,7 @@
     width: 500px;
     display: flex;
     flex-direction: row;
+    position: relative;
 }
 
 .post-header .avatar {
@@ -40,6 +41,7 @@
 
 .post-header .more {
     margin-left: auto;
+    cursor: pointer;
 }
 
 .post-footer {
@@ -72,7 +74,24 @@
     margin-left: 10px;
 }
 
-#post .more {
-    width: 20px;
-    display: inline;
-}
+.post-header .options-menu {
+    width: 170px;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+  
+  .option {
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .option:hover {
+    background-color: #f0f0f0;
+  }
+  

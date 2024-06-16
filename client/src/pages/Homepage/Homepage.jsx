@@ -95,10 +95,12 @@ function Homepage() {
             data.map((post) => (
               <Post
                 key={post.postId}
+                postId={post.postId}
                 image={post.postImg}
                 caption={post.postContent}
                 postTime={calculatePostTime(post.postTime)}
                 userName={userName}
+                refreshHomepage={refreshHomepage}
               />
             ))}
         </Grid>

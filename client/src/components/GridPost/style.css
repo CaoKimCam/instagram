@@ -33,7 +33,7 @@
 }
 
 .gridImage {
-    max-width: 323px;
+    width: 323px;
     border-radius: 2px;
     height: 300px;
     /* width: 100%; */

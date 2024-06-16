@@ -1,7 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import "./style.css";
+import EditPost from "../EditPost/EditPost"; // Import component EditPost
+import { deletePost } from "../../api/posterApi"; // Import hàm deletePost
 
-function Post({ image, caption, userName, postTime }) {
+function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
+  const [showOptions, setShowOptions] = useState(false);
+  const [showEditPost, setShowEditPost] = useState(false);
+
+  const handleMoreClick = () => {
+    setShowOptions(!showOptions);
+  };
+
+  const handleDelete = async () => {
+    try {
+      await deletePost(postId);
+      alert("Post deleted successfully");
+      setShowOptions(false);
+      refreshHomepage(); // Làm mới lại trang chủ sau khi xóa bài viết
+    } catch (error) {
+      console.error("Error deleting post:", error);
+      alert("Failed to delete post");
+    }
+  };
+
+  const handleEdit = () => {
+    setShowEditPost(true); // Hiển thị popup EditPost
+    setShowOptions(false);
+  };
+
+  const handleCopyLink = () => {
+    alert("Copy link");
+    setShowOptions(false);
+  };
+
+  const handleCancel = () => {
+    setShowOptions(false);
+  };
+
+  const handleCloseEditPost = () => {
+    setShowEditPost(false);
+  };
+
   return (
     <div className="post">
       <div className="post-header">
@@ -9,7 +48,7 @@ function Post({ image, caption, userName, postTime }) {
           src="https://res.cloudinary.com/dpqnzt8qq/image/upload/v1717835313/ufomkmr3jiqjek6acvob.png"
           alt="avatar"
           className="avatar"
-          style={{ objectFit: "cover", objectPosition: "50% 50%" }}
+          style={{ objectFit: "cover", objectPosition: "50% 50%", zIndex: -1 }}
         />
         <h4 className="username" style={{ fontWeight: 600 }}>
           {userName}
@@ -20,7 +59,24 @@ function Post({ image, caption, userName, postTime }) {
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
           alt=""
           className="more"
+          onClick={handleMoreClick}
         />
+        {showOptions && (
+          <div className="options-menu">
+            <div className="option" style={{ color: "red" }} onClick={handleDelete}>
+              Delete
+            </div>
+            <div className="option" onClick={handleEdit}>
+              Edit
+            </div>
+            <div className="option" onClick={handleCopyLink}>
+              Copy link
+            </div>
+            <div className="option" onClick={handleCancel}>
+              Cancel
+            </div>
+          </div>
+        )}
       </div>
       <img
         src={image}
@@ -63,12 +119,18 @@ function Post({ image, caption, userName, postTime }) {
               className="user-name"
               style={{ fontWeight: 600, marginRight: 10 }}
             >
-              username
+              {userName}
             </h4>
             <div className="user-caption">{caption}</div>
           </div>
         </div>
       </div>
+      {showEditPost && (
+        <EditPost
+          postId={postId}
+          onClose={handleCloseEditPost}
+        />
+      )}
     </div>
   );
 }
