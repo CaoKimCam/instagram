@@ -1,7 +1,16 @@
 import React from "react";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
 
 function ProfileDetail({ userName }) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+
+    navigate('/login');
+  };
+
   return (
     <div style={{ backgroundColor: "#fefefe" }}>
       <div id="profile">
@@ -20,7 +29,7 @@ function ProfileDetail({ userName }) {
             <div className="row1">
               <h1 className="profileUsername">{userName}</h1>
               <button className="editProfile">Edit profile</button>
-              <button className="logout">Log out</button>
+              <button className="logout" onClick={handleLogout}>Log out</button>
             </div>
 
             <div className="row2">
