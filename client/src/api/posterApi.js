@@ -44,7 +44,7 @@ export const createPost = async (postContent, imageUrl, authorId, postTime) => {
   }
 };
 
-// Hàm cập nhật một bài viết chỉ với nội dung
+// Hàm cập nhật một bài viết
 export const updatePost = async (postId, postContent) => {
   try {
     const response = await axiosClient.put(`/posters/${postId}`, { postContent });

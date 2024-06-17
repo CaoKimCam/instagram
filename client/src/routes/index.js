@@ -3,7 +3,7 @@ import Profile from "../pages/Profile/Profile";
 import NotFound from "../pages/NotFound/NotFound";
 import SignUp from "../pages/SignUp/SignUp";
 import LogIn from "../pages/LogIn/LogIn";
-import EditPost from "../components/EditPost/EditPost";
+import PostDetail from "../components/PostDetail/PostDetail";
 
 export const routes = [
   {
@@ -29,8 +29,8 @@ export const routes = [
     isShowHeader: true
   },
   {
-    path: '/edit-post/:postId',
-    page: EditPost,
+    path: '/post-detail',
+    page: PostDetail,
     isShowHeader: true,
     isPrivate: true
   },

@@ -3,6 +3,8 @@ import "./style.css";
 import logoIcon from "../../assets/logo-icon.gif";
 
 function SidebarSimple({ toggleSidebar,toggleSearchBox }) {
+
+  // Hàm xử lý khi nhấn nút Search
   const handleSearchClick = () => {
     toggleSidebar();
     toggleSearchBox();
@@ -10,6 +12,8 @@ function SidebarSimple({ toggleSidebar,toggleSearchBox }) {
 
   return (
     <div id="sidebar-simple">
+
+      {/* Logo bản thu gọn */}
       <a href="./">
         <img src={logoIcon} alt="instagram" className="logoGif" />
       </a>

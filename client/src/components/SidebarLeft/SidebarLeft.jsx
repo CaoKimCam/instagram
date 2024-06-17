@@ -5,14 +5,17 @@ import CreatePost from "../CreatePost/CreatePost";
 function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
   const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
 
+  // Hàm bật CreatePost component
   const openCreatePopup = () => {
     setIsCreatePopupOpen(true);
   };
 
+  // Hàm tắt CreatePost component
   const closeCreatePopup = () => {
     setIsCreatePopupOpen(false);
   };
 
+  // Hàm xử lý khi nhấn nút Search
   const handleSearchClick = () => {
     toggleSidebar();
     toggleSearchBox();
@@ -20,6 +23,8 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
 
   return (
     <div id="sidebar-left">
+
+      {/* Logo */}
       <a href="./">
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/d2e5a25def5e4ffa9bdc08ae25dacb4096ac6c76f08dd7c4c241bf34b4c8bf15?"
@@ -122,7 +127,8 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
           </p>
         </div>
       </div>
-      {/* Pop-up */}
+      
+      {/* Bật/tắt CreatePost component */}
       {isCreatePopupOpen && <CreatePost onClose={closeCreatePopup} refreshHomepage={refreshHomepage} />}
     </div>
   );

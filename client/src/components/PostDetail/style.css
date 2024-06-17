@@ -1,0 +1,40 @@
+#main {
+    width: 100%;
+}
+
+#postDetailContent {
+    max-width: 935px;
+    height: 600px;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid #ccc;
+    margin-top: 30px;
+}
+
+.postDetailImage {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 600px;
+    height: 600px;
+    object-fit: cover;
+    position: absolute;
+    top: 0%;
+    position: relative;
+}
+
+.postDetailAvatar {
+    width: 30px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 100px;
+    margin-left: 20px;
+}
+
+.postDetailUsername {
+    font-weight: 500;
+    font-size: 14px;
+    margin-left: 10px;
+    margin-top: 3px;
+}

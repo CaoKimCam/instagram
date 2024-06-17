@@ -16,6 +16,7 @@ function Profile() {
     fetchAccount();
   }, []);
 
+  // Lấy dữ liệu bài viết từ API
   const fetchData = async () => {
     try {
       const posts = await getPosts();
@@ -26,6 +27,7 @@ function Profile() {
     }
   };
 
+  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
@@ -39,11 +41,14 @@ function Profile() {
   return (
     <div id="main">
       <Grid container spacing={0}>
+
+        {/* Sidebar bên trái */}
         <Grid item xs={3}>
           <SidebarLeft />
         </Grid>
-        <Grid item xs={8}>
 
+        {/* Phần content */}
+        <Grid item xs={8}>
           {/* Profile Detail */}
           {data && (
             <ProfileDetail
@@ -56,6 +61,7 @@ function Profile() {
             <GridPost images={data.map(post => post.postImg)} />
           )}
         </Grid>
+
       </Grid>
 
       {/* Footer */}

@@ -4,17 +4,16 @@ import userApi from "../../api/userApi";
 import { getPostDetail, updatePost } from "../../api/posterApi";
 
 function EditPost({ postId, initialContent, onClose, onEditComplete }) {
-  // const [postContent, setPostContent] = useState("");
   const [postContent, setPostContent] = useState(initialContent);
   const [userName, setUserName] = useState("");
   const [postImage, setPostImage] = useState("");
-  // const authorId = '66640ade927e340c8c024bdf';
 
   useEffect(() => {
     fetchAccount();
     fetchPostDetail(postId);
   }, [postId]);
 
+  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
@@ -25,6 +24,7 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
     }
   };
 
+  // Lấy dữ liệu một bài viết cụ thể từ API
   const fetchPostDetail = async (postId) => {
     try {
       const response = await getPostDetail(postId);
@@ -35,6 +35,7 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
     }
   };
 
+  // Hàm xử lý cập nhật bài đăng
   const handleUpdatePost = async () => {
     try {
       await updatePost(postId, postContent);
@@ -51,6 +52,8 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
     <div className="overlay" onClick={onClose}>
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         <div id="editPost">
+
+          {/* Header */}
           <div className="header">
             <div
               id="editPost"
@@ -66,9 +69,11 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
             >
               Exit
             </div>
+
             <div style={{ margin: "auto" }}>
               Edit post
             </div>
+
             <div
               id="editPost"
               className="editPost"
@@ -84,7 +89,11 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
               Done
             </div>
           </div>
+
+          {/* Content */}
           <div className="content">
+
+            {/* Ảnh không thể thay đổi */}
             <div style={{ width: 476, borderRight: "1px solid #ccc", position: "relative" }}>
               <img
                 id="editImage"
@@ -93,6 +102,8 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
                 className="editImage"
               />
             </div>
+
+            {/* Phần caption */}
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
                 <div className="editAvatar"></div>

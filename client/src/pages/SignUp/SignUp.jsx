@@ -6,10 +6,10 @@ import userApi from '../../api/userApi';
 function SignUp() {
   const navigate = useNavigate();
 
+  // Hàm xử lý đăng ký tài khoản
   const handleSignUp = async (event) => {
     event.preventDefault();
 
-    // Lấy các phần tử input từ form
     const { email, name, password } = event.target.elements;
 
     if (!email || !name || !password) {
@@ -38,6 +38,8 @@ function SignUp() {
   return (
     <div>
       <form onSubmit={handleSignUp}>
+
+        {/* Khối bên trên */}
         <div id="signup-rec1">
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/85442272ee093e59390fcb9c544117f2506c8f252f29f968b14ef639ab983573?"
@@ -74,6 +76,7 @@ function SignUp() {
         </div>
       </form>
 
+      {/* Khối bên dưới */}
       <div id="signup-rec2">
         <p className="have-an-acc">Have an account?</p>
         <a href="./login" className="login">

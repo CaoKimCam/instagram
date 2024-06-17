@@ -4,6 +4,7 @@ import "./style.css";
 function SearchBox() {
   return (
     <div id="searchbox">
+      
       {/* SearchBox Header */}
       <div
         className="searchHeader"

@@ -20,6 +20,7 @@ function Homepage() {
     fetchAccount();
   }, []);
 
+  // Lấy dữ liệu bài viết từ API
   const fetchData = async () => {
     try {
       const posts = await getPosts();
@@ -30,6 +31,7 @@ function Homepage() {
     }
   };
 
+  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
@@ -40,6 +42,7 @@ function Homepage() {
     }
   };
 
+  // Hàm làm mới trang chủ
   const refreshHomepage = async () => {
     try {
       const posts = await getPosts();
@@ -50,14 +53,17 @@ function Homepage() {
     }
   };
 
+  // Hàm bật tắt sidebar left
   const toggleSidebar = () => {
     setShowSidebarLeft(!showSidebarLeft);
   };
 
+  // Hàm bật tắt search box
   const toggleSearchBox = () => {
     setShowSearchBox(!showSearchBox);
   };
 
+  // Hàm tính thời gian đã trôi qua từ khi bài viết được tạo
   const calculatePostTime = (postTime) => {
     const currentTime = new Date().getTime();
     const postTimeInMs = new Date(postTime).getTime();
@@ -82,6 +88,8 @@ function Homepage() {
   return (
     <div id="main">
       <Grid container spacing={10}>
+
+        {/* Sidebar bên trái */}
         <Grid item xs={3.5}>
           {showSidebarLeft ? (
             <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} refreshHomepage={refreshHomepage} />
@@ -90,6 +98,8 @@ function Homepage() {
           )}
           {showSearchBox && <SearchBox />}
         </Grid>
+
+        {/* Danh sách bài viết */}
         <Grid item xs={5}>
           {data &&
             data.map((post) => (
@@ -104,9 +114,12 @@ function Homepage() {
               />
             ))}
         </Grid>
+
+        {/* Sidebar bên phải */}
         <Grid item xs={3}>
           <SidebarRight />
         </Grid>
+        
       </Grid>
 
       {/* Footer */}

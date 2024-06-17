@@ -14,6 +14,7 @@ function CreatePost({ onClose, refreshHomepage }) {
     fetchAccount();
   }, []);
 
+  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
@@ -24,6 +25,7 @@ function CreatePost({ onClose, refreshHomepage }) {
     }
   };
 
+  // Tải file ảnh/video lên
   const { getRootProps, getInputProps, open: openFileDialog } = useDropzone({
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
@@ -42,6 +44,7 @@ function CreatePost({ onClose, refreshHomepage }) {
     },
   });
 
+  // Hàm xử lý đăng bài
   const handlePost = async () => {
     if (postContent && uploadedFile) {
       try {
@@ -63,10 +66,13 @@ function CreatePost({ onClose, refreshHomepage }) {
     <div className="overlay" onClick={onClose}>
       <div className="popup" onClick={(e) => e.stopPropagation()}>
         <div id="create">
+
+          {/* Header */}
           <div className="header">
             <div style={{ margin: "auto", transform: "translateX(100%)" }}>
               Create new post
             </div>
+
             <div
               id="createPost"
               className="createPost"
@@ -82,7 +88,11 @@ function CreatePost({ onClose, refreshHomepage }) {
               Post
             </div>
           </div>
+
+          {/* Content */}
           <div className="content">
+
+            {/* Chọn ảnh từ máy tính -> ảnh đè lên dropzone */}
             <div style={{ maxWidth: 476, borderRight: "1px solid #ccc", position: "relative" }}>
               <div {...getRootProps({ className: "dropzone", style: { width: 476 } })}>
                 <input {...getInputProps()} />
@@ -97,6 +107,8 @@ function CreatePost({ onClose, refreshHomepage }) {
                 />
               )}
             </div>
+
+            {/* Phần tạo caption */}
             <div style={{ display: "flex", flexDirection: "column" }}>
               <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
                 <div className="createAvatar"></div>

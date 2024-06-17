@@ -7,10 +7,12 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditPost, setShowEditPost] = useState(false);
 
+  // Hàm xử lý khi nhấn dấu ba chấm ở header
   const handleMoreClick = () => {
     setShowOptions(!showOptions);
   };
 
+  // Hàm xử lý khi nhấn Delete
   const handleDelete = async () => {
     try {
       await deletePost(postId);
@@ -23,11 +25,13 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
     }
   };
 
+  // Hàm xử lý khi nhấn Edit
   const handleEdit = () => {
     setShowEditPost(true);
     setShowOptions(false);
   };
 
+  // Hàm xử lý khi nhấn Copy Link
   const handleCopyLink = () => {
     const link = `${window.location.origin}/posts/${postId}`;
     navigator.clipboard.writeText(link)
@@ -41,14 +45,17 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
     setShowOptions(false);
   };
 
+  // Hàm xử lý khi nhấn Cancel
   const handleCancel = () => {
     setShowOptions(false);
   };
 
+  // Hàm xử lý để đóng EditPost component
   const handleCloseEditPost = () => {
     setShowEditPost(false);
   };
 
+  // Hàm xử lý sau khi cập nhật bài đăng hoàn thành -> làm mới trang chủ
   const handleEditComplete = () => {
     setShowEditPost(false);
     refreshHomepage();
@@ -56,6 +63,8 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
 
   return (
     <div className="post">
+
+      {/* Header */}
       <div className="post-header">
         <img
           src="https://res.cloudinary.com/dpqnzt8qq/image/upload/v1717835313/ufomkmr3jiqjek6acvob.png"
@@ -63,17 +72,23 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
           className="avatar"
           style={{ objectFit: "cover", objectPosition: "50% 50%", zIndex: -1 }}
         />
+
         <h4 className="username" style={{ fontWeight: 600 }}>
           {userName}
         </h4>
+
         <div className="dot">‧</div>
+
         <span className="time">{postTime}</span>
+
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
           alt=""
           className="more"
           onClick={handleMoreClick}
         />
+
+        {/* Khi nhấn "more" sẽ hiển thị các lựa chọn: delete, edit, copy link */}
         {showOptions && (
           <div className="options-menu">
             <div className="option" style={{ color: "red" }} onClick={handleDelete}>
@@ -91,12 +106,16 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
           </div>
         )}
       </div>
+
+      {/* Phần content chính */}
       <img
         src={image}
         alt=""
         className="image"
         style={{ objectFit: "cover", objectPosition: "50% 50%" }}
       />
+
+      {/* Phần tương tác bài đăng + caption */}
       <div className="post-footer">
         <div className="react">
           <img
@@ -120,9 +139,11 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
             className="save"
           />
         </div>
+
         <h4 className="number-like" style={{ fontWeight: 600 }}>
           5 likes
         </h4>
+        
         <div className="caption">
           <div
             className="caption-user"
@@ -138,12 +159,8 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
           </div>
         </div>
       </div>
-      {showEditPost && (
-        <EditPost
-          postId={postId}
-          onClose={handleCloseEditPost}
-        />
-      )}
+
+      {/* Bật/tắt EditPost component */}
       {showEditPost && (
         <EditPost
           postId={postId}

@@ -6,6 +6,7 @@ import userApi from "../../api/userApi";
 function SidebarRight() {
   // const [suggestedUsers, setSuggestedUsers] = useState([]);
 
+  // Fake api danh sách gợi ý kết bạn
   // useEffect(() => {
   //   const fetchSuggestedUsers = async () => {
   //     try {
@@ -27,6 +28,7 @@ function SidebarRight() {
     fetchAccount();
   }, []);
 
+  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
