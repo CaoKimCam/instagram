@@ -19,9 +19,16 @@ export class PostController{
         private readonly productService: PostService,
         private readonly cloudinaryService: CloudinaryService,
         ){}
-
+        
     @UseGuards(JwtAuthGuard)
-    @Get()
+    @Get('/allposts')
+    async getAllPosts(@Request() req): Promise<Poster[]>{
+        const id=req.user.id;
+        return await this.productService.getAllPosts(id);
+    }
+        
+    @UseGuards(JwtAuthGuard)
+    @Get('/myposts')
     async getPosts(@Request() req): Promise<Poster[]>{
         const id=req.user.id;
         return await this.productService.getPosts(id);
@@ -37,7 +44,7 @@ export class PostController{
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/:id')
+    @Get('/myposts/:id')
     async detailProduct(@Param ('id') id:ObjectId): Promise<Poster>{
         const id_string= id.toString();
         return await this.productService.detailPost(id_string); 

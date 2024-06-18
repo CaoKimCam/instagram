@@ -17,4 +17,7 @@ export class PostDto{
 
     @IsOptional()
     postImg?:string;
+
+    @IsOptional()
+    state?:number;
 }
