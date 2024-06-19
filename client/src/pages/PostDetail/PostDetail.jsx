@@ -1,13 +1,49 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./style.css";
 import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 import Grid from "@mui/material/Grid";
+import { useParams } from "react-router-dom";
+import { getPostDetail } from "../../api/posterApi";
+import userApi from "../../api/userApi";
 
 function PostDetail() {
+    const { postId } = useParams();
+    const [postContent, setPostContent] = useState("");
+    const [postImage, setPostImage] = useState("");
+    const [userName, setUserName] = useState("");
+
+    useEffect(() => {
+        fetchAccount();
+    }, []);
+
+    // Lấy dữ liệu tài khoản đăng nhập từ API
+    const fetchAccount = async () => {
+        try {
+            const response = await userApi.account();
+            setUserName(response.data.userName);
+            console.log("UserName from API:", response.data.userName);
+        } catch (error) {
+            console.error("Error fetching user name:", error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchPostDetail = async () => {
+            try {
+                const response = await getPostDetail(postId);
+                setPostContent(response.post.postContent);
+                setPostImage(response.post.postImg);
+            } catch (error) {
+                console.error(`Error fetching post with ID ${postId}:`, error);
+            }
+        };
+
+        fetchPostDetail();
+    }, [postId]);
+
     return (
         <div id="main">
             <Grid container spacing={30}>
-
                 {/* Sidebar bên trái */}
                 <Grid item xs={3}>
                     <SidebarLeft />
@@ -16,12 +52,11 @@ function PostDetail() {
                 {/* Phần Content */}
                 <Grid item xs={9}>
                     <div id="postDetailContent">
-
                         {/* Ảnh của bài đăng */}
                         <img
                             id="postDetailImage"
-                            src="https://via.placeholder.com/600"
-                            alt=""
+                            src={postImage || "https://via.placeholder.com/600"}
+                            alt="Post Detail"
                             className="postDetailImage"
                         />
 
@@ -30,7 +65,7 @@ function PostDetail() {
                             <div style={{ display: "flex", flexDirection: "column", height: "fit-content", width: 335, borderBottom: "1px solid #ccc" }}>
                                 <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
                                     <div className="postDetailAvatar"></div>
-                                    <div className="postDetailUsername">userName</div>
+                                    <div className="postDetailUsername">{userName}</div>
                                     <img
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
                                         alt=""
@@ -41,7 +76,7 @@ function PostDetail() {
                                     id="postDetailCaption"
                                     style={{ marginLeft: 20, width: 300, fontWeight: 400, fontSize: 14, marginBottom: 20 }}
                                 >
-                                    postContent
+                                    {postContent}
                                 </p>
                             </div>
 

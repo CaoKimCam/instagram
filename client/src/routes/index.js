@@ -3,7 +3,7 @@ import Profile from "../pages/Profile/Profile";
 import NotFound from "../pages/NotFound/NotFound";
 import SignUp from "../pages/SignUp/SignUp";
 import LogIn from "../pages/LogIn/LogIn";
-import PostDetail from "../pages/PostDetail/PostDetail";
+import PostDetail from "../pages/PostDetail/PostDetail"; // Import PostDetail
 import CreatePost from "../components/CreatePost/CreatePost";
 import Post from "../components/Post/Post";
 
@@ -31,7 +31,7 @@ export const routes = [
     isShowHeader: true
   },
   {
-    path: '/post-detail',
+    path: '/post-detail/:postId',
     page: PostDetail,
     isShowHeader: true,
     isPrivate: true

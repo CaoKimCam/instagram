@@ -21,7 +21,7 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
         url:'mongodb+srv://21520641:j9Mg5HyJxJ6tDQ71@cluster.dkpd6sl.mongodb.net/?retryWrites=true&w=majority&appName=cluster',
         synchronize: true,
         autoLoadEntities: true,
-        database:'Tester',
+        database:'MyDatabase',
         // useUnifiedTopolory: true,
         entities: [__dirname+'src/**/*.entity{.ts,.js}'],    }
     ),

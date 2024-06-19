@@ -25,7 +25,7 @@ export const getMyPosts = async () => {
 // Hàm lấy chi tiết một bài viết cụ thể
 export const getPostDetail = async (postId) => {
   try {
-    const response = await axiosClient.get(`/posters/myposts/${postId}`);
+    const response = await axiosClient.get(`posters/myposts/${postId}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching post with ID ${postId}:`, error);

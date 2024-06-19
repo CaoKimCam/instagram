@@ -6,17 +6,23 @@ import GridPost from "../../components/GridPost/GridPost";
 import Grid from "@mui/material/Grid";
 import { getMyPosts } from "../../api/posterApi";
 import userApi from "../../api/userApi";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
   const [data, setData] = useState(null);
   const [userName, setUserName] = useState("");
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
     fetchAccount();
   }, []);
 
-  // Lấy dữ liệu bài viết từ API
+  const handleClick = (postId) => {
+    console.log(postId);
+    navigate(`/post-detail/${postId}`);
+  };
+
   const fetchData = async () => {
     try {
       const posts = await getMyPosts();
@@ -27,7 +33,6 @@ function Profile() {
     }
   };
 
-  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
@@ -41,30 +46,26 @@ function Profile() {
   return (
     <div id="main">
       <Grid container spacing={0}>
-
-        {/* Sidebar bên trái */}
         <Grid item xs={3}>
           <SidebarLeft />
         </Grid>
-
-        {/* Phần content */}
         <Grid item xs={8}>
-          {/* Profile Detail */}
           {data && (
             <ProfileDetail
               userName={userName}
             />
           )}
-
-          {/* Grid Post */}
           {data && (
-            <GridPost images={data.map(post => post.postImg)} />
+            <GridPost
+              posts={data.map(post => ({
+                image: post.postImg,
+                postId: post.postId
+              }))}
+              handleClick={handleClick} // Truyền handleClick xuống GridPost
+            />
           )}
         </Grid>
-
       </Grid>
-
-      {/* Footer */}
       <div id="footer"></div>
     </div>
   );
