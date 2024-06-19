@@ -4,7 +4,7 @@ import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 import ProfileDetail from "../../components/ProfileDetail/ProfileDetail";
 import GridPost from "../../components/GridPost/GridPost";
 import Grid from "@mui/material/Grid";
-import { getPosts } from "../../api/posterApi";
+import { getMyPosts } from "../../api/posterApi";
 import userApi from "../../api/userApi";
 
 function Profile() {
@@ -19,7 +19,7 @@ function Profile() {
   // Lấy dữ liệu bài viết từ API
   const fetchData = async () => {
     try {
-      const posts = await getPosts();
+      const posts = await getMyPosts();
       setData(posts.reverse());
       console.log("Data from API:", posts);
     } catch (error) {

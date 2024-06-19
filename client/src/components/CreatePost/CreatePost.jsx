@@ -114,6 +114,7 @@ function CreatePost({ onClose, refreshHomepage }) {
                 <div className="createAvatar"></div>
                 <div className="createUsername">{userName}</div>
               </div>
+              <button className="setStatus">Set status</button>
               <textarea
                 id="postContent"
                 placeholder="Write a caption..."

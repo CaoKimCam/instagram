@@ -6,7 +6,7 @@ import Grid from "@mui/material/Grid";
 import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
-import { getPosts } from "../../api/posterApi";
+import { getAllPosts } from "../../api/posterApi";
 import userApi from "../../api/userApi";
 
 function Homepage() {
@@ -23,7 +23,7 @@ function Homepage() {
   // Lấy dữ liệu bài viết từ API
   const fetchData = async () => {
     try {
-      const posts = await getPosts();
+      const posts = await getAllPosts();
       setData(posts.reverse());
       console.log("Data from API:", posts);
     } catch (error) {
@@ -45,7 +45,7 @@ function Homepage() {
   // Hàm làm mới trang chủ
   const refreshHomepage = async () => {
     try {
-      const posts = await getPosts();
+      const posts = await getAllPosts();
       setData(posts.reverse());
       console.log("Homepage refreshed:", posts);
     } catch (error) {

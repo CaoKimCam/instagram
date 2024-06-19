@@ -1,12 +1,22 @@
 import axiosClient from './axiosClient';
 
-// Hàm lấy danh sách bài viết
-export const getPosts = async () => {
+export const getAllPosts = async () => {
   try {
-    const response = await axiosClient.get('/posters');
+    const response = await axiosClient.get('/posters/allposts');
     return response.data;
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching all posts:', error);
+    throw error;
+  }
+};
+
+// Hàm lấy danh sách bài viết của người dùng hiện tại
+export const getMyPosts = async () => {
+  try {
+    const response = await axiosClient.get('/posters/myposts');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching my posts:', error);
     throw error;
   }
 };
@@ -14,7 +24,7 @@ export const getPosts = async () => {
 // Hàm lấy chi tiết một bài viết
 export const getPostDetail = async (postId) => {
   try {
-    const response = await axiosClient.get(`/posters/${postId}`);
+    const response = await axiosClient.get(`/posters/myposts/${postId}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching post with ID ${postId}:`, error);
@@ -45,16 +55,15 @@ export const createPost = async (postContent, imageUrl, authorId, postTime) => {
 };
 
 // Hàm cập nhật một bài viết
-export const updatePost = async (postId, postContent) => {
+export const updatePost = async (postId, postDto) => {
   try {
-    const response = await axiosClient.put(`/posters/${postId}`, { postContent });
+    const response = await axiosClient.put(`/posters/${postId}`, postDto);
     return response.data;
   } catch (error) {
     console.error(`Error updating post with ID ${postId}:`, error);
     throw error;
   }
 };
-
 
 // Hàm xóa một bài viết
 export const deletePost = async (postId) => {
