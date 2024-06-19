@@ -28,14 +28,113 @@ export class PostService {
         private readonly commentRepos: MongoRepository<Comment>,
     ){}
 
-    async getAllPosts(): Promise<Poster[]>{
-        return await this.postRepos.find();
+    // async getAllPosts(): Promise<Poster[]>{
+    //     return await this.postRepos.find();
+    // }
+
+    async getAllPosts(usesId: string):Promise<any[]>{
+        
+        const currentUser=await this.userRepos.findOneById(usesId)
+        // const followings = currentUser.followings;
+        // const followers = currentUser.followers;
+        var friendIds;
+        var friends;
+        var onlyFollowings;
+        var posts;
+        if (currentUser.followers&&currentUser.followings)
+        {
+            friendIds=currentUser.followers.filter(id=>{
+                currentUser.followings.includes(id)
+            })
+        }
+        if(friendIds)friends=this.userRepos.findByIds(friendIds);
+        if(currentUser.followings) onlyFollowings= currentUser.followings.filter(id=>{
+            return !friendIds.includes(id)
+        })
+        if(friendIds) {
+            var postfromFriends=friendIds.map(async friendId=>
+                {
+                const name = (await this.userRepos.findOneById(new ObjectId(friendId))).userName
+                return (!this.isBestFriend(currentUser.id.toString(),friendId.toString()))? 
+                this.getFriendPosts(name)
+                : this.getBestFriendPosts(name)
+                })
+        }
+
+        if(onlyFollowings){
+            var postfromFollowings=onlyFollowings.map(async followingId=>{
+                const name = (await this.userRepos.findOneById(new ObjectId(followingId))).userName
+                this.logger.log("hi", await this.getFollowPost(name))
+                return await this.getFollowPost(name);
+            })
+        }
+
+        // Đợi cho tất cả các Promise được giải quyết
+        const resolvedPostsFromFriends = postfromFriends ? await Promise.all(postfromFriends) : [];
+        const resolvedPostsFromFollowings = postfromFollowings ? await Promise.all(postfromFollowings) : [];
+        
+        posts=resolvedPostsFromFriends.concat(resolvedPostsFromFollowings)
+        return posts.length>0?posts:null;
     }
     async getPosts(id:string): Promise<Poster[]>{
         const user = await this.userRepos.findOneById(new ObjectId(id));
         const postIds=user.postIds;
         const posts=await this.postRepos.findByIds(postIds);
         return posts;
+    }
+
+    async getPublicPosts(name: string): Promise<any>{
+        const user = await this.userRepos.findOne({where:{userName: name}})
+        var publicPosts= await this.postRepos.findByIds(user.postIds)
+        publicPosts=publicPosts.filter(post=>{
+            if(post.state===0) return post
+        })
+        return publicPosts;
+    }
+
+    async getFollowPost(name: string): Promise<any>{
+        const user = await this.userRepos.findOne({where:{userName: name}})
+        var followingPosts= await this.postRepos.findByIds(user.postIds)
+        followingPosts=followingPosts.filter(post=>{
+            if(post.state===1) return post
+        })
+        return followingPosts;
+    }
+
+    async getFriendPosts(name: string): Promise<any>{
+        const user = await this.userRepos.findOne({where:{userName: name}})
+        // const publicPosts= await this.postRepos.find({where:{
+        //     postId: In(user.postIds),
+        //     state:2
+        // }})
+        var friendPosts= await this.postRepos.findByIds(user.postIds)
+        friendPosts=friendPosts.filter(post=>{
+            if(post.state===2) return post
+        })
+        return friendPosts;
+    }
+
+    async getBestFriendPosts(name: string): Promise<any>{
+        const user = await this.userRepos.findOne({where:{userName: name}})
+        var bfriendPosts= await this.postRepos.findByIds(user.postIds)
+        bfriendPosts=bfriendPosts.filter(post=>{
+            if(post.state===3) return post
+        })
+        return bfriendPosts;
+    }
+
+    async getPrivatePosts(name: string): Promise<any>{
+        const user = await this.userRepos.findOne({where:{userName: name}})
+        const publicPosts= await this.postRepos.find({where:{
+            postId: {$in: user.postIds},
+            state:4,
+        },
+        order:{
+            postTime:'DESC'
+        },
+        }
+        )
+        return publicPosts.length>0?publicPosts[0]:null;
     }
 
     //tạo ra 1 bài đăng
@@ -118,5 +217,11 @@ export class PostService {
         const result = await this.postRepos.delete({postId:new ObjectId(postId)});
         return result.affected > 0;
     }
-    
+    //hàm phụ:
+    async isBestFriend(current: string, other: string): Promise<Boolean>{
+        const currentId= new ObjectId(current);
+        const friendId= new ObjectId(other);
+        const friend= await this.userRepos.findOneById(friendId);
+        return friend.bestfriend.includes(currentId)
+    }   
 }

@@ -22,6 +22,9 @@ export class User{
     userBio: string;
 
     @Column({ type: 'array', default: [] })
+    bestfriend: ObjectId[]=[];
+
+    @Column({ type: 'array', default: [] })
     followers: ObjectId[]=[];//người theo dõi mình
     @Column({ type: 'array', default: [] })
     followings: ObjectId[]=[];//người mình đang theo dõi
@@ -32,7 +35,6 @@ export class User{
 
     @Column()
     postSaved: ObjectId[]=[];//bài viết đã lưu
-
     @Column()
     postIds: ObjectId[]=[];//bài viết mình đăng
     @Column()
