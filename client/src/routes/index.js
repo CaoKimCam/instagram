@@ -4,6 +4,8 @@ import NotFound from "../pages/NotFound/NotFound";
 import SignUp from "../pages/SignUp/SignUp";
 import LogIn from "../pages/LogIn/LogIn";
 import PostDetail from "../components/PostDetail/PostDetail";
+import CreatePost from "../components/CreatePost/CreatePost";
+import Post from "../components/Post/Post";
 
 export const routes = [
   {
@@ -31,6 +33,18 @@ export const routes = [
   {
     path: '/post-detail',
     page: PostDetail,
+    isShowHeader: true,
+    isPrivate: true
+  },
+  {
+    path: '/create-post',
+    page: CreatePost,
+    isShowHeader: true,
+    isPrivate: true
+  },
+  {
+    path: '/post',
+    page: Post,
     isShowHeader: true,
     isPrivate: true
   },

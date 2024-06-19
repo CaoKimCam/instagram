@@ -3,29 +3,49 @@ import "./style.css";
 import { useDropzone } from "react-dropzone";
 import { createPost } from '../../api/posterApi';
 import userApi from "../../api/userApi";
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function CreatePost({ onClose, refreshHomepage }) {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [postContent, setPostContent] = useState("");
-  const authorId = '';
   const [userName, setUserName] = useState("");
+  const authorId = '';
+  const [status, setStatus] = useState("Public");
+  const [showStatusOptions, setShowStatusOptions] = useState(false);
 
   useEffect(() => {
     fetchAccount();
   }, []);
 
-  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
-      console.log("UserName from API:", response.data.userName);
     } catch (error) {
-      console.error("Error fetching user name:", error);
+      console.error("Lỗi khi lấy tên người dùng:", error);
     }
   };
 
-  // Tải file ảnh/video lên
+  const handlePost = async () => {
+    if (postContent && uploadedFile) {
+      try {
+        const postTime = new Date().toISOString();
+        await createPost(postContent, uploadedFile, authorId, postTime);
+        refreshHomepage();
+        onClose();
+      } catch (error) {
+        console.error('Lỗi khi đăng bài:', error);
+      }
+    } else {
+      alert('Vui lòng thêm một hình ảnh và viết một chú thích.');
+    }
+  };
+
+  const handleStatusSelect = (selectedStatus) => {
+    setStatus(selectedStatus);
+    setShowStatusOptions(false);
+  };
+
   const { getRootProps, getInputProps, open: openFileDialog } = useDropzone({
     accept: {
       'image/*': ['.jpeg', '.jpg', '.png', '.gif'],
@@ -44,24 +64,6 @@ function CreatePost({ onClose, refreshHomepage }) {
     },
   });
 
-  // Hàm xử lý đăng bài
-  const handlePost = async () => {
-    if (postContent && uploadedFile) {
-      try {
-        const postTime = new Date().toISOString();
-        await createPost(postContent, uploadedFile, authorId, postTime);
-        console.log(postTime);
-        console.log('Create post successfully!');
-        refreshHomepage();
-        onClose();
-      } catch (error) {
-        console.error('Error creating post:', error);
-      }
-    } else {
-      alert('Please add an image and write a caption.');
-    }
-  };
-
   return (
     <div className="overlay" onClick={onClose}>
       <div className="popup" onClick={(e) => e.stopPropagation()}>
@@ -70,7 +72,7 @@ function CreatePost({ onClose, refreshHomepage }) {
           {/* Header */}
           <div className="header">
             <div style={{ margin: "auto", transform: "translateX(100%)" }}>
-              Create new post
+              Tạo bài viết mới
             </div>
 
             <div
@@ -85,18 +87,18 @@ function CreatePost({ onClose, refreshHomepage }) {
               }}
               onClick={handlePost}
             >
-              Post
+              Đăng
             </div>
           </div>
 
           {/* Content */}
           <div className="content">
 
-            {/* Chọn ảnh từ máy tính -> ảnh đè lên dropzone */}
+            {/* Chọn file từ máy tính */}
             <div style={{ maxWidth: 476, borderRight: "1px solid #ccc", position: "relative" }}>
               <div {...getRootProps({ className: "dropzone", style: { width: 476 } })}>
                 <input {...getInputProps()} />
-                <button className="select" onClick={openFileDialog}>Select from computer</button>
+                <button className="select" onClick={openFileDialog}>Chọn từ máy tính</button>
               </div>
               {uploadedFile && (
                 <img
@@ -108,16 +110,30 @@ function CreatePost({ onClose, refreshHomepage }) {
               )}
             </div>
 
-            {/* Phần tạo caption */}
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            {/* Phần viết chú thích */}
+            <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
               <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
                 <div className="createAvatar"></div>
                 <div className="createUsername">{userName}</div>
+                <button
+                  className="setStatus"
+                  onClick={() => setShowStatusOptions(!showStatusOptions)}
+                >
+                  {status} <ArrowDropDownIcon style={{ width: 20, height: 20, transform: "translateY(20%)" }} />
+                </button>
               </div>
-              <button className="setStatus">Set status</button>
+              {showStatusOptions && (
+                  <div className="status-options">
+                    <div className="status-option public" onClick={() => handleStatusSelect("Public")}>Public</div>
+                    <div className="status-option follower" onClick={() => handleStatusSelect("Follower")}>Follower</div>
+                    <div className="status-option friend" onClick={() => handleStatusSelect("Friend")}>Friend</div>
+                    <div className="status-option best-friend" onClick={() => handleStatusSelect("Best Friend")}>Best Friend</div>
+                    <div className="status-option only-me" onClick={() => handleStatusSelect("Only Me")}>Only Me</div>
+                  </div>
+                )}
               <textarea
                 id="postContent"
-                placeholder="Write a caption..."
+                placeholder="Viết chú thích..."
                 className="postContent"
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}

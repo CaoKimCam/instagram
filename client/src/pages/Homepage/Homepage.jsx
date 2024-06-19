@@ -24,7 +24,7 @@ function Homepage() {
   const fetchData = async () => {
     try {
       const posts = await getAllPosts();
-      setData(posts.reverse());
+      setData(posts.reverse);
       console.log("Data from API:", posts);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -46,7 +46,7 @@ function Homepage() {
   const refreshHomepage = async () => {
     try {
       const posts = await getAllPosts();
-      setData(posts.reverse());
+      setData(posts.reverse);
       console.log("Homepage refreshed:", posts);
     } catch (error) {
       console.error("Error refreshing homepage:", error);

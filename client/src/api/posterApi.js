@@ -1,5 +1,6 @@
 import axiosClient from './axiosClient';
 
+// Hàm lấy tất cả các bài viết của người dùng hiện tại
 export const getAllPosts = async () => {
   try {
     const response = await axiosClient.get('/posters/allposts');
@@ -10,7 +11,7 @@ export const getAllPosts = async () => {
   }
 };
 
-// Hàm lấy danh sách bài viết của người dùng hiện tại
+// Hàm lấy tất cả bài viết của người dùng hiện tại
 export const getMyPosts = async () => {
   try {
     const response = await axiosClient.get('/posters/myposts');
@@ -21,7 +22,7 @@ export const getMyPosts = async () => {
   }
 };
 
-// Hàm lấy chi tiết một bài viết
+// Hàm lấy chi tiết một bài viết cụ thể
 export const getPostDetail = async (postId) => {
   try {
     const response = await axiosClient.get(`/posters/myposts/${postId}`);
@@ -33,13 +34,13 @@ export const getPostDetail = async (postId) => {
 };
 
 // Hàm tạo một bài viết mới
-export const createPost = async (postContent, imageUrl, authorId, postTime) => {
+export const createPost = async (postDto, file) => {
   try {
     const formData = new FormData();
-    formData.append('postContent', postContent);
-    formData.append('authorId', authorId);
-    formData.append('postTime', postTime);
-    formData.append('file', imageUrl);
+    formData.append('file', file);
+    for (const key in postDto) {
+      formData.append(key, postDto[key]);
+    }
 
     const response = await axiosClient.post('/posters', formData, {
       headers: {
