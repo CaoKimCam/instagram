@@ -33,7 +33,6 @@ function SidebarRight() {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
-      console.log("UserName from API:", response.data.userName);
     } catch (error) {
       console.error("Error fetching user name:", error);
     }

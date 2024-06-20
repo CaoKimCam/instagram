@@ -13,6 +13,10 @@ const userApi = {
     const url = '/users/account';
     return axiosClient.get(url);
   },
+  getAllUsers: () => {
+    const url = '/users/all';
+    return axiosClient.get(url);
+  },
   // Các phương thức khác như updateUser, deleteUser...
 };
 

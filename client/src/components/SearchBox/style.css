@@ -17,11 +17,23 @@ h1 {
 }
 
 .inputSearch {
-    margin: 20px 30px 30px 20px;
+    margin: 20px 30px 10px 20px;
     padding: 10px;
     border: none;
     border-radius: 6px ;
     background-color: #efefef;
+}
+
+.searchButton {
+    width: fit-content;
+    margin: 0 30px 20px 20px;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 6px ;
+    background-color: #4192EF;
+    color: #fff;
+    font-weight: 500;
+    align-self: center;
 }
 
 .historyHeader p {

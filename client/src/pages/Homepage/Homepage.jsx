@@ -14,10 +14,13 @@ function Homepage() {
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [userName, setUserName] = useState("");
-  
+  const [searchResults, setSearchResults] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+
   useEffect(() => {
     fetchData();
     fetchAccount();
+    fetchAllUsers();
   }, []);
 
   // Lấy dữ liệu bài viết từ API
@@ -25,7 +28,6 @@ function Homepage() {
     try {
       const posts = await getAllPosts();
       setData(posts.reverse);
-      console.log("Data from API:", posts);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -36,11 +38,36 @@ function Homepage() {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
-      console.log("UserName from API:", response.data.userName);
     } catch (error) {
       console.error("Error fetching user name:", error);
     }
   };
+
+  // Lấy danh sách tất cả người dùng từ API
+  const fetchAllUsers = async () => {
+    try {
+      const response = await userApi.getAllUsers();
+      if (response.statusCode === 404) {
+        console.error("Forbidden access:", response.message);
+        // Xử lý thông báo lỗi cho người dùng hoặc thực hiện hành động phù hợp khác
+        return;
+      }
+
+      // Kiểm tra nếu dữ liệu trả về không phải mảng người dùng
+      if (!Array.isArray(response.data)) {
+        console.error("Invalid data format - not an array:", response.data);
+        // Xử lý thông báo lỗi cho người dùng hoặc thực hiện hành động phù hợp khác
+        return;
+      }
+
+      // Lưu trữ danh sách người dùng vào state allUsers
+      setAllUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching all users:", error);
+      // Xử lý thông báo lỗi cho người dùng hoặc thực hiện hành động phù hợp khác
+    }
+  };
+
 
   // Hàm làm mới trang chủ
   const refreshHomepage = async () => {
@@ -85,6 +112,25 @@ function Homepage() {
     }
   };
 
+  // Hàm tìm kiếm người dùng
+  const handleSearch = (searchTerm) => {
+    if (!Array.isArray(allUsers)) {
+      console.error("allUsers is not an array:", allUsers);
+      return;
+    }
+
+    if (searchTerm.trim() === "") {
+      setSearchResults([]);
+      return;
+    }
+
+    const filteredUsers = allUsers.filter(user => {
+      return user.userName.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+
+    setSearchResults(filteredUsers);
+  };
+
   return (
     <div id="main">
       <Grid container spacing={10}>
@@ -96,7 +142,7 @@ function Homepage() {
           ) : (
             <SidebarSimple toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
           )}
-          {showSearchBox && <SearchBox />}
+          {showSearchBox && <SearchBox handleSearch={handleSearch} searchResults={searchResults} />}
         </Grid>
 
         {/* Danh sách bài viết */}
@@ -119,7 +165,7 @@ function Homepage() {
         <Grid item xs={3}>
           <SidebarRight />
         </Grid>
-        
+
       </Grid>
 
       {/* Footer */}
