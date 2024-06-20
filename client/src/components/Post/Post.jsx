@@ -33,7 +33,7 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
 
   // Hàm xử lý khi nhấn Copy Link
   const handleCopyLink = () => {
-    const link = `${window.location.origin}/posts/${postId}`;
+    const link = `${window.location.origin}/post-detail/${postId}`;
     navigator.clipboard.writeText(link)
       .then(() => {
         alert("Link copied to clipboard");

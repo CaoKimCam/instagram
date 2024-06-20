@@ -5,12 +5,16 @@ import Grid from "@mui/material/Grid";
 import { useParams } from "react-router-dom";
 import { getPostDetail } from "../../api/posterApi";
 import userApi from "../../api/userApi";
+import { deletePost } from "../../api/posterApi";
+import EditPost from "../../components/EditPost/EditPost";
 
 function PostDetail() {
     const { postId } = useParams();
     const [postContent, setPostContent] = useState("");
     const [postImage, setPostImage] = useState("");
     const [userName, setUserName] = useState("");
+    const [showOptions, setShowOptions] = useState(false);
+    const [showEditPost, setShowEditPost] = useState(false);
 
     useEffect(() => {
         fetchAccount();
@@ -41,6 +45,60 @@ function PostDetail() {
         fetchPostDetail();
     }, [postId]);
 
+    // Hàm xử lý khi nhấn dấu ba chấm ở header
+    const handleMoreClick = () => {
+        setShowOptions(!showOptions);
+    };
+
+    // Hàm xử lý khi nhấn Delete
+    const handleDelete = async () => {
+        try {
+            await deletePost(postId);
+            alert("Post deleted successfully");
+            setShowOptions(false);
+            // refreshHomepage();
+        } catch (error) {
+            console.error("Error deleting post:", error);
+            alert("Failed to delete post");
+        }
+    };
+
+    // Hàm xử lý khi nhấn Edit
+    const handleEdit = () => {
+        setShowEditPost(true);
+        setShowOptions(false);
+    };
+
+    // Hàm xử lý khi nhấn Copy Link
+    const handleCopyLink = () => {
+        const link = `${window.location.origin}/post-detail/${postId}`;
+        navigator.clipboard.writeText(link)
+            .then(() => {
+                alert("Link copied to clipboard");
+            })
+            .catch((err) => {
+                console.error("Error copying link:", err);
+                alert("Failed to copy link");
+            });
+        setShowOptions(false);
+    };
+
+    // Hàm xử lý khi nhấn Cancel
+    const handleCancel = () => {
+        setShowOptions(false);
+    };
+
+    // Hàm xử lý để đóng EditPost component
+    const handleCloseEditPost = () => {
+        setShowEditPost(false);
+    };
+
+    // Hàm xử lý sau khi cập nhật bài đăng hoàn thành -> làm mới trang chủ
+    const handleEditComplete = () => {
+        setShowEditPost(false);
+        // refreshHomepage();
+    };
+
     return (
         <div id="main">
             <Grid container spacing={30}>
@@ -69,8 +127,26 @@ function PostDetail() {
                                     <img
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
                                         alt=""
-                                        style={{ marginLeft: "auto", transform: "translate(-20%,-15%)" }}
+                                        style={{ marginLeft: "auto", transform: "translate(-20%,-15%)", cursor: "pointer"}}
+                                        onClick={handleMoreClick}
                                     />
+                                    {/* Khi nhấn "more" sẽ hiển thị các lựa chọn: delete, edit, copy link */}
+                                    {showOptions && (
+                                        <div className="options-menu">
+                                            <div className="option" style={{ color: "red" }} onClick={handleDelete}>
+                                                Delete
+                                            </div>
+                                            <div className="option" onClick={handleEdit}>
+                                                Edit
+                                            </div>
+                                            <div className="option" onClick={handleCopyLink}>
+                                                Copy link
+                                            </div>
+                                            <div className="option" onClick={handleCancel}>
+                                                Cancel
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                                 <p
                                     id="postDetailCaption"
@@ -131,6 +207,14 @@ function PostDetail() {
 
             {/* Footer */}
             <div id="footer"></div>
+            {/* Bật/tắt EditPost component */}
+            {showEditPost && (
+                <EditPost
+                    postId={postId}
+                    onClose={handleCloseEditPost}
+                    onEditComplete={handleEditComplete}
+                />
+            )}
         </div>
     );
 }

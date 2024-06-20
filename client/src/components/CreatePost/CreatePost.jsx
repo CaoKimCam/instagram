@@ -72,7 +72,7 @@ function CreatePost({ onClose, refreshHomepage }) {
           {/* Header */}
           <div className="header">
             <div style={{ margin: "auto", transform: "translateX(100%)" }}>
-              Tạo bài viết mới
+              Create new post
             </div>
 
             <div
@@ -87,7 +87,7 @@ function CreatePost({ onClose, refreshHomepage }) {
               }}
               onClick={handlePost}
             >
-              Đăng
+              Post
             </div>
           </div>
 
@@ -98,7 +98,7 @@ function CreatePost({ onClose, refreshHomepage }) {
             <div style={{ maxWidth: 476, borderRight: "1px solid #ccc", position: "relative" }}>
               <div {...getRootProps({ className: "dropzone", style: { width: 476 } })}>
                 <input {...getInputProps()} />
-                <button className="select" onClick={openFileDialog}>Chọn từ máy tính</button>
+                <button className="select" onClick={openFileDialog}>Select from computer</button>
               </div>
               {uploadedFile && (
                 <img
@@ -133,7 +133,7 @@ function CreatePost({ onClose, refreshHomepage }) {
                 )}
               <textarea
                 id="postContent"
-                placeholder="Viết chú thích..."
+                placeholder="Write a caption..."
                 className="postContent"
                 value={postContent}
                 onChange={(e) => setPostContent(e.target.value)}

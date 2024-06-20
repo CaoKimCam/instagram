@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import "./style.css";
 import CreatePost from "../CreatePost/CreatePost";
+import { useNavigate } from "react-router-dom";
 
 function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
   const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Hàm bật CreatePost component
   const openCreatePopup = () => {
@@ -21,30 +23,31 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
     toggleSearchBox();
   };
 
+  // Hàm xử lý điều hướng đến trang chủ
+  const handleNavigateHome = () => {
+    navigate('/');
+  };
+
   return (
     <div id="sidebar-left">
 
       {/* Logo */}
-      <a href="./">
+      <div onClick={handleNavigateHome} style={{ cursor: "pointer" }}>
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/d2e5a25def5e4ffa9bdc08ae25dacb4096ac6c76f08dd7c4c241bf34b4c8bf15?"
           alt="instagram"
           className="logo"
         />
-      </a>
+      </div>
 
       <div className="sidebar-left-icon">
         {/* Home */}
-        <div className="icon">
+        <div className="icon" onClick={handleNavigateHome} style={{ cursor: "pointer" }}>
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/a2b9a3665605d71e08830fc2cb4a7946ca91fcfdc0d4bda4c76eb364470b1236?"
             alt="home"
           />
-          <h4>
-            <a href="./" style={{ textDecoration: "none", color: "#000" }}>
-              Home
-            </a>
-          </h4>
+          <h4>Home</h4>
         </div>
 
         {/* Search */}
@@ -127,7 +130,7 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
           </p>
         </div>
       </div>
-      
+
       {/* Bật/tắt CreatePost component */}
       {isCreatePopupOpen && <CreatePost onClose={closeCreatePopup} refreshHomepage={refreshHomepage} />}
     </div>
