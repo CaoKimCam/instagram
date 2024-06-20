@@ -118,4 +118,11 @@ export class UserController{
         const followingId= new ObjectId(req.user.id);
         return this.flService.unfollowUser(new ObjectId(followedId), followingId);
     }
+
+    //---search
+    @Get('/search/:name')
+    async searchListUserByName(@Param('name') name: string){
+        return this.userService.searchByName(name)
+    }
+
 }
