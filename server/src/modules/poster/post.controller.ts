@@ -62,4 +62,10 @@ export class PostController{
     async deleteProduct(@Param('id') id:ObjectId): Promise<boolean>{
         return await this.productService.deletePost(id);
     }
+
+    //getpublicPost
+    @Get('/other/:name')
+    async getPublicPost(@Param('name') name:string){
+        return await this.productService.getPublicPosts(name)
+    }
 }
