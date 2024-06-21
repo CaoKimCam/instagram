@@ -77,27 +77,6 @@ export class UserController{
 
     //tính năng liên quan đến follow
     @UseGuards(JwtAuthGuard)
-    @Post('/follow/:followingId')//gửi theo dõi vào hàng đợi của người muốn theo dõi
-    async follow(@Request() req, @Param('followingId') followingId: string){
-        const followerId= new ObjectId(req.user.id);
-        return this.flService.followInQueue(followerId, new ObjectId(followingId));
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete('/unfollower/:followerId')//người xoá là người được follow
-    async deleteFollowByFollowing(@Request() req, @Param('followerId') followerId: string){
-        const followingId= new ObjectId(req.user.id);
-        return this.flService.deletefollowInQueue(new ObjectId(followerId),followingId);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete('/unfollowing/:followingId')//người xoá là người follow (follower)
-    async deleteFollowbyFollower(@Request() req, @Param('followingId') followingId: string){
-        const followerId= new ObjectId(req.user.id);
-        return this.flService.deletefollowInQueue(followerId,new ObjectId(followingId));
-    }
-
-    @UseGuards(JwtAuthGuard)
     @Post('/followed/:followerId')//accept theo dõi của người theo dõi
     async acceptFollow(@Request() req, @Param('followerId') followerId: string){
         const followingId= new ObjectId(req.user.id);
@@ -117,6 +96,29 @@ export class UserController{
     async unfollowByFollowing(@Request() req, @Param('followedId') followedId: string){
         const followingId= new ObjectId(req.user.id);
         return this.flService.unfollowUser(new ObjectId(followedId), followingId);
+    }
+
+    //---bestfriend
+        //addtobestfriend
+    @UseGuards(JwtAuthGuard)
+    @Post('/bff/:name')//thêm
+    async addBestfriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.addBestFriend(current, name)
+    }
+        //remove to bff
+    @UseGuards(JwtAuthGuard)
+    @Delete('/bff/:name')//xoá
+    async removeBestfriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.removeBestFriend(current, name)
+    }
+        //check trạng thái friend
+    @UseGuards(JwtAuthGuard)
+    @Post('/friend/:name')
+    async isFriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.isFriend(current, name)
     }
 
     //---search

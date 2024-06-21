@@ -68,4 +68,6 @@ export class PostController{
     async getPublicPost(@Param('name') name:string){
         return await this.productService.getPublicPosts(name)
     }
+
+    
 }
