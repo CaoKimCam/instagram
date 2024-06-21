@@ -53,7 +53,7 @@ const SearchBox = ({ onSearch }) => {
                   borderRadius: 100,
                 }}
               />
-              <div style={{ marginLeft: 10 }}>
+              <div style={{ marginLeft: 0 }}>
                 <p className="userName">{user.userName}</p>
               </div>
             </div>
