@@ -25,31 +25,30 @@ const userApi = {
     const url = `/users/${id}`;
     return axiosClient.get(url);
   },
-  followUser: (followingId) => {
-    const url = `/users/follow/${followingId}`;
-    return axiosClient.post(url);
-  },
-  unfollowByFollower: (followingId) => {
-    const url = `/users/unfollower/${followingId}`;
-    return axiosClient.delete(url);
-  },
-  unfollowByFollowing: (followingId) => {
-    const url = `/users/unfollowing/${followingId}`;
-    return axiosClient.delete(url);
-  },
   acceptFollow: (followerId) => {
     const url = `/users/followed/${followerId}`;
     return axiosClient.post(url);
   },
-  deleteFollowByFollowing: (followingId) => {
-    const url = `/users/deletefollow/${followingId}`;
+  unfollowByFollower: (followingId) => {
+    const url = `/users/followeing/${followingId}`;
     return axiosClient.delete(url);
   },
-  deleteFollowByFollower: (followerId) => {
-    const url = `/users/deletefollow/${followerId}`;
+  unfollowByFollowing: (followedId) => {
+    const url = `/users/follower/${followedId}`;
     return axiosClient.delete(url);
   },
-  // Các phương thức khác như updateUser, deleteUser...
+  addBestFriend: (name) => {
+    const url = `/users/bff/${name}`;
+    return axiosClient.post(url);
+  },
+  removeBestFriend: (name) => {
+    const url = `/users/bff/${name}`;
+    return axiosClient.delete(url);
+  },
+  isFriend: (name) => {
+    const url = `/users/friend/${name}`;
+    return axiosClient.post(url);
+  },
 };
 
 export default userApi;

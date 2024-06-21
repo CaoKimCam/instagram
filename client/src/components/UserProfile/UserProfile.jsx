@@ -29,16 +29,16 @@ function UserDetail({ user, handleFollowClick, isFollowing }) {
             </div>
             <div className="userDetail-row2">
               <p className="userDetail-posts">
-                <span style={{ fontWeight: 500 }}>3</span> posts
+                <span style={{ fontWeight: 500 }}>5</span> posts
               </p>
               <p className="userDetail-followers">
-                <span style={{ fontWeight: 500 }}>3</span> followers
+                <span style={{ fontWeight: 500 }}>5</span> followers
               </p>
               <p className="userDetail-following">
-                <span style={{ fontWeight: 500 }}>3</span> following
+                <span style={{ fontWeight: 500 }}>5</span> following
               </p>
             </div>
-            <p className="userDetail-profileBio">bio</p>
+            <p className="userDetail-profileBio">gdsgasfdas</p>
           </div>
         </div>
       </div>
