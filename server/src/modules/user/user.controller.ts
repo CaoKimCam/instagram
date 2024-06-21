@@ -77,27 +77,6 @@ export class UserController{
 
     //tính năng liên quan đến follow
     @UseGuards(JwtAuthGuard)
-    @Post('/follow/:followingId')//gửi theo dõi vào hàng đợi của người muốn theo dõi
-    async follow(@Request() req, @Param('followingId') followingId: string){
-        const followerId= new ObjectId(req.user.id);
-        return this.flService.followInQueue(followerId, new ObjectId(followingId));
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete('/unfollower/:followerId')//người xoá là người được follow
-    async deleteFollowByFollowing(@Request() req, @Param('followerId') followerId: string){
-        const followingId= new ObjectId(req.user.id);
-        return this.flService.deletefollowInQueue(new ObjectId(followerId),followingId);
-    }
-
-    @UseGuards(JwtAuthGuard)
-    @Delete('/unfollowing/:followingId')//người xoá là người follow (follower)
-    async deleteFollowbyFollower(@Request() req, @Param('followingId') followingId: string){
-        const followerId= new ObjectId(req.user.id);
-        return this.flService.deletefollowInQueue(followerId,new ObjectId(followingId));
-    }
-
-    @UseGuards(JwtAuthGuard)
     @Post('/followed/:followerId')//accept theo dõi của người theo dõi
     async acceptFollow(@Request() req, @Param('followerId') followerId: string){
         const followingId= new ObjectId(req.user.id);
