@@ -19,11 +19,10 @@ export class FollowService{
         if(!follower || !following){
             throw new NotFoundException('User not found!');
         }
+        if (follower.followings.includes(followingId))//có thì huỷ
+        throw new Error("You have followed this user!")
         following.followers.push(followerId);
         follower.followings.push(followingId);
-        //xoá trong hàng đợi: xoá tính năng inQueue
-        // follower.followingsInQueue=follower.followersInQueue.filter(id=>!id.equals(followingId));
-        // following.followersInQueue=following.followersInQueue.filter(id=>!id.equals(followerId));
         await this.userRepos.save(follower);
         await this.userRepos.save(following);
     }
@@ -37,8 +36,7 @@ export class FollowService{
         }
     
         follower.followings = follower.followings.filter(id => !id.equals(followingId));
-        if(following.state)following.followers = following.followers.filter(id => !id.equals(followerId));
-    
+        following.followers = following.followers.filter(id => !id.equals(followerId));
         await this.userRepos.save(follower);
         await this.userRepos.save(following);
     }
