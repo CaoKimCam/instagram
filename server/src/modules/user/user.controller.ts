@@ -119,6 +119,29 @@ export class UserController{
         return this.flService.unfollowUser(new ObjectId(followedId), followingId);
     }
 
+    //---bestfriend
+        //addtobestfriend
+    @UseGuards(JwtAuthGuard)
+    @Post('/bff/:name')//thêm
+    async addBestfriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.addBestFriend(current, name)
+    }
+        //remove to bff
+    @UseGuards(JwtAuthGuard)
+    @Delete('/bff/:name')//xoá
+    async removeBestfriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.removeBestFriend(current, name)
+    }
+        //check trạng thái friend
+    @UseGuards(JwtAuthGuard)
+    @Post('/friend/:name')
+    async isFriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.isFriend(current, name)
+    }
+
     //---search
     @Get('/search/:name')
     async searchListUserByName(@Param('name') name: string){

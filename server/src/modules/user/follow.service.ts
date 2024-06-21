@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "./user.entity";
 import { ObjectId } from "mongodb";
 import { MongoRepository } from "typeorm";
+import { equal } from "assert";
 
 @Injectable()
 export class FollowService{
@@ -71,5 +72,33 @@ export class FollowService{
         await this.userRepos.save(follower);
         await this.userRepos.save(following);
     }
+    async addBestFriend(current: ObjectId, other: string){
+        const friend= await this.userRepos.findOne({
+            where:{userName: other}
+        })
+        const currentUser= await this.userRepos.findOneById(current);
+        if (currentUser&&friend) 
+        {
+            if (currentUser.bestfriend) currentUser.bestfriend.push(friend.id);
+        } else throw new NotFoundException('User not found!')
+        return await this.userRepos.save(currentUser)
+    }  
 
+    async removeBestFriend(current: ObjectId, other: string){
+        const friend= await this.userRepos.findOne({
+            where:{userName: other}
+        })
+        const currentUser= await this.userRepos.findOneById(current);
+        if (currentUser&&friend) 
+        {
+            if (currentUser.bestfriend) currentUser.bestfriend=currentUser.bestfriend.filter(id=>!id.equals(friend.id));
+        } else throw new NotFoundException('User not found!')
+        return await this.userRepos.save(currentUser)
+    }  
+    async isFriend(current: ObjectId, nameOther: string): Promise<Boolean>{
+        const friend= await this.userRepos.findOne({
+            where:{userName: nameOther}
+        })
+        return (friend.followers.includes(current)&&friend.followings.includes(current))?true: null
+    }   
 }
