@@ -14,13 +14,10 @@ function Homepage() {
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [userName, setUserName] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
 
   useEffect(() => {
     fetchData();
     fetchAccount();
-    fetchAllUsers();
   }, []);
 
   // Lấy dữ liệu bài viết từ API
@@ -43,32 +40,6 @@ function Homepage() {
     }
   };
 
-  // Lấy danh sách tất cả người dùng từ API
-  const fetchAllUsers = async () => {
-    try {
-      const response = await userApi.getAllUsers();
-      if (response.statusCode === 404) {
-        console.error("Forbidden access:", response.message);
-        // Xử lý thông báo lỗi cho người dùng hoặc thực hiện hành động phù hợp khác
-        return;
-      }
-
-      // Kiểm tra nếu dữ liệu trả về không phải mảng người dùng
-      if (!Array.isArray(response.data)) {
-        console.error("Invalid data format - not an array:", response.data);
-        // Xử lý thông báo lỗi cho người dùng hoặc thực hiện hành động phù hợp khác
-        return;
-      }
-
-      // Lưu trữ danh sách người dùng vào state allUsers
-      setAllUsers(response.data);
-    } catch (error) {
-      console.error("Error fetching all users:", error);
-      // Xử lý thông báo lỗi cho người dùng hoặc thực hiện hành động phù hợp khác
-    }
-  };
-
-
   // Hàm làm mới trang chủ
   const refreshHomepage = async () => {
     try {
@@ -88,6 +59,17 @@ function Homepage() {
   // Hàm bật tắt search box
   const toggleSearchBox = () => {
     setShowSearchBox(!showSearchBox);
+  };
+
+  // Hàm tìm kiếm người dùng
+  const handleSearch = async (name) => {
+    try {
+      const response = await userApi.searchUserByName(name);
+      return response.data; // Lấy dữ liệu từ response
+    } catch (error) {
+      console.error("Error searching users:", error);
+      return [];
+    }
   };
 
   // Hàm tính thời gian đã trôi qua từ khi bài viết được tạo
@@ -112,29 +94,9 @@ function Homepage() {
     }
   };
 
-  // Hàm tìm kiếm người dùng
-  const handleSearch = (searchTerm) => {
-    if (!Array.isArray(allUsers)) {
-      console.error("allUsers is not an array:", allUsers);
-      return;
-    }
-
-    if (searchTerm.trim() === "") {
-      setSearchResults([]);
-      return;
-    }
-
-    const filteredUsers = allUsers.filter(user => {
-      return user.userName.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-
-    setSearchResults(filteredUsers);
-  };
-
   return (
     <div id="main">
       <Grid container spacing={10}>
-
         {/* Sidebar bên trái */}
         <Grid item xs={3.5}>
           {showSidebarLeft ? (
@@ -142,7 +104,7 @@ function Homepage() {
           ) : (
             <SidebarSimple toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
           )}
-          {showSearchBox && <SearchBox handleSearch={handleSearch} searchResults={searchResults} />}
+          {showSearchBox && <SearchBox onSearch={handleSearch} />}
         </Grid>
 
         {/* Danh sách bài viết */}
@@ -165,7 +127,6 @@ function Homepage() {
         <Grid item xs={3}>
           <SidebarRight />
         </Grid>
-
       </Grid>
 
       {/* Footer */}

@@ -104,7 +104,8 @@ export class UserService{
         const listafter=listUser.map(user=>(
             {
                 userName:user.userName,
-                userAvatar:user.userAvatar
+                userAvatar:user.userAvatar,
+                id:user.id,
             }
         ))
         

@@ -17,6 +17,14 @@ const userApi = {
     const url = '/users/all';
     return axiosClient.get(url);
   },
+  searchUserByName: (name) => {
+    const url = `/users/search/${name}`;
+    return axiosClient.get(url);
+  },
+  getUserDetail: (id) => {
+    const url = `/users/${id}`;
+    return axiosClient.get(url);
+  },
   // Các phương thức khác như updateUser, deleteUser...
 };
 

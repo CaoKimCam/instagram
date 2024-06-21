@@ -2,9 +2,8 @@ import React from 'react';
 import './style.css';
 
 function GridPost({ posts, handleClick }) {
-  // Kiểm tra nếu posts là undefined hoặc null thì trả về null
   if (!posts) {
-    return null; // hoặc return <div></div> hoặc thích hợp với UI của bạn
+    return null;
   }
 
   return (

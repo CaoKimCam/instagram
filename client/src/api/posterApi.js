@@ -76,3 +76,14 @@ export const deletePost = async (postId) => {
     throw error;
   }
 };
+
+// Hàm lấy tất cả các bài viết công khai của một người dùng khác
+export const getPublicPost = async (name) => {
+  try {
+    const response = await axiosClient.get(`/posters/other/${name}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching public posts for user ${name}:`, error);
+    throw error;
+  }
+};

@@ -3,9 +3,10 @@ import Profile from "../pages/Profile/Profile";
 import NotFound from "../pages/NotFound/NotFound";
 import SignUp from "../pages/SignUp/SignUp";
 import LogIn from "../pages/LogIn/LogIn";
-import PostDetail from "../pages/PostDetail/PostDetail"; // Import PostDetail
+import PostDetail from "../pages/PostDetail/PostDetail";
 import CreatePost from "../components/CreatePost/CreatePost";
 import Post from "../components/Post/Post";
+import OtherUser from "../pages/OtherUser/OtherUser";
 
 export const routes = [
   {
@@ -45,6 +46,12 @@ export const routes = [
   {
     path: '/post',
     page: Post,
+    isShowHeader: true,
+    isPrivate: true
+  },
+  {
+    path: '/other/:id',
+    page: OtherUser,
     isShowHeader: true,
     isPrivate: true
   },
