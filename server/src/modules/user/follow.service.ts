@@ -63,10 +63,14 @@ export class FollowService{
         } else throw new NotFoundException('User not found!')
         return await this.userRepos.save(currentUser)
     }  
-    async isFriend(current: ObjectId, nameOther: string): Promise<Boolean>{
-        const friend= await this.userRepos.findOne({
-            where:{userName: nameOther}
-        })
-        return (friend.followers.includes(current)&&friend.followings.includes(current))?true: null
+    async isFriend(current: ObjectId, nameOther: string): Promise<boolean> {
+        const friend = await this.userRepos.findOne({ where: { userName: nameOther } });
+
+        if (!friend) {
+            return false;
+        }
+
+        return friend.followers.some(followerId => followerId.equals(current))
+            && friend.followings.some(followingId => followingId.equals(current));
     }   
 }

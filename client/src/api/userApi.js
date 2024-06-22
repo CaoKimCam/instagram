@@ -52,7 +52,7 @@ const userApi = {
   // Hàm kiểm tra trạng thái bạn bè
   isFriend: (name) => {
     const url = `/users/friend/${name}`;
-    return axiosClient.post(url);
+    return axiosClient.get(url);
   },
   // Các phương thức khác như updateUser, deleteUser...
 };

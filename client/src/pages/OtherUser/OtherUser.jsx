@@ -12,56 +12,46 @@ function OtherUser() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
   const [isFollowing, setIsFollowing] = useState(false); // Trạng thái theo dõi
+  const [isFriend, setIsFriend] = useState(false); // Trạng thái bạn bè
   const { id: userId } = useParams();
 
   useEffect(() => {
-    const fetchUserDetail = async () => {
+    const fetchData = async () => {
       try {
-        const response = await userApi.getUserDetail(userId);
-        setUser(response.data);
+        const userResponse = await userApi.getUserDetail(userId);
+        setUser(userResponse.data);
+  
+        const publicPosts = await getPublicPost(userResponse.data.userName);
+        setPosts(publicPosts);
+  
+        const friendResponse = await userApi.isFriend(userResponse.data.userName);
+        setIsFriend(friendResponse.data);
+  
+        const isUserFollowing = localStorage.getItem('isFollowing_' + userId) === 'true';
+        setIsFollowing(isUserFollowing);
       } catch (error) {
-        console.error("Error fetching user details:", error);
+        console.error("Error fetching user details or posts:", error);
       }
     };
-
-    fetchUserDetail();
+  
+    fetchData();
   }, [userId]);
-
-  useEffect(() => {
-    const fetchPublicPosts = async () => {
-      try {
-        if (user) {
-          const publicPosts = await getPublicPost(user.userName);
-          setPosts(publicPosts);
-        }
-      } catch (error) {
-        console.error("Error fetching public posts:", error);
-      }
-    };
-
-    fetchPublicPosts();
-  }, [user]);
 
   const handleFollowClick = async () => {
     try {
       if (!isFollowing) {
-        await userApi.acceptFollow(userId); // Use acceptFollow for following
+        await userApi.acceptFollow(userId);
         localStorage.setItem('isFollowing_' + userId, 'true');
-        setIsFollowing(true); // Update state after successful follow
+        setIsFollowing(true);
       } else {
         await userApi.unfollowUser(userId);
         localStorage.removeItem('isFollowing_' + userId);
-        setIsFollowing(false); // Update state after successful unfollow
+        setIsFollowing(false);
       }
     } catch (error) {
       console.error("Error following/unfollowing user:", error);
     }
   };
-
-  useEffect(() => {
-    const isUserFollowing = localStorage.getItem('isFollowing_' + userId) === 'true';
-    setIsFollowing(isUserFollowing);
-  }, [userId]);
 
   return (
     <div id="main">
@@ -76,6 +66,7 @@ function OtherUser() {
                 user={user}
                 handleFollowClick={handleFollowClick}
                 isFollowing={isFollowing}
+                isFriend={isFriend} // Truyền trạng thái bạn bè vào UserProfile
               />
               <GridPost posts={posts} />
             </>

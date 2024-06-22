@@ -107,7 +107,7 @@ export class UserController{
     }
         //check trạng thái friend
     @UseGuards(JwtAuthGuard)
-    @Post('/friend/:name')
+    @Get('/friend/:name')
     async isFriend(@Request() req, @Param('name') name: string){
         const current= new ObjectId(req.user.id);
         return this.flService.isFriend(current, name)
