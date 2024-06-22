@@ -1,48 +1,54 @@
-.userDetail-row1 {
+.row1 {
     display: flex; 
     flex-direction: row; 
     align-items: center;
     width: 500px;
-    margin-top: 20px;
+    margin-top: 40px;
 }
 
-.userDetail-profileUsername {
+.profileUsername {
     font-size: 20px;
     font-weight: 400;
     margin-left: 70px;
-    transform: translateY(-20%);
 }
 
-.userDetail-follow {
+.editProfile {
     width: 100px;
     height: 30px;
     border: none;
-    background-color: #4192EF;
-    color: #fff;
-    font-size: 14px;
+    background-color: #dcdcdc;
     font-weight: 500;
     border-radius: 10px;
-    margin-left: 50px;
-    margin-right: auto;
-    margin-top: 20px;
+    margin-left: auto;
 }
 
-.userDetail-row2 {
+.logout {
+    width: 100px;
+    height: 30px;
+    border: none;
+    background-color: #dcdcdc;
+    font-weight: 500;
+    border-radius: 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+.row2 {
     display: flex; 
     flex-direction: row; 
     margin-top: 20px;
 }
 
-.userDetail-posts, .userDetail-followers, .userDetail-following {
+.posts, .followers, .following {
     font-weight: 400;
     margin-left: auto;
 }
 
-.userDetail-posts {
+.posts {
     margin-left: 70px;
 }
 
-.userDetail-profileBio {
+.profileBio {
     margin-left: 70px;
     margin-top: 20px;
     font-weight: 400;
