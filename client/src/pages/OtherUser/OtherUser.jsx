@@ -11,7 +11,6 @@ import { getPublicPost } from "../../api/posterApi";
 function OtherUser() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [isFollowing, setIsFollowing] = useState(false); // Trạng thái theo dõi
   const { id: userId } = useParams();
 
   useEffect(() => {
@@ -37,6 +36,7 @@ function OtherUser() {
         if (user) {
           const publicPosts = await getPublicPost(user.userName);
           setPosts(publicPosts);
+          console.log(publicPosts);
         }
       } catch (error) {
         console.error("Error fetching public posts:", error);
@@ -47,36 +47,6 @@ function OtherUser() {
     fetchPublicPosts();
   }, [user]);
 
-  const handleFollowClick = async () => {
-    try {
-      if (!isFollowing) {
-        await userApi.followUser(userId);
-        localStorage.setItem('isFollowing_' + userId, 'true');
-        setIsFollowing(true); // Cập nhật state sau khi follow thành công
-      } else {
-        await userApi.unfollowByFollowing(userId);
-        localStorage.removeItem('isFollowing_' + userId);
-        setIsFollowing(false); // Cập nhật state sau khi unfollow thành công
-      }
-    } catch (error) {
-      console.error("Error following/unfollowing user:", error);
-    }
-  };
-  
-  useEffect(() => {
-    const isUserFollowing = localStorage.getItem('isFollowing_' + userId) === 'true';
-    setIsFollowing(isUserFollowing);
-  }, [userId]);
-  
-
-  const handleAcceptFollow = async () => {
-    try {
-      await userApi.acceptFollow(userId);
-    } catch (error) {
-      console.error("Error accepting follow:", error);
-    }
-  };
-
   return (
     <div id="main">
       <Grid container spacing={0}>
@@ -86,12 +56,7 @@ function OtherUser() {
         <Grid item xs={8}>
           {user ? (
             <>
-              <UserProfile
-                user={user}
-                handleFollowClick={handleFollowClick}
-                isFollowing={isFollowing}
-                handleAcceptFollow={handleAcceptFollow}
-              />
+              <UserProfile user={user} />
               <GridPost posts={posts} />
             </>
           ) : (

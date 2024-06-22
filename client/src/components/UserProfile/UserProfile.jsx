@@ -31,18 +31,16 @@ function UserDetail({ user }) {
             <div className="row1">
               <h1 className="profileUsername">{userName}</h1>
             </div>
-            <div className="userDetail-row2">
-              <p className="userDetail-posts">
-                <span style={{ fontWeight: 500 }}>3</span> posts
-              </p>
-              <p className="userDetail-followers">
-                <span style={{ fontWeight: 500 }}>3</span> followers
-              </p>
-              <p className="userDetail-following">
-                <span style={{ fontWeight: 500 }}>3</span> following
-              </p>
+
+            {/* Số lượng bài đã đăng, người theo dõi, đang theo dõi */}
+            <div className="row2">
+              <p className="posts"><span style={{ fontWeight: 500 }}>3</span> posts</p>
+              <p className="followers"><span style={{ fontWeight: 500 }}>3</span> followers</p>
+              <p className="following"><span style={{ fontWeight: 500 }}>3</span> following</p>
             </div>
-            <p className="userDetail-profileBio">bio</p>
+            
+            {/* Phần mô tả */}
+            <p className="profileBio">bio</p>
           </div>
         </div>
       </div>
