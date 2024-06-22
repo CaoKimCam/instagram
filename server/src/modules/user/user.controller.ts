@@ -77,25 +77,17 @@ export class UserController{
 
     //tính năng liên quan đến follow
     @UseGuards(JwtAuthGuard)
-    @Post('/followed/:followerId')//accept theo dõi của người theo dõi
-    async acceptFollow(@Request() req, @Param('followerId') followerId: string){
-        const followingId= new ObjectId(req.user.id);
-        return this.flService.acceptFollow(new ObjectId(followerId), followingId);
+    @Post('/follower/:followingId')//accept theo dõi của người theo dõi
+    async acceptFollow(@Request() req, @Param('followingId') followingId: string){
+        const followerId= new ObjectId(req.user.id);
+        return this.flService.acceptFollow(followerId, new ObjectId(followingId));
     }
 
     @UseGuards(JwtAuthGuard)
-    @Delete('/followeing/:followingId')//xoá theo dõi khi đã là accept bởi người theo dõi
+    @Delete('/follower/:followingId')//xoá theo dõi
     async unfollowByFollower(@Request() req, @Param('followingId') followingId: string){
         const followerId= new ObjectId(req.user.id);
         return this.flService.unfollowUser(followerId, new ObjectId(followingId));
-    }
-
-    //xoá theo dõi bởi người được theo dõi
-    @UseGuards(JwtAuthGuard)
-    @Delete('/follower/:followedId')//xoá theo dõi khi đã là accept bởi người được theo dõi
-    async unfollowByFollowing(@Request() req, @Param('followedId') followedId: string){
-        const followingId= new ObjectId(req.user.id);
-        return this.flService.unfollowUser(new ObjectId(followedId), followingId);
     }
 
     //---bestfriend
