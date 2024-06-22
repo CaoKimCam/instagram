@@ -1,20 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./style.css";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
-function UserProfile({ user, handleFollowClick, isFollowing, isFriend }) {
+function UserProfile({ user, handleFollowClick, isFollowing, isFriend, handleStarClick, isFavorite }) {
   const { userName, followers, followings } = user;
-  const [isFavorite, setIsFavorite] = useState(false);
-
-  const handleStarClick = () => {
-    setIsFavorite((prevIsFavorite) => !prevIsFavorite);
-  };
 
   useEffect(() => {
     console.log("isFriend in UserProfile:", isFriend);
     console.log("isFollowing in UserProfile:", isFollowing);
-  }, [isFriend, isFollowing]); // Đảm bảo useEffect này nhận các giá trị mới của isFriend và isFollowing
+    console.log("isFavorite in UserProfile:", isFavorite);
+  }, [isFriend, isFollowing, isFavorite]); // Đảm bảo useEffect này nhận các giá trị mới của isFriend và isFollowing và isFavorite
 
   return (
     <div style={{ backgroundColor: "#fefefe" }}>
@@ -30,6 +26,7 @@ function UserProfile({ user, handleFollowClick, isFollowing, isFriend }) {
               marginTop: 30,
               backgroundSize: "cover",
               backgroundPosition: "center",
+              backgroundImage: `url(${user.avatarUrl || 'default-avatar-url'})`,
             }}
           ></div>
           <div style={{ display: "flex", flexDirection: "column", marginLeft: 20 }}>
