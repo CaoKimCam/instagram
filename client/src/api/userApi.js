@@ -25,6 +25,35 @@ const userApi = {
     const url = `/users/${id}`;
     return axiosClient.get(url);
   },
+  // Hàm gửi yêu cầu chấp nhận theo dõi
+  acceptFollow: (followingId) => {
+    const url = `/users/follower/${followingId}`;
+    return axiosClient.post(url);
+  },
+
+  // Hàm gửi yêu cầu hủy theo dõi
+  unfollowUser: (followingId) => {
+    const url = `/users/follower/${followingId}`;
+    return axiosClient.delete(url);
+  },
+
+  // Hàm gửi yêu cầu thêm bạn thân
+  addBestfriend: (name) => {
+    const url = `/users/bff/${name}`;
+    return axiosClient.post(url);
+  },
+
+  // Hàm gửi yêu cầu xóa bạn thân
+  removeBestfriend: (name) => {
+    const url = `/users/bff/${name}`;
+    return axiosClient.delete(url);
+  },
+
+  // Hàm kiểm tra trạng thái bạn bè
+  isFriend: (name) => {
+    const url = `/users/friend/${name}`;
+    return axiosClient.post(url);
+  },
   // Các phương thức khác như updateUser, deleteUser...
 };
 

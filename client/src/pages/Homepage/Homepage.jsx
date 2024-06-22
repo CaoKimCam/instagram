@@ -6,16 +6,29 @@ import Grid from "@mui/material/Grid";
 import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
+import { getAllPosts } from "../../api/posterApi";
 import userApi from "../../api/userApi";
 
 function Homepage() {
+  const [data, setData] = useState([]);
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [userName, setUserName] = useState("");
 
   useEffect(() => {
+    fetchData();
     fetchAccount();
   }, []);
+
+  // Lấy dữ liệu bài viết từ API
+  const fetchData = async () => {
+    try {
+      const posts = await getAllPosts();
+      setData(posts.reverse());
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
 
   // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
@@ -28,15 +41,15 @@ function Homepage() {
   };
 
   // Hàm làm mới trang chủ
-  // const refreshHomepage = async () => {
-  //   try {
-  //     const posts = await getAllPosts();
-  //     setData(posts.reverse());
-  //     console.log("Homepage refreshed:", posts);
-  //   } catch (error) {
-  //     console.error("Error refreshing homepage:", error);
-  //   }
-  // };
+  const refreshHomepage = async () => {
+    try {
+      const posts = await getAllPosts();
+      setData(posts.reverse());
+      console.log("Homepage refreshed:", posts);
+    } catch (error) {
+      console.error("Error refreshing homepage:", error);
+    }
+  };
 
   // Hàm bật tắt sidebar left
   const toggleSidebar = () => {
@@ -87,7 +100,7 @@ function Homepage() {
         {/* Sidebar bên trái */}
         <Grid item xs={3.5}>
           {showSidebarLeft ? (
-            <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} /> //refreshHomepage={refreshHomepage} />
+            <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} refreshHomepage={refreshHomepage} />
           ) : (
             <SidebarSimple toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
           )}
@@ -96,7 +109,21 @@ function Homepage() {
 
         {/* Danh sách bài viết */}
         <Grid item xs={5}>
-          <Post />
+          {data.length > 0 ? (
+            data.map((post, index) => (
+              <Post
+                key={post.postId || index} // Đảm bảo rằng mỗi postId là duy nhất
+                postId={post.postId}
+                image={post.postImg}
+                caption={post.postContent}
+                postTime={calculatePostTime(post.postTime)}
+                userName={userName}
+                refreshHomepage={refreshHomepage}
+              />
+            ))
+          ) : (
+            <p>No posts available.</p>
+          )}
         </Grid>
 
         {/* Sidebar bên phải */}
