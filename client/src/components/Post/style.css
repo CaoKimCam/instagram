@@ -1,6 +1,7 @@
-.post {
+#post {
     width: 500px;
     border-bottom: 1px solid #ccc;
+    z-index: -1;
 }
 
 .post-header {

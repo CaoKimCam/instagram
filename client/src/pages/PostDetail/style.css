@@ -39,7 +39,7 @@
     margin-top: 3px;
 }
 
-.post-footer {
+.postDetail-footer {
     width: 335px;
     height: 160px;
     margin-top: 10px;
@@ -48,7 +48,7 @@
     bottom: 0;
 }
 
-.react {
+.postDetail-react {
     width: 300px;
     margin-left: 20px;
     margin-top: 10px;

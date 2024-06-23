@@ -172,8 +172,8 @@ function PostDetail() {
                             </div>
 
                             {/* Phần tương tác bài đăng + caption */}
-                            <div className="post-footer">
-                                <div className="react">
+                            <div className="postDetail-footer">
+                                <div className="postDetail-react">
                                     <img
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/c20b1aa752aac82cf2696a44bc6f6310431162eefd7c1dd70943e77371996f53?"
                                         alt=""

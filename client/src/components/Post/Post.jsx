@@ -3,35 +3,33 @@ import "./style.css";
 import EditPost from "../EditPost/EditPost";
 import { deletePost } from "../../api/posterApi";
 
-function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
+function Post({ post, calculatePostTime, refreshHomepage }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditPost, setShowEditPost] = useState(false);
 
-  // Hàm xử lý khi nhấn dấu ba chấm ở header
+  const { postId, authorId, postTime, postContent } = post;
+
   const handleMoreClick = () => {
     setShowOptions(!showOptions);
   };
 
-  // Hàm xử lý khi nhấn Delete
   const handleDelete = async () => {
     try {
       await deletePost(postId);
       alert("Post deleted successfully");
       setShowOptions(false);
-      refreshHomepage();
+      refreshHomepage(); // Gọi hàm refreshHomepage từ props để làm mới trang chủ sau khi xóa bài đăng
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete post");
     }
   };
 
-  // Hàm xử lý khi nhấn Edit
   const handleEdit = () => {
     setShowEditPost(true);
     setShowOptions(false);
   };
 
-  // Hàm xử lý khi nhấn Copy Link
   const handleCopyLink = () => {
     const link = `${window.location.origin}/post-detail/${postId}`;
     navigator.clipboard.writeText(link)
@@ -45,50 +43,37 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
     setShowOptions(false);
   };
 
-  // Hàm xử lý khi nhấn Cancel
   const handleCancel = () => {
     setShowOptions(false);
   };
 
-  // Hàm xử lý để đóng EditPost component
   const handleCloseEditPost = () => {
     setShowEditPost(false);
   };
 
-  // Hàm xử lý sau khi cập nhật bài đăng hoàn thành -> làm mới trang chủ
   const handleEditComplete = () => {
     setShowEditPost(false);
-    refreshHomepage();
+    refreshHomepage(); // Gọi hàm refreshHomepage từ props khi chỉnh sửa bài đăng hoàn tất
   };
 
   return (
     <div className="post">
-
-      {/* Header */}
       <div className="post-header">
         <img
           src="https://res.cloudinary.com/dpqnzt8qq/image/upload/v1717835313/ufomkmr3jiqjek6acvob.png"
           alt="avatar"
           className="avatar"
-          style={{ objectFit: "cover", objectPosition: "50% 50%", zIndex: -1 }}
         />
-
-        <h4 className="username" style={{ fontWeight: 600 }}>
-          {userName}
-        </h4>
-
+        <h4 className="username">{authorId}</h4>
         <div className="dot">‧</div>
-
-        <span className="time">{postTime}</span>
-
+        <span className="time">{calculatePostTime(postTime)}</span>
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
-          alt=""
+          alt="more"
           className="more"
           onClick={handleMoreClick}
         />
 
-        {/* Khi nhấn "more" sẽ hiển thị các lựa chọn: delete, edit, copy link */}
         {showOptions && (
           <div className="options-menu">
             <div className="option" style={{ color: "red" }} onClick={handleDelete}>
@@ -107,60 +92,46 @@ function Post({ image, caption, userName, postTime, postId, refreshHomepage }) {
         )}
       </div>
 
-      {/* Phần content chính */}
       <img
-        src={image}
-        alt=""
+        src="https://via.placeholder.com/500"
+        alt="post"
         className="image"
-        style={{ objectFit: "cover", objectPosition: "50% 50%" }}
       />
 
-      {/* Phần tương tác bài đăng + caption */}
       <div className="post-footer">
         <div className="react">
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/c20b1aa752aac82cf2696a44bc6f6310431162eefd7c1dd70943e77371996f53?"
-            alt=""
+            alt="heart"
             className="heart"
           />
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/39902428d2ced9abf70943cbb60eda5b8b45e004592c552b0bb4278608e4ffdc?"
-            alt=""
+            alt="comment"
             className="comment"
           />
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/4738f086753c9eef15575e1ec80d909b8eeba168c98e0bd6d6fe0cd7b4c39c11?"
-            alt=""
+            alt="share"
             className="share"
           />
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/539cd64323766987e541a1d54bd900af9f86b80385a6480427ab4d25919c095b?"
-            alt=""
+            alt="save"
             className="save"
           />
         </div>
 
-        <h4 className="number-like" style={{ fontWeight: 600 }}>
-          5 likes
-        </h4>
-        
+        <h4 className="number-like">5 likes</h4>
+
         <div className="caption">
-          <div
-            className="caption-user"
-            style={{ display: "flex", flexDirection: "row" }}
-          >
-            <h4
-              className="user-name"
-              style={{ fontWeight: 600, marginRight: 10 }}
-            >
-              {userName}
-            </h4>
-            <div className="user-caption">{caption}</div>
+          <div className="caption-user">
+            <h4 className="user-name">{authorId}</h4>
+            <div className="user-caption">{postContent}</div>
           </div>
         </div>
       </div>
 
-      {/* Bật/tắt EditPost component */}
       {showEditPost && (
         <EditPost
           postId={postId}

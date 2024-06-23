@@ -30,7 +30,13 @@ function CreatePost({ onClose, refreshHomepage }) {
     if (postContent && uploadedFile) {
       try {
         const postTime = new Date().toISOString();
-        await createPost(postContent, uploadedFile, authorId, postTime);
+        const postDto = {
+          postContent,
+          postTime,
+          authorId,
+          state: status, // Truyền trạng thái vào postDto
+        };
+        await createPost(postDto, uploadedFile);
         refreshHomepage();
         onClose();
       } catch (error) {
@@ -123,14 +129,14 @@ function CreatePost({ onClose, refreshHomepage }) {
                 </button>
               </div>
               {showStatusOptions && (
-                  <div className="status-options">
-                    <div className="status-option public" onClick={() => handleStatusSelect("Public")}>Public</div>
-                    <div className="status-option follower" onClick={() => handleStatusSelect("Follower")}>Follower</div>
-                    <div className="status-option friend" onClick={() => handleStatusSelect("Friend")}>Friend</div>
-                    <div className="status-option best-friend" onClick={() => handleStatusSelect("Best Friend")}>Best Friend</div>
-                    <div className="status-option only-me" onClick={() => handleStatusSelect("Only Me")}>Only Me</div>
-                  </div>
-                )}
+                <div className="status-options">
+                  <div className="status-option public" onClick={() => handleStatusSelect("Public")}>Public</div>
+                  <div className="status-option follower" onClick={() => handleStatusSelect("Follower")}>Follower</div>
+                  <div className="status-option friend" onClick={() => handleStatusSelect("Friend")}>Friend</div>
+                  <div className="status-option best-friend" onClick={() => handleStatusSelect("Best Friend")}>Best Friend</div>
+                  <div className="status-option only-me" onClick={() => handleStatusSelect("Only Me")}>Only Me</div>
+                </div>
+              )}
               <textarea
                 id="postContent"
                 placeholder="Write a caption..."

@@ -6,31 +6,20 @@ import Grid from "@mui/material/Grid";
 import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
-import { getAllPosts } from "../../api/posterApi";
 import userApi from "../../api/userApi";
+import { getAllPosts } from "../../api/posterApi";
 
 function Homepage() {
-  const [data, setData] = useState([]);
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [userName, setUserName] = useState("");
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    fetchData();
     fetchAccount();
+    fetchPosts();
   }, []);
 
-  // Lấy dữ liệu bài viết từ API
-  const fetchData = async () => {
-    try {
-      const posts = await getAllPosts();
-      setData(posts.reverse());
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
-
-  // Lấy dữ liệu tài khoản đăng nhập từ API
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
@@ -40,99 +29,91 @@ function Homepage() {
     }
   };
 
-  // Hàm làm mới trang chủ
+  const fetchPosts = async () => {
+    try {
+      const fetchedPosts = await getAllPosts();
+      if (Array.isArray(fetchedPosts)) {
+        setPosts(fetchedPosts.reverse());
+        console.log("Posts fetched:", fetchedPosts);
+      } else {
+        console.error("Invalid posts data:", fetchedPosts);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
   const refreshHomepage = async () => {
     try {
-      const posts = await getAllPosts();
-      setData(posts.reverse());
-      console.log("Homepage refreshed:", posts);
+      const fetchedPosts = await getAllPosts();
+      if (Array.isArray(fetchedPosts)) {
+        setPosts(fetchedPosts.reverse());
+        console.log("Homepage refreshed:", fetchedPosts);
+      } else {
+        console.error("Invalid posts data:", fetchedPosts);
+      }
     } catch (error) {
       console.error("Error refreshing homepage:", error);
     }
   };
 
-  // Hàm bật tắt sidebar left
   const toggleSidebar = () => {
     setShowSidebarLeft(!showSidebarLeft);
   };
 
-  // Hàm bật tắt search box
   const toggleSearchBox = () => {
     setShowSearchBox(!showSearchBox);
   };
 
-  // Hàm tìm kiếm người dùng
   const handleSearch = async (name) => {
     try {
       const response = await userApi.searchUserByName(name);
-      return response.data; // Lấy dữ liệu từ response
+      return response.data;
     } catch (error) {
       console.error("Error searching users:", error);
       return [];
     }
   };
 
-  // Hàm tính thời gian đã trôi qua từ khi bài viết được tạo
   const calculatePostTime = (postTime) => {
-    const currentTime = new Date().getTime();
-    const postTimeInMs = new Date(postTime).getTime();
-    const diffInMs = currentTime - postTimeInMs;
-    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
-    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
-
-    if (diffInHours < 24) {
-      if (diffInHours === 0) {
-        return `${diffInMinutes} minutes ago`;
-      } else {
-        return `${diffInHours} hours ago`;
-      }
-    } else if (diffInHours >= 24 && diffInHours < 48) {
-      return "yesterday";
-    } else {
-      const postDate = new Date(postTime);
-      return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-    }
+    // Implement your time calculation logic here
   };
 
   return (
     <div id="main">
       <Grid container spacing={10}>
-        {/* Sidebar bên trái */}
         <Grid item xs={3.5}>
           {showSidebarLeft ? (
-            <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} refreshHomepage={refreshHomepage} />
+            <SidebarLeft
+              toggleSidebar={toggleSidebar}
+              toggleSearchBox={toggleSearchBox}
+              refreshHomepage={refreshHomepage}
+            />
           ) : (
-            <SidebarSimple toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
+            <SidebarSimple
+              toggleSidebar={toggleSidebar}
+              toggleSearchBox={toggleSearchBox}
+            />
           )}
           {showSearchBox && <SearchBox onSearch={handleSearch} />}
         </Grid>
 
-        {/* Danh sách bài viết */}
         <Grid item xs={5}>
-          {data.length > 0 ? (
-            data.map((post, index) => (
-              <Post
-                key={post.postId || index} // Đảm bảo rằng mỗi postId là duy nhất
-                postId={post.postId}
-                image={post.postImg}
-                caption={post.postContent}
-                postTime={calculatePostTime(post.postTime)}
-                userName={userName}
-                refreshHomepage={refreshHomepage}
-              />
-            ))
-          ) : (
-            <p>No posts available.</p>
-          )}
+          {posts.map((post, index) => (
+            <Post
+              key={post.postId || index}
+              post={post}
+              calculatePostTime={calculatePostTime}
+              refreshHomepage={refreshHomepage} // Truyền hàm refreshHomepage xuống Post component
+            />
+          ))}
         </Grid>
 
-        {/* Sidebar bên phải */}
         <Grid item xs={3}>
           <SidebarRight />
         </Grid>
       </Grid>
 
-      {/* Footer */}
       <div id="footer"></div>
     </div>
   );

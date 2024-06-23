@@ -1,6 +1,6 @@
 import axiosClient from './axiosClient';
 
-// Hàm lấy tất cả các bài viết của người dùng hiện tại
+// Hàm lấy tất cả các bài viết
 export const getAllPosts = async () => {
   try {
     const response = await axiosClient.get('/posters/allposts');
