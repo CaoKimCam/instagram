@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 import EditPost from "../EditPost/EditPost";
 import { deletePost } from "../../api/posterApi";
@@ -7,7 +7,11 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditPost, setShowEditPost] = useState(false);
 
-  const { postId, authorId, postTime, postContent } = post;
+  const { postId, username, postTime, postContent, postImg } = post;
+
+  useEffect(() => {
+    console.log("Post data:", post); // Thêm log này
+  }, [post]);
 
   const handleMoreClick = () => {
     setShowOptions(!showOptions);
@@ -18,7 +22,7 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
       await deletePost(postId);
       alert("Post deleted successfully");
       setShowOptions(false);
-      refreshHomepage(); // Gọi hàm refreshHomepage từ props để làm mới trang chủ sau khi xóa bài đăng
+      refreshHomepage();
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete post");
@@ -53,7 +57,7 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
 
   const handleEditComplete = () => {
     setShowEditPost(false);
-    refreshHomepage(); // Gọi hàm refreshHomepage từ props khi chỉnh sửa bài đăng hoàn tất
+    refreshHomepage();
   };
 
   return (
@@ -63,8 +67,9 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
           src="https://res.cloudinary.com/dpqnzt8qq/image/upload/v1717835313/ufomkmr3jiqjek6acvob.png"
           alt="avatar"
           className="avatar"
+          style={{ objectFit: "cover" }}
         />
-        <h4 className="username">{authorId}</h4>
+        <h4 className="username">{username}</h4> {/* Hiển thị username */}
         <div className="dot">‧</div>
         <span className="time">{calculatePostTime(postTime)}</span>
         <img
@@ -93,9 +98,10 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
       </div>
 
       <img
-        src="https://via.placeholder.com/500"
+        src={postImg || "https://via.placeholder.com/500"}
         alt="post"
         className="image"
+        style={{ objectFit: "cover" }}
       />
 
       <div className="post-footer">
@@ -122,11 +128,11 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
           />
         </div>
 
-        <h4 className="number-like">5 likes</h4>
+        <h4 className="number-like" style={{ fontWeight: 600 }}>5 likes</h4>
 
         <div className="caption">
           <div className="caption-user">
-            <h4 className="user-name">{authorId}</h4>
+            <p className="user-name" style={{ fontWeight: 600, marginRight: 10 }}>{username}</p> {/* Hiển thị username */}
             <div className="user-caption">{postContent}</div>
           </div>
         </div>

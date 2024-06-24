@@ -6,12 +6,14 @@ import Grid from "@mui/material/Grid";
 import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
+import CreatePost from "../../components/CreatePost/CreatePost";
 import userApi from "../../api/userApi";
 import { getAllPosts } from "../../api/posterApi";
 
 function Homepage() {
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
+  const [showCreatePost, setShowCreatePost] = useState(false);
   const [userName, setUserName] = useState("");
   const [posts, setPosts] = useState([]);
 
@@ -33,8 +35,21 @@ function Homepage() {
     try {
       const fetchedPosts = await getAllPosts();
       if (Array.isArray(fetchedPosts)) {
-        setPosts(fetchedPosts.reverse());
-        console.log("Posts fetched:", fetchedPosts);
+        const posts = fetchedPosts.flat(); // Sử dụng flat để làm phẳng mảng
+        const postsWithUserDetails = await Promise.all(posts.map(async post => {
+          try {
+            const userResponse = await userApi.getUserDetail(post.authorId);
+            return {
+              ...post,
+              username: userResponse.data.userName, // Gán thêm username vào post
+            };
+          } catch (error) {
+            console.error(`Error fetching user details for authorId ${post.authorId}:`, error);
+            return post;
+          }
+        }));
+        setPosts(postsWithUserDetails.reverse());
+        console.log("Posts fetched:", postsWithUserDetails);
       } else {
         console.error("Invalid posts data:", fetchedPosts);
       }
@@ -65,6 +80,16 @@ function Homepage() {
     setShowSearchBox(!showSearchBox);
   };
 
+  const openCreatePost = () => {
+    setShowCreatePost(true);
+    setShowSidebarLeft(true);
+    setShowSearchBox(false);
+  };
+
+  const closeCreatePost = () => {
+    setShowCreatePost(false);
+  };
+
   const handleSearch = async (name) => {
     try {
       const response = await userApi.searchUserByName(name);
@@ -76,7 +101,24 @@ function Homepage() {
   };
 
   const calculatePostTime = (postTime) => {
-    // Implement your time calculation logic here
+    const currentTime = new Date().getTime();
+    const postTimeInMs = new Date(postTime).getTime();
+    const diffInMs = currentTime - postTimeInMs;
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+
+    if (diffInHours < 24) {
+      if (diffInHours === 0) {
+        return `${diffInMinutes} minutes ago`;
+      } else {
+        return `${diffInHours} hours ago`;
+      }
+    } else if (diffInHours >= 24 && diffInHours < 48) {
+      return "yesterday";
+    } else {
+      const postDate = new Date(postTime);
+      return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
   };
 
   return (
@@ -87,7 +129,7 @@ function Homepage() {
             <SidebarLeft
               toggleSidebar={toggleSidebar}
               toggleSearchBox={toggleSearchBox}
-              refreshHomepage={refreshHomepage}
+              openCreatePost={openCreatePost}
             />
           ) : (
             <SidebarSimple
@@ -104,7 +146,7 @@ function Homepage() {
               key={post.postId || index}
               post={post}
               calculatePostTime={calculatePostTime}
-              refreshHomepage={refreshHomepage} // Truyền hàm refreshHomepage xuống Post component
+              refreshHomepage={refreshHomepage}
             />
           ))}
         </Grid>
@@ -115,6 +157,10 @@ function Homepage() {
       </Grid>
 
       <div id="footer"></div>
+
+      {showCreatePost && (
+        <CreatePost onClose={closeCreatePost} refreshHomepage={refreshHomepage} />
+      )}
     </div>
   );
 }
