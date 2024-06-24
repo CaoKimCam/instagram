@@ -13,6 +13,14 @@ function CreatePost({ onClose, refreshHomepage }) {
   const [status, setStatus] = useState("Public");
   const [showStatusOptions, setShowStatusOptions] = useState(false);
 
+  const statusMapping = {
+    "Public": 0,
+    "Follower": 1,
+    "Friend": 2,
+    "Best Friend": 3,
+    "Only Me": 4
+  };
+
   useEffect(() => {
     fetchAccount();
   }, []);
@@ -34,7 +42,7 @@ function CreatePost({ onClose, refreshHomepage }) {
           postContent,
           postTime,
           authorId,
-          state: status, // Truyền trạng thái vào postDto
+          state: statusMapping[status],
         };
         await createPost(postDto, uploadedFile);
         refreshHomepage();

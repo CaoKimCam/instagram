@@ -140,6 +140,7 @@ export class PostService {
     //tạo ra 1 bài đăng
     async createPost(postDto: PostDto, postImg: string): Promise<Poster>{
         postDto.postImg=postImg;
+        postDto.state = Number(postDto.state);
         const savePost = await this.postRepos.save(postDto);
         const user = await this.userRepos.findOneById(savePost.authorId);
         if (user){//thêm post vào user
@@ -180,6 +181,7 @@ export class PostService {
         const toUpdate = await this.postRepos.findOneById(id);
         if (!toUpdate) {throw new NotFoundException(`Post with ID ${id} not found`);}
         this.logger.log(toUpdate);
+        postDto.state = Number(postDto.state);
         await this.postRepos.update({postId: id}, postDto);
         return Object.assign(toUpdate, postDto);
     }

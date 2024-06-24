@@ -39,6 +39,7 @@ export class PostController{
     @UseInterceptors(FileInterceptor('file'))
     async createProduct(@UploadedFile() file: Express.Multer.File, @Body(new ValidationPipe) postDto: PostDto, @Request() req): Promise<any>{
         postDto.authorId=req.user.id;
+        postDto.state = Number(postDto.state);
         const postImg= (await this.cloudinaryService.uploadFile(file)).secure_url;
         return await this.productService.createPost(postDto, postImg);
     }
@@ -54,6 +55,7 @@ export class PostController{
     @Put('/:id')
     async updateProduct(@Body() postDto: PostDto, @Param('id') id: ObjectId, @Request() req): Promise<Poster>{
         postDto.authorId=req.user.id;
+        postDto.state = Number(postDto.state);
         return await this.productService.updatePost(postDto, id);
     }
 
