@@ -9,25 +9,28 @@ import SearchBox from "../../components/SearchBox/SearchBox";
 import CreatePost from "../../components/CreatePost/CreatePost";
 import userApi from "../../api/userApi";
 import { getAllPosts } from "../../api/posterApi";
+import reactApi from "../../api/reactApi"; // Import reactApi
 
 function Homepage() {
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
-  const [userName, setUserName] = useState("");
   const [posts, setPosts] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null); // State để lưu trữ id của người dùng hiện tại
+  const [reacts, setReacts] = useState({}); // State để lưu trữ các lượt like của các bài đăng
 
   useEffect(() => {
-    fetchAccount();
     fetchPosts();
+    fetchAccount(); // Gọi hàm để lấy id của người dùng hiện tại
+    fetchReacts(); // Gọi hàm để lấy danh sách các lượt like
   }, []);
 
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
-      setUserName(response.data.userName);
+      setCurrentUserId(response.data.id); // Lưu id của người dùng hiện tại
     } catch (error) {
-      console.error("Error fetching user name:", error);
+      console.error("Error fetching user account data:", error);
     }
   };
 
@@ -35,13 +38,13 @@ function Homepage() {
     try {
       const fetchedPosts = await getAllPosts();
       if (Array.isArray(fetchedPosts)) {
-        const posts = fetchedPosts.flat(); // Sử dụng flat để làm phẳng mảng
+        const posts = fetchedPosts.flat();
         const postsWithUserDetails = await Promise.all(posts.map(async post => {
           try {
             const userResponse = await userApi.getUserDetail(post.authorId);
             return {
               ...post,
-              username: userResponse.data.userName, // Gán thêm username vào post
+              username: userResponse.data.userName,
             };
           } catch (error) {
             console.error(`Error fetching user details for authorId ${post.authorId}:`, error);
@@ -49,7 +52,6 @@ function Homepage() {
           }
         }));
         setPosts(postsWithUserDetails.reverse());
-        console.log("Posts fetched:", postsWithUserDetails);
       } else {
         console.error("Invalid posts data:", fetchedPosts);
       }
@@ -58,11 +60,29 @@ function Homepage() {
     }
   };
 
+  const fetchReacts = async () => {
+    try {
+      const reactsData = await reactApi.getReacts();
+      // Chuyển đổi reactsData thành một object để dễ dàng truy cập
+      const reactsMap = reactsData.reduce((map, react) => {
+        if (!map[react.postId]) {
+          map[react.postId] = [];
+        }
+        map[react.postId].push(react);
+        return map;
+      }, {});
+      setReacts(reactsMap);
+    } catch (error) {
+      console.error("Error fetching reacts:", error);
+    }
+  };
+
   const refreshHomepage = async () => {
     try {
       const fetchedPosts = await getAllPosts();
       if (Array.isArray(fetchedPosts)) {
         setPosts(fetchedPosts.reverse());
+        fetchReacts(); // Sau khi cập nhật lại posts, gọi lại fetchReacts để đồng bộ hóa dữ liệu
         console.log("Homepage refreshed:", fetchedPosts);
       } else {
         console.error("Invalid posts data:", fetchedPosts);
@@ -147,6 +167,8 @@ function Homepage() {
               post={post}
               calculatePostTime={calculatePostTime}
               refreshHomepage={refreshHomepage}
+              currentUserId={currentUserId} // Truyền id người dùng hiện tại xuống Post
+              reacts={reacts[post.postId]} // Truyền danh sách các lượt like của bài đăng
             />
           ))}
         </Grid>
