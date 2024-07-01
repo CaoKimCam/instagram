@@ -9,6 +9,7 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditPost, setShowEditPost] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [reactIds, setReactIds] = useState([]);
   const [likesCount, setLikesCount] = useState(0);
 
   const { postId, username, postTime, postContent, postImg } = post;
@@ -16,16 +17,17 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
   useEffect(() => {
     const fetchReactStatus = async () => {
       try {
-        const reacts = await reactApi.getReactsByObjectId(postId);
+        const reacts = await reactApi.getAllReacts();
         if (reacts && Array.isArray(reacts)) {
-          const userReact = reacts.find(react => react.author === currentUserId);
-          console.log(userReact);
+          const filteredReacts = reacts.filter(react => react.objectId === postId);
+          const userReact = filteredReacts.find(react => react.author === currentUserId);
+          setReactIds(filteredReacts.map(react => react._id)); // Set an array of reactIds
+          setLikesCount(filteredReacts.length); // Count of reacts
           if (userReact) {
             setLiked(true);
           } else {
             setLiked(false);
           }
-          setLikesCount(reacts.length);
         } else {
           console.error("Invalid reacts data:", reacts);
         }
@@ -79,17 +81,17 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
           const payload = { type: true, objectId: postId, author: currentUserId, time: new Date().toISOString() };
           await reactApi.createReact(payload);
           setLiked(true);
+          setReactIds([...reactIds, payload._id]); // Add new reactId to array
           setLikesCount(likesCount + 1);
         } else {
           alert("User information not available");
         }
       } else {
-        const reacts = await reactApi.getReactsByObjectId(postId);
-        const userReact = reacts.find(react => react.objectId === postId && react.author === currentUserId);
-
+        const userReact = reactIds.find(reactId => reactId === postId);
         if (userReact) {
-          await reactApi.deleteReact(userReact._id);
+          await reactApi.deleteReact(userReact);
           setLiked(false);
+          setReactIds(reactIds.filter(reactId => reactId !== userReact)); // Remove reactId from array
           setLikesCount(likesCount - 1);
         }
       }

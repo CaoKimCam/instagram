@@ -4,7 +4,7 @@ const reactApi = {
   // Lấy danh sách Reacts (cho admin)
   getAllReacts: async () => {
     try {
-      const response = await axiosClient.get('/likes/reacts/alls');
+      const response = await axiosClient.get('/likes/allreacts/');
       return response.data;
     } catch (error) {
       throw error;
