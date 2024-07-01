@@ -1,13 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
 import EditPost from "../EditPost/EditPost";
-import { deletePost } from "../../api/posterApi";
+import reactApi from "../../api/reactApi";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
-function Post({ post, calculatePostTime, refreshHomepage }) {
+function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditPost, setShowEditPost] = useState(false);
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
 
-  const { postId, authorId, postTime, postContent } = post;
+  const { postId, username, postTime, postContent, postImg } = post;
+
+  useEffect(() => {
+    const fetchReactStatus = async () => {
+      try {
+        const reacts = await reactApi.getReactsByObjectId(postId);
+        if (reacts && Array.isArray(reacts)) {
+          const userReact = reacts.find(react => react.author === currentUserId);
+          console.log(userReact);
+          if (userReact) {
+            setLiked(true);
+          } else {
+            setLiked(false);
+          }
+          setLikesCount(reacts.length);
+        } else {
+          console.error("Invalid reacts data:", reacts);
+        }
+      } catch (error) {
+        console.error("Error fetching react status:", error);
+      }
+    };
+  
+    fetchReactStatus();
+  }, [postId, currentUserId]);
 
   const handleMoreClick = () => {
     setShowOptions(!showOptions);
@@ -15,10 +43,7 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
 
   const handleDelete = async () => {
     try {
-      await deletePost(postId);
-      alert("Post deleted successfully");
-      setShowOptions(false);
-      refreshHomepage(); // Gọi hàm refreshHomepage từ props để làm mới trang chủ sau khi xóa bài đăng
+      // Xử lý xóa post
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete post");
@@ -31,16 +56,7 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
   };
 
   const handleCopyLink = () => {
-    const link = `${window.location.origin}/post-detail/${postId}`;
-    navigator.clipboard.writeText(link)
-      .then(() => {
-        alert("Link copied to clipboard");
-      })
-      .catch((err) => {
-        console.error("Error copying link:", err);
-        alert("Failed to copy link");
-      });
-    setShowOptions(false);
+    // Xử lý sao chép link
   };
 
   const handleCancel = () => {
@@ -53,7 +69,34 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
 
   const handleEditComplete = () => {
     setShowEditPost(false);
-    refreshHomepage(); // Gọi hàm refreshHomepage từ props khi chỉnh sửa bài đăng hoàn tất
+    refreshHomepage();
+  };
+
+  const handleLike = async () => {
+    try {
+      if (!liked) {
+        if (currentUserId) {
+          const payload = { type: true, objectId: postId, author: currentUserId, time: new Date().toISOString() };
+          await reactApi.createReact(payload);
+          setLiked(true);
+          setLikesCount(likesCount + 1);
+        } else {
+          alert("User information not available");
+        }
+      } else {
+        const reacts = await reactApi.getReactsByObjectId(postId);
+        const userReact = reacts.find(react => react.objectId === postId && react.author === currentUserId);
+
+        if (userReact) {
+          await reactApi.deleteReact(userReact._id);
+          setLiked(false);
+          setLikesCount(likesCount - 1);
+        }
+      }
+    } catch (error) {
+      console.error("Error liking or unliking post:", error);
+      alert("Failed to like or unlike post");
+    }
   };
 
   return (
@@ -63,8 +106,9 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
           src="https://res.cloudinary.com/dpqnzt8qq/image/upload/v1717835313/ufomkmr3jiqjek6acvob.png"
           alt="avatar"
           className="avatar"
+          style={{ objectFit: "cover" }}
         />
-        <h4 className="username">{authorId}</h4>
+        <h4 className="username">{username}</h4>
         <div className="dot">‧</div>
         <span className="time">{calculatePostTime(postTime)}</span>
         <img
@@ -93,18 +137,19 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
       </div>
 
       <img
-        src="https://via.placeholder.com/500"
+        src={postImg || "https://via.placeholder.com/500"}
         alt="post"
         className="image"
+        style={{ objectFit: "cover" }}
       />
 
       <div className="post-footer">
         <div className="react">
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/c20b1aa752aac82cf2696a44bc6f6310431162eefd7c1dd70943e77371996f53?"
-            alt="heart"
-            className="heart"
-          />
+          {liked ? (
+            <FavoriteIcon className="heart" style={{ width: 35, height: 35 }} onClick={handleLike} />
+          ) : (
+            <FavoriteBorderIcon className="heart" style={{ width: 35, height: 35 }} onClick={handleLike} />
+          )}
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/39902428d2ced9abf70943cbb60eda5b8b45e004592c552b0bb4278608e4ffdc?"
             alt="comment"
@@ -122,13 +167,25 @@ function Post({ post, calculatePostTime, refreshHomepage }) {
           />
         </div>
 
-        <h4 className="number-like">5 likes</h4>
+        <h4 className="number-like" style={{ fontWeight: 600 }}>{likesCount} likes</h4>
 
         <div className="caption">
           <div className="caption-user">
-            <h4 className="user-name">{authorId}</h4>
+            <p className="user-name" style={{ fontWeight: 600, marginRight: 10 }}>{username}</p>
             <div className="user-caption">{postContent}</div>
           </div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          <input
+            type="text"
+            className="typeComment"
+            name="comment"
+            placeholder="Add a comment..."
+            style={{ border: "none", marginTop: 5, width: 500, padding: "5px 0", outline: "none", marginBottom: 20 }}
+          />
+
+          <p style={{ color: "#4192EF" }}>Post</p>
         </div>
       </div>
 

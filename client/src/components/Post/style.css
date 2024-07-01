@@ -1,7 +1,6 @@
-#post {
+.post {
     width: 500px;
     border-bottom: 1px solid #ccc;
-    z-index: -1;
 }
 
 .post-header {
@@ -16,6 +15,7 @@
     height: 50px;
     border-radius: 100px;
     margin: 10px 10px 10px 0;
+    z-index: -1;
 }
 
 .image {
@@ -30,6 +30,11 @@
     margin-top: 10px;
     margin-left: 10px;
     line-height: 50px;
+    z-index: -1;
+}
+
+.post-header .username {
+    font-weight: 600;
 }
 
 .post-header .more {
@@ -52,6 +57,10 @@
     margin: 0 10px 0 0;
 }
 
+.heart {
+    width: 50px;
+}
+
 .save {
     width: 35px;
     float: right;
@@ -60,7 +69,6 @@
 .caption-user {
     width: 500px;
     display: flex;
-    margin-bottom: 20px;
 }
 
 #post .caption .user-caption {

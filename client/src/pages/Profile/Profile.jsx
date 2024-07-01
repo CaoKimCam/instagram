@@ -9,8 +9,11 @@ import userApi from "../../api/userApi";
 import { useNavigate } from "react-router-dom";
 
 function Profile() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [userName, setUserName] = useState("");
+  const [followers, setFollowers] = useState(0);
+  const [followings, setFollowings] = useState(0);
+  const [postsCount, setPostsCount] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +30,7 @@ function Profile() {
     try {
       const posts = await getMyPosts();
       setData(posts.reverse());
-      console.log("Data from API:", posts);
+      setPostsCount(posts.length);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -37,9 +40,10 @@ function Profile() {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
-      console.log("UserName from API:", response.data.userName);
+      setFollowers(response.data.followers.length);
+      setFollowings(response.data.followings.length);
     } catch (error) {
-      console.error("Error fetching user name:", error);
+      console.error("Error fetching user account data:", error);
     }
   };
 
@@ -53,6 +57,9 @@ function Profile() {
           {data && (
             <ProfileDetail
               userName={userName}
+              followers={followers}
+              followings={followings}
+              postsCount={postsCount}
             />
           )}
           {data && (
@@ -61,7 +68,7 @@ function Profile() {
                 image: post.postImg,
                 postId: post.postId
               }))}
-              handleClick={handleClick} // Truyền handleClick xuống GridPost
+              handleClick={handleClick}
             />
           )}
         </Grid>

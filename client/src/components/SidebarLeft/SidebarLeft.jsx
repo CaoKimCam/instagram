@@ -1,26 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
-import CreatePost from "../CreatePost/CreatePost";
 import { useNavigate } from "react-router-dom";
 
-function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
-  const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
+function SidebarLeft({ toggleSidebar, toggleSearchBox, openCreatePost }) {
   const navigate = useNavigate();
-
-  // Hàm bật CreatePost component
-  const openCreatePopup = () => {
-    setIsCreatePopupOpen(true);
-  };
-
-  // Hàm tắt CreatePost component
-  const closeCreatePopup = () => {
-    setIsCreatePopupOpen(false);
-  };
 
   // Hàm xử lý khi nhấn nút Search
   const handleSearchClick = () => {
     toggleSidebar();
     toggleSearchBox();
+  };
+
+  const handleCreateClick = () => {
+    openCreatePost();
   };
 
   // Hàm xử lý điều hướng đến trang chủ
@@ -85,7 +77,7 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
         </div>
 
         {/* Create */}
-        <div className="icon" onClick={openCreatePopup}>
+        <div className="icon" onClick={handleCreateClick}>
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/461acdfcd36914838f13cc932028dc4ebb142f7d899dfcd00325a1ed09fc0ecf?"
             alt="create"
@@ -130,9 +122,6 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
           </p>
         </div>
       </div>
-
-      {/* Bật/tắt CreatePost component */}
-      {isCreatePopupOpen && <CreatePost onClose={closeCreatePopup} refreshHomepage={refreshHomepage} />}
     </div>
   );
 }
