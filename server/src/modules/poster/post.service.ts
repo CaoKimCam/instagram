@@ -28,9 +28,28 @@ export class PostService {
         private readonly commentRepos: MongoRepository<Comment>,
     ){}
 
-    // async getAllPosts(): Promise<Poster[]>{
-    //     return await this.postRepos.find();
-    // }
+    async Test(userid: string): Promise<any[]>{
+        const id= new ObjectId(userid)
+        const posts = await this.postRepos.find();
+        const fullposts = await Promise.all(
+            posts.map(async post=>{
+                const reactIds= post.postLikeId;
+                const reacts= await this.reactRepos.findByIds(reactIds)
+                const listObjectIdsLike= reacts.map(react=>react.author)
+                const numberUserLikePost= reacts.length
+                const isCurrentUserLikePost= (reactIds.includes(id))
+                const users= await this.userRepos.findByIds(listObjectIdsLike)
+                const userNamesLikePost=users.map(user=> user.userName)
+                return{
+                    ...post,
+                    userNameLikePosts: userNamesLikePost,
+                    countReacts: numberUserLikePost,
+                    isLike: isCurrentUserLikePost,
+                }
+            })
+        )
+        return fullposts;
+    }
 
     async getAllPosts(usesId: string):Promise<any[]>{
         
@@ -131,9 +150,7 @@ export class PostService {
         },
         order:{
             postTime:'DESC'
-        },
-        }
-        )
+        }})
         return publicPosts.length>0?publicPosts[0]:null;
     }
 
