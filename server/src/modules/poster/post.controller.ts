@@ -24,8 +24,7 @@ export class PostController{
     @Get('/allposts')
     async getAllPosts(@Request() req): Promise<Poster[]>{
         const id=req.user.id;
-        // return await this.productService.getAllPosts(id);
-        return await this.productService.Test(id);
+        return await this.productService.getAllPosts(id);
     }
         
     @UseGuards(JwtAuthGuard)

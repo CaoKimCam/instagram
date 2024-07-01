@@ -28,7 +28,7 @@ export class PostService {
         private readonly commentRepos: MongoRepository<Comment>,
     ){}
 
-    async Test(userid: string): Promise<any[]>{
+    async TEST(userid: string): Promise<any[]>{
         const id= new ObjectId(userid)
         const posts = await this.postRepos.find();
         const fullposts = await Promise.all(
@@ -93,7 +93,26 @@ export class PostService {
         const resolvedPostsFromFollowings = postfromFollowings ? await Promise.all(postfromFollowings) : [];
         
         posts=resolvedPostsFromFriends.concat(resolvedPostsFromFollowings)
-        return posts.length>0?posts:null;
+
+        // const posts = await this.postRepos.find();
+        const fullposts = await Promise.all(
+            posts.map(async post=>{
+                const reactIds= post.postLikeId;
+                const reacts= await this.reactRepos.findByIds(reactIds)
+                const listObjectIdsLike= reacts.map(react=>react.author)
+                const numberUserLikePost= reacts.length
+                const isCurrentUserLikePost= (reactIds.includes(new ObjectId(usesId)))
+                const users= await this.userRepos.findByIds(listObjectIdsLike)
+                const userNamesLikePost=users.map(user=> user.userName)
+                return{
+                    ...post,
+                    userNameLikePosts: userNamesLikePost,
+                    countReacts: numberUserLikePost,
+                    isLike: isCurrentUserLikePost,
+                }
+            })
+        )
+        return fullposts.length>0?fullposts:null;
     }
     async getPosts(id:string): Promise<Poster[]>{
         const user = await this.userRepos.findOneById(new ObjectId(id));
