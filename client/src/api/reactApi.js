@@ -1,10 +1,20 @@
 import axiosClient from './axiosClient';
 
 const reactApi = {
-  // Lấy danh sách Reacts
-  getReacts: async () => {
+  // Lấy danh sách Reacts (cho admin)
+  getAllReacts: async () => {
     try {
-      const response = await axiosClient.get('/likes');
+      const response = await axiosClient.get('/likes/reacts/alls');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // Lấy Reacts theo objectId (bài viết hoặc bình luận)
+  getReactsByObjectId: async (objectId) => {
+    try {
+      const response = await axiosClient.get(`/likes/reacts/${objectId}`);
       return response.data;
     } catch (error) {
       throw error;
@@ -12,7 +22,7 @@ const reactApi = {
   },
 
   // Tạo một React mới
-createReact: async (reactDto) => {
+  createReact: async (reactDto) => {
     try {
       const response = await axiosClient.post('/likes', reactDto);
       return response.data;
@@ -24,7 +34,7 @@ createReact: async (reactDto) => {
   // Lấy chi tiết một React
   getReactDetail: async (reactId) => {
     try {
-      const response = await axiosClient.get(`/likes/${reactId}`);
+      const response = await axiosClient.get(`/likes/react/${reactId}`);
       return response.data;
     } catch (error) {
       throw error;

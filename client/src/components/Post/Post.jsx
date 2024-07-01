@@ -16,19 +16,24 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
   useEffect(() => {
     const fetchReactStatus = async () => {
       try {
-        const reacts = await reactApi.getReacts();
-        const userReact = reacts.find(react => react.objectId === postId && react.author === currentUserId);
-        if (userReact) {
-          setLiked(true);
+        const reacts = await reactApi.getReactsByObjectId(postId);
+        if (reacts && Array.isArray(reacts)) {
+          const userReact = reacts.find(react => react.author === currentUserId);
+          console.log(userReact);
+          if (userReact) {
+            setLiked(true);
+          } else {
+            setLiked(false);
+          }
+          setLikesCount(reacts.length);
         } else {
-          setLiked(false);
+          console.error("Invalid reacts data:", reacts);
         }
-        setLikesCount(reacts.length);
       } catch (error) {
         console.error("Error fetching react status:", error);
       }
     };
-
+  
     fetchReactStatus();
   }, [postId, currentUserId]);
 
@@ -72,18 +77,18 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
       if (!liked) {
         if (currentUserId) {
           const payload = { type: true, objectId: postId, author: currentUserId, time: new Date().toISOString() };
-          await reactApi.createReact(payload); // Gửi yêu cầu lưu lượt like lên server
+          await reactApi.createReact(payload);
           setLiked(true);
           setLikesCount(likesCount + 1);
         } else {
           alert("User information not available");
         }
       } else {
-        const reacts = await reactApi.getReacts(); // Lấy lại danh sách lượt like từ server
+        const reacts = await reactApi.getReactsByObjectId(postId);
         const userReact = reacts.find(react => react.objectId === postId && react.author === currentUserId);
 
         if (userReact) {
-          await reactApi.deleteReact(userReact._id); // Xóa lượt like của người dùng hiện tại
+          await reactApi.deleteReact(userReact._id);
           setLiked(false);
           setLikesCount(likesCount - 1);
         }
