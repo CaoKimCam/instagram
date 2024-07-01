@@ -14,7 +14,7 @@ export class ReactController{
     constructor(private readonly productService: ReactService){}
     
     @UseGuards(JwtAuthGuard)
-    @Get('/reacts/alls')//all reacts only by admin
+    @Get('/allreacts/')//all reacts only by admin
     async getReacts(): Promise<React[]>{
         return await this.productService.getReacts();
     }
