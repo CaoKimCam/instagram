@@ -23,7 +23,11 @@ export class ReactService {
         private readonly reactRepos: MongoRepository<React>){}
 
     async getReacts(): Promise<React[]>{return await this.reactRepos.find();}
-
+    async getReactsByObjectId(id: string){
+        return await this.reactRepos.find({
+            where: {objectId: new ObjectId(id)}
+        })
+    }
     async createReacts(reactDto: ReactDto): Promise<any>{//React
         const saveReact = await this.reactRepos.save(reactDto);
 

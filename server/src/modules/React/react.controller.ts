@@ -14,9 +14,15 @@ export class ReactController{
     constructor(private readonly productService: ReactService){}
     
     @UseGuards(JwtAuthGuard)
-    @Get()//all reacts only by admin
+    @Get('/reacts/alls')//all reacts only by admin
     async getReacts(): Promise<React[]>{
         return await this.productService.getReacts();
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/reacts/:id')
+    async getReactsByObjectId(@Param('id') id: string){
+        return await this.productService.getReactsByObjectId(id);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -26,7 +32,7 @@ export class ReactController{
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/:id')
+    @Get('/react/:id')
     async detailReact(@Param ('id') id:ObjectId): Promise<React>{
         const id_string= id.toString();
         return await this.productService.detailReacts(id_string); 
