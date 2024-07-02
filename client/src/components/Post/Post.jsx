@@ -79,19 +79,20 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
       if (!liked) {
         if (currentUserId) {
           const payload = { type: true, objectId: postId, author: currentUserId, time: new Date().toISOString() };
-          await reactApi.createReact(payload);
+          const newReact = await reactApi.createReact(payload);
           setLiked(true);
-          setReactIds([...reactIds, payload._id]); // Add new reactId to array
+          setReactIds([...reactIds, newReact._id]); // Add new reactId to array
           setLikesCount(likesCount + 1);
         } else {
           alert("User information not available");
         }
       } else {
-        const userReact = reactIds.find(reactId => reactId === postId);
-        if (userReact) {
-          await reactApi.deleteReact(userReact);
+        const userReact = await reactApi.getAllReacts(); // Lấy tất cả reacts để tìm react của người dùng
+        const reactToDelete = userReact.find(react => react.objectId === postId && react.author === currentUserId);
+        if (reactToDelete) {
+          await reactApi.deleteReact(reactToDelete.id); // Xóa react dựa trên reactId
           setLiked(false);
-          setReactIds(reactIds.filter(reactId => reactId !== userReact)); // Remove reactId from array
+          setReactIds(reactIds.filter(reactId => reactId !== reactToDelete._id)); // Remove reactId from array
           setLikesCount(likesCount - 1);
         }
       }
@@ -148,9 +149,9 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
       <div className="post-footer">
         <div className="react">
           {liked ? (
-            <FavoriteIcon className="heart" style={{ width: 35, height: 35 }} onClick={handleLike} />
+            <FavoriteIcon className="heart" style={{ width: 35, height: 35, cursor: "pointer" }} onClick={handleLike} />
           ) : (
-            <FavoriteBorderIcon className="heart" style={{ width: 35, height: 35 }} onClick={handleLike} />
+            <FavoriteBorderIcon className="heart" style={{ width: 35, height: 35, cursor: "pointer" }} onClick={handleLike} />
           )}
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/39902428d2ced9abf70943cbb60eda5b8b45e004592c552b0bb4278608e4ffdc?"
