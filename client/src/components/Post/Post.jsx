@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import "./style.css";
 import EditPost from "../EditPost/EditPost";
 import reactApi from "../../api/reactApi";
+import { deletePost } from "../../api/posterApi";
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { NavLink } from "react-router-dom";
 
 function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
   const [showOptions, setShowOptions] = useState(false);
@@ -21,8 +23,8 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
         if (reacts && Array.isArray(reacts)) {
           const filteredReacts = reacts.filter(react => react.objectId === postId);
           const userReact = filteredReacts.find(react => react.author === currentUserId);
-          setReactIds(filteredReacts.map(react => react._id)); // Set an array of reactIds
-          setLikesCount(filteredReacts.length); // Count of reacts
+          setReactIds(filteredReacts.map(react => react._id));
+          setLikesCount(filteredReacts.length);
           if (userReact) {
             setLiked(true);
           } else {
@@ -35,7 +37,7 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
         console.error("Error fetching react status:", error);
       }
     };
-  
+
     fetchReactStatus();
   }, [postId, currentUserId]);
 
@@ -45,7 +47,10 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
 
   const handleDelete = async () => {
     try {
-      // Xử lý xóa post
+      await deletePost(postId);
+      alert("Post deleted successfully");
+      setShowOptions(false);
+      // refreshHomepage();
     } catch (error) {
       console.error("Error deleting post:", error);
       alert("Failed to delete post");
@@ -58,7 +63,16 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
   };
 
   const handleCopyLink = () => {
-    // Xử lý sao chép link
+    const link = `${window.location.origin}/post-detail/${postId}`;
+    navigator.clipboard.writeText(link)
+      .then(() => {
+        alert("Link copied to clipboard");
+      })
+      .catch((err) => {
+        console.error("Error copying link:", err);
+        alert("Failed to copy link");
+      });
+    setShowOptions(false);
   };
 
   const handleCancel = () => {
@@ -81,18 +95,18 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
           const payload = { type: true, objectId: postId, author: currentUserId, time: new Date().toISOString() };
           const newReact = await reactApi.createReact(payload);
           setLiked(true);
-          setReactIds([...reactIds, newReact._id]); // Add new reactId to array
+          setReactIds([...reactIds, newReact._id]);
           setLikesCount(likesCount + 1);
         } else {
           alert("User information not available");
         }
       } else {
-        const userReact = await reactApi.getAllReacts(); // Lấy tất cả reacts để tìm react của người dùng
+        const userReact = await reactApi.getAllReacts();
         const reactToDelete = userReact.find(react => react.objectId === postId && react.author === currentUserId);
         if (reactToDelete) {
-          await reactApi.deleteReact(reactToDelete.id); // Xóa react dựa trên reactId
+          await reactApi.deleteReact(reactToDelete.id);
           setLiked(false);
-          setReactIds(reactIds.filter(reactId => reactId !== reactToDelete._id)); // Remove reactId from array
+          setReactIds(reactIds.filter(reactId => reactId !== reactToDelete._id));
           setLikesCount(likesCount - 1);
         }
       }
@@ -153,11 +167,13 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
           ) : (
             <FavoriteBorderIcon className="heart" style={{ width: 35, height: 35, cursor: "pointer" }} onClick={handleLike} />
           )}
-          <img
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/39902428d2ced9abf70943cbb60eda5b8b45e004592c552b0bb4278608e4ffdc?"
-            alt="comment"
-            className="comment"
-          />
+          <NavLink to={`/post-detail/${postId}`}>
+            <img
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/39902428d2ced9abf70943cbb60eda5b8b45e004592c552b0bb4278608e4ffdc?"
+              alt="comment"
+              className="comment"
+            />
+          </NavLink>
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/4738f086753c9eef15575e1ec80d909b8eeba168c98e0bd6d6fe0cd7b4c39c11?"
             alt="share"
@@ -177,18 +193,6 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
             <p className="user-name" style={{ fontWeight: 600, marginRight: 10 }}>{username}</p>
             <div className="user-caption">{postContent}</div>
           </div>
-        </div>
-
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          <input
-            type="text"
-            className="typeComment"
-            name="comment"
-            placeholder="Add a comment..."
-            style={{ border: "none", marginTop: 5, width: 500, padding: "5px 0", outline: "none", marginBottom: 20 }}
-          />
-
-          <p style={{ color: "#4192EF" }}>Post</p>
         </div>
       </div>
 

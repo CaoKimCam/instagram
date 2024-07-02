@@ -17,26 +17,16 @@ function PostDetail() {
     const [showEditPost, setShowEditPost] = useState(false);
 
     useEffect(() => {
-        fetchAccount();
-    }, []);
-
-    // Lấy dữ liệu tài khoản đăng nhập từ API
-    const fetchAccount = async () => {
-        try {
-            const response = await userApi.account();
-            setUserName(response.data.userName);
-            console.log("UserName from API:", response.data.userName);
-        } catch (error) {
-            console.error("Error fetching user name:", error);
-        }
-    };
-
-    useEffect(() => {
         const fetchPostDetail = async () => {
             try {
                 const response = await getPostDetail(postId);
                 setPostContent(response.post.postContent);
                 setPostImage(response.post.postImg);
+                const authorId = response.post.authorId;
+                if (authorId) {
+                    const userDetailResponse = await userApi.getUserDetail(authorId);
+                    setUserName(userDetailResponse.data.userName);
+                }
             } catch (error) {
                 console.error(`Error fetching post with ID ${postId}:`, error);
             }
@@ -127,7 +117,7 @@ function PostDetail() {
                                     <img
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
                                         alt=""
-                                        style={{ marginLeft: "auto", transform: "translate(-20%,-15%)", cursor: "pointer"}}
+                                        style={{ marginLeft: "auto", transform: "translate(-20%,-15%)", cursor: "pointer" }}
                                         onClick={handleMoreClick}
                                     />
                                     {/* Khi nhấn "more" sẽ hiển thị các lựa chọn: delete, edit, copy link */}
@@ -161,7 +151,7 @@ function PostDetail() {
                                 <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
                                     <div className="postDetailAvatar" style={{ alignSelf: "center" }}></div>
                                     <div style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>
-                                        <div style={{ fontSize: 14, fontWeight: 500 }}>userName</div>
+                                        <div style={{ fontSize: 14, fontWeight: 500 }}>{userName}</div>
                                         <p
                                             style={{ fontWeight: 400, fontSize: 14 }}
                                         >
@@ -199,6 +189,18 @@ function PostDetail() {
                                 <h4 className="number-like" style={{ fontWeight: 600, marginLeft: 20 }}>
                                     5 likes
                                 </h4>
+
+                                <div style={{ width: 335, display: "flex", flexDirection: "row", position: "absolute", bottom: 0, padding: "0 10px", borderTop: "1px solid #ccc" }}>
+                                    <input
+                                        type="text"
+                                        className="typeComment"
+                                        name="comment"
+                                        placeholder="Add a comment..."
+                                        style={{ border: "none", width: 300, padding: "15px 5px", outline: "none" }}
+                                    />
+
+                                    <p style={{ color: "#4192EF", alignSelf: "center" }}>Post</p>
+                                </div>
                             </div>
                         </div>
                     </div>
