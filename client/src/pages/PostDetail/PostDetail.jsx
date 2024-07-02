@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import "./style.css";
 import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 import Grid from "@mui/material/Grid";
@@ -7,6 +7,7 @@ import { getPostDetail } from "../../api/posterApi";
 import userApi from "../../api/userApi";
 import { deletePost } from "../../api/posterApi";
 import EditPost from "../../components/EditPost/EditPost";
+import commentApi from "../../api/commentApi";
 
 function PostDetail() {
     const { postId } = useParams();
@@ -15,6 +16,27 @@ function PostDetail() {
     const [userName, setUserName] = useState("");
     const [showOptions, setShowOptions] = useState(false);
     const [showEditPost, setShowEditPost] = useState(false);
+    const [comments, setComments] = useState([]);
+    const [newComment, setNewComment] = useState("");
+
+    const fetchComments = useCallback(async () => {
+        try {
+            const response = await commentApi.getAllComments(postId);
+            const filteredComments = response.data.filter(comment => comment.postId === postId);
+            const updatedComments = await Promise.all(
+                filteredComments.map(async (comment) => {
+                    const authorDetail = await userApi.getUserDetail(comment.authorId);
+                    return {
+                        ...comment,
+                        authorName: authorDetail.data.userName,
+                    };
+                })
+            );
+            setComments(updatedComments);
+        } catch (error) {
+            console.error(`Error fetching comments for post ${postId}:`, error);
+        }
+    }, [postId]);
 
     useEffect(() => {
         const fetchPostDetail = async () => {
@@ -27,17 +49,29 @@ function PostDetail() {
                     const userDetailResponse = await userApi.getUserDetail(authorId);
                     setUserName(userDetailResponse.data.userName);
                 }
+                await fetchComments(); // Fetch danh sách comment khi load bài đăng
             } catch (error) {
                 console.error(`Error fetching post with ID ${postId}:`, error);
             }
         };
 
         fetchPostDetail();
-    }, [postId]);
+    }, [postId, fetchComments]);
 
-    // Hàm xử lý khi nhấn dấu ba chấm ở header
-    const handleMoreClick = () => {
-        setShowOptions(!showOptions);
+    // Function để gửi comment mới lên server
+    const handlePostComment = async () => {
+        try {
+            const commentDto = {
+                content: newComment,
+                postId: postId,
+                time: new Date().toISOString(), // Thêm thời gian khi gửi comment
+            };
+            await commentApi.createComment(commentDto);
+            setNewComment("");
+            await fetchComments();
+        } catch (error) {
+            console.error("Error posting comment:", error);
+        }
     };
 
     // Hàm xử lý khi nhấn Delete
@@ -118,7 +152,7 @@ function PostDetail() {
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
                                         alt=""
                                         style={{ marginLeft: "auto", transform: "translate(-20%,-15%)", cursor: "pointer" }}
-                                        onClick={handleMoreClick}
+                                        onClick={() => setShowOptions(!showOptions)}
                                     />
                                     {/* Khi nhấn "more" sẽ hiển thị các lựa chọn: delete, edit, copy link */}
                                     {showOptions && (
@@ -148,17 +182,15 @@ function PostDetail() {
 
                             {/* Phần comment của bài đăng */}
                             <div style={{ display: "flex", flexDirection: "column", width: 335 }}>
-                                <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
-                                    <div className="postDetailAvatar" style={{ alignSelf: "center" }}></div>
-                                    <div style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>
-                                        <div style={{ fontSize: 14, fontWeight: 500 }}>{userName}</div>
-                                        <p
-                                            style={{ fontWeight: 400, fontSize: 14 }}
-                                        >
-                                            comment
-                                        </p>
+                                {comments.map((comment) => (
+                                    <div key={comment.id} style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
+                                        <div className="postDetailAvatar" style={{ alignSelf: "center" }}></div>
+                                        <div style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>
+                                            <div style={{ fontSize: 14, fontWeight: 500 }}>{comment.authorName}</div>
+                                            <p style={{ fontWeight: 400, fontSize: 14 }}>{comment.content}</p>
+                                        </div>
                                     </div>
-                                </div>
+                                ))}
                             </div>
 
                             {/* Phần tương tác bài đăng + caption */}
@@ -197,9 +229,17 @@ function PostDetail() {
                                         name="comment"
                                         placeholder="Add a comment..."
                                         style={{ border: "none", width: 300, padding: "15px 5px", outline: "none" }}
+                                        value={newComment}
+                                        onChange={(e) => setNewComment(e.target.value)}
                                     />
-
-                                    <p style={{ color: "#4192EF", alignSelf: "center" }}>Post</p>
+                                    <button
+                                        className="postCommentButton"
+                                        style={{ color: "#4192EF", alignSelf: "center", border: "none", backgroundColor: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
+                                        onClick={handlePostComment}
+                                        disabled={!newComment} // Disable nút gửi comment khi newComment rỗng
+                                    >
+                                        Post
+                                    </button>
                                 </div>
                             </div>
                         </div>
