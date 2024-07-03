@@ -163,7 +163,7 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
       <div className="post-footer">
         <div className="react">
           {liked ? (
-            <FavoriteIcon className="heart" style={{ width: 35, height: 35, cursor: "pointer" }} onClick={handleLike} />
+            <FavoriteIcon className="heart" style={{ width: 35, height: 35, cursor: "pointer", color: "red" }} onClick={handleLike} />
           ) : (
             <FavoriteBorderIcon className="heart" style={{ width: 35, height: 35, cursor: "pointer" }} onClick={handleLike} />
           )}

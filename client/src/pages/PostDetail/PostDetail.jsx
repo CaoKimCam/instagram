@@ -8,16 +8,23 @@ import userApi from "../../api/userApi";
 import { deletePost } from "../../api/posterApi";
 import EditPost from "../../components/EditPost/EditPost";
 import commentApi from "../../api/commentApi";
+import reactApi from "../../api/reactApi";
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 function PostDetail() {
     const { postId } = useParams();
     const [postContent, setPostContent] = useState("");
     const [postImage, setPostImage] = useState("");
     const [userName, setUserName] = useState("");
+    const [postTime, setPostTime] = useState("");
     const [showOptions, setShowOptions] = useState(false);
     const [showEditPost, setShowEditPost] = useState(false);
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState("");
+    const [liked, setLiked] = useState(false);
+    const [reactIds, setReactIds] = useState([]);
+    const [likesCount, setLikesCount] = useState(0);
 
     const fetchComments = useCallback(async () => {
         try {
@@ -38,25 +45,53 @@ function PostDetail() {
         }
     }, [postId]);
 
+    const fetchReactStatus = useCallback(async () => {
+        try {
+            // Fetch thông tin user hiện tại
+            const accountResponse = await userApi.account();
+            const currentUserId = accountResponse.data.id; // Hoặc key khác nếu id không đúng
+    
+            // Fetch reacts
+            const reacts = await reactApi.getAllReacts();
+            if (reacts && Array.isArray(reacts)) {
+                const filteredReacts = reacts.filter(react => react.objectId === postId);
+                const userReact = filteredReacts.find(react => react.author === currentUserId);
+                setReactIds(filteredReacts.map(react => react._id));
+                setLikesCount(filteredReacts.length);
+                if (userReact) {
+                    setLiked(true);
+                } else {
+                    setLiked(false);
+                }
+            } else {
+                console.error("Invalid reacts data:", reacts);
+            }
+        } catch (error) {
+            console.error("Error fetching react status:", error);
+        }
+    }, [postId]);
+
     useEffect(() => {
         const fetchPostDetail = async () => {
             try {
                 const response = await getPostDetail(postId);
                 setPostContent(response.post.postContent);
                 setPostImage(response.post.postImg);
+                setPostTime(response.post.postTime);
                 const authorId = response.post.authorId;
                 if (authorId) {
                     const userDetailResponse = await userApi.getUserDetail(authorId);
                     setUserName(userDetailResponse.data.userName);
                 }
                 await fetchComments(); // Fetch danh sách comment khi load bài đăng
+                await fetchReactStatus(); // Fetch số lượt like khi load bài đăng
             } catch (error) {
                 console.error(`Error fetching post with ID ${postId}:`, error);
             }
         };
 
         fetchPostDetail();
-    }, [postId, fetchComments]);
+    }, [postId, fetchComments, fetchReactStatus]);
 
     // Function để gửi comment mới lên server
     const handlePostComment = async () => {
@@ -121,6 +156,58 @@ function PostDetail() {
     const handleEditComplete = () => {
         setShowEditPost(false);
         // refreshHomepage();
+    };
+
+    const calculatePostTime = (postTime) => {
+        const currentTime = new Date().getTime();
+        const postTimeInMs = new Date(postTime).getTime();
+        const diffInMs = currentTime - postTimeInMs;
+        const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+        const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+
+        if (diffInHours < 24) {
+            if (diffInHours === 0) {
+                return `${diffInMinutes} minutes ago`;
+            } else {
+                return `${diffInHours} hours ago`;
+            }
+        } else if (diffInHours >= 24 && diffInHours < 48) {
+            return "yesterday";
+        } else {
+            const postDate = new Date(postTime);
+            return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        }
+    };
+
+    const handleLike = async () => {
+        try {
+            const accountResponse = await userApi.account();
+            const currentUserId = accountResponse.data.id;
+    
+            if (!liked) {
+                if (currentUserId) {
+                    const payload = { type: true, objectId: postId, author: currentUserId, time: new Date().toISOString() };
+                    const newReact = await reactApi.createReact(payload);
+                    setLiked(true);
+                    setReactIds([...reactIds, newReact._id]);
+                    setLikesCount(likesCount + 1);
+                } else {
+                    alert("User information not available");
+                }
+            } else {
+                const userReact = await reactApi.getAllReacts();
+                const reactToDelete = userReact.find(react => react.objectId === postId && react.author === currentUserId);
+                if (reactToDelete) {
+                    await reactApi.deleteReact(reactToDelete.id);
+                    setLiked(false);
+                    setReactIds(reactIds.filter(reactId => reactId !== reactToDelete._id));
+                    setLikesCount(likesCount - 1);
+                }
+            }
+        } catch (error) {
+            console.error("Error liking or unliking post:", error);
+            alert("Failed to like or unlike post");
+        }
     };
 
     return (
@@ -196,11 +283,19 @@ function PostDetail() {
                             {/* Phần tương tác bài đăng + caption */}
                             <div className="postDetail-footer">
                                 <div className="postDetail-react">
-                                    <img
-                                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/c20b1aa752aac82cf2696a44bc6f6310431162eefd7c1dd70943e77371996f53?"
-                                        alt=""
-                                        className="heart"
-                                    />
+                                    {liked ? (
+                                        <FavoriteIcon
+                                            style={{ cursor: "pointer", color: "red", width: 35, height: 35 }}
+                                            onClick={handleLike}
+                                            className="heart"
+                                        />
+                                    ) : (
+                                        <FavoriteBorderIcon
+                                            style={{ cursor: "pointer", width: 35, height: 35 }}
+                                            onClick={handleLike}
+                                            className="heart"
+                                        />
+                                    )}
                                     <img
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/39902428d2ced9abf70943cbb60eda5b8b45e004592c552b0bb4278608e4ffdc?"
                                         alt=""
@@ -219,8 +314,10 @@ function PostDetail() {
                                 </div>
 
                                 <h4 className="number-like" style={{ fontWeight: 600, marginLeft: 20 }}>
-                                    5 likes
+                                    {likesCount} likes
                                 </h4>
+
+                                <p style={{ marginLeft: 20, color: "#737373", fontWeight: 400, fontSize: 12, marginTop: 5 }}>{calculatePostTime(postTime)}</p>
 
                                 <div style={{ width: 335, display: "flex", flexDirection: "row", position: "absolute", bottom: 0, padding: "0 10px", borderTop: "1px solid #ccc" }}>
                                     <input
@@ -236,7 +333,7 @@ function PostDetail() {
                                         className="postCommentButton"
                                         style={{ color: "#4192EF", alignSelf: "center", border: "none", backgroundColor: "#fff", fontWeight: 600, fontSize: 14, cursor: "pointer" }}
                                         onClick={handlePostComment}
-                                        disabled={!newComment} // Disable nút gửi comment khi newComment rỗng
+                                        disabled={!newComment}
                                     >
                                         Post
                                     </button>
