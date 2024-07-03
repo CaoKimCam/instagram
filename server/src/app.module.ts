@@ -18,7 +18,7 @@ import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
       {
         type: 'mongodb',
         // url:'mongodb://localhost:27017',//local
-        url:'mongodb+srv://21520641:j9Mg5HyJxJ6tDQ71@cluster.dkpd6sl.mongodb.net/?retryWrites=true&w=majority&appName=cluster',
+        url:process.env.DATABASE_URL,
         synchronize: true,
         autoLoadEntities: true,
         database:'MyDatabase',
