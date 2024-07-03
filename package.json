@@ -1,0 +1,14 @@
+{
+    "name": "photos-sharing-website",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+      "start": "node server.js",
+      "build": "npm run build --prefix client && npm run build --prefix server",
+      "start:prod": "node server/dist/main",
+      "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install npm && run build"
+    },
+    "dependencies": {},
+    "devDependencies": {}
+  }
+  
