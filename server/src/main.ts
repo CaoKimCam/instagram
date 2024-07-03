@@ -23,7 +23,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: false,
   });
-  const PORT= process.env.PORT||3000;
+  const PORT= process.env.PORT || 3000;
   await app.listen(PORT);
 
   if (module.hot) {
