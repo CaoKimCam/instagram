@@ -9,8 +9,8 @@
       "heroku-postbuild": "npm run build"
     },
     "engines": {
-      "node": "20.x",
-      "npm": ">=10.x"
+      "node": "20.11.1",
+      "npm": "10.2.4"
     },
     "dependencies": {},
     "devDependencies": {}
