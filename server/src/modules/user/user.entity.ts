@@ -28,10 +28,6 @@ export class User{
     followers: ObjectId[]=[];//người theo dõi mình
     @Column({ type: 'array', default: [] })
     followings: ObjectId[]=[];//người mình đang theo dõi
-    @Column({ type: 'array', default: [] })
-    followersInQueue: ObjectId[]=[];
-    @Column({ type: 'array', default: [] })
-    followingsInQueue: ObjectId[]=[];
 
     @Column()
     postSaved: ObjectId[]=[];//bài viết đã lưu

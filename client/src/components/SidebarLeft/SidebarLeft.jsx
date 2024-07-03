@@ -1,45 +1,45 @@
-import React, { useState } from "react";
+import React from "react";
 import "./style.css";
-import CreatePost from "../CreatePost/CreatePost";
+import { useNavigate } from "react-router-dom";
 
-function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
-  const [isCreatePopupOpen, setIsCreatePopupOpen] = useState(false);
+function SidebarLeft({ toggleSidebar, toggleSearchBox, openCreatePost }) {
+  const navigate = useNavigate();
 
-  const openCreatePopup = () => {
-    setIsCreatePopupOpen(true);
-  };
-
-  const closeCreatePopup = () => {
-    setIsCreatePopupOpen(false);
-  };
-
+  // Hàm xử lý khi nhấn nút Search
   const handleSearchClick = () => {
     toggleSidebar();
     toggleSearchBox();
   };
 
+  const handleCreateClick = () => {
+    openCreatePost();
+  };
+
+  // Hàm xử lý điều hướng đến trang chủ
+  const handleNavigateHome = () => {
+    navigate('/');
+  };
+
   return (
     <div id="sidebar-left">
-      <a href="./">
+
+      {/* Logo */}
+      <div onClick={handleNavigateHome} style={{ cursor: "pointer" }}>
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/d2e5a25def5e4ffa9bdc08ae25dacb4096ac6c76f08dd7c4c241bf34b4c8bf15?"
           alt="instagram"
           className="logo"
         />
-      </a>
+      </div>
 
       <div className="sidebar-left-icon">
         {/* Home */}
-        <div className="icon">
+        <div className="icon" onClick={handleNavigateHome} style={{ cursor: "pointer" }}>
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/a2b9a3665605d71e08830fc2cb4a7946ca91fcfdc0d4bda4c76eb364470b1236?"
             alt="home"
           />
-          <h4>
-            <a href="./" style={{ textDecoration: "none", color: "#000" }}>
-              Home
-            </a>
-          </h4>
+          <h4>Home</h4>
         </div>
 
         {/* Search */}
@@ -77,7 +77,7 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
         </div>
 
         {/* Create */}
-        <div className="icon" onClick={openCreatePopup}>
+        <div className="icon" onClick={handleCreateClick}>
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/461acdfcd36914838f13cc932028dc4ebb142f7d899dfcd00325a1ed09fc0ecf?"
             alt="create"
@@ -122,8 +122,6 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, refreshHomepage }) {
           </p>
         </div>
       </div>
-      {/* Pop-up */}
-      {isCreatePopupOpen && <CreatePost onClose={closeCreatePopup} refreshHomepage={refreshHomepage} />}
     </div>
   );
 }

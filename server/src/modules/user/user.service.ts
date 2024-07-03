@@ -94,7 +94,23 @@ export class UserService{
         return result.affected > 0;
     }
 
-    
+    async searchByName(username:string){
+        var listUser= await this.userRepos.find({
+            where:{
+                userName: new RegExp(username, "i"),
+            }}
+        )
+        
+        const listafter=listUser.map(user=>(
+            {
+                userName:user.userName,
+                userAvatar:user.userAvatar,
+                id:user.id,
+            }
+        ))
+        
+        return listafter
+    }
     // hàm phụ
     async isUsernameTaken(username: string): Promise<boolean>{
         const existingUser = await this.userRepos.findOne({where:{userName:username.trim().toString()}})

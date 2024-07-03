@@ -6,45 +6,66 @@ import Grid from "@mui/material/Grid";
 import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
-import { getPosts } from "../../api/posterApi";
+import CreatePost from "../../components/CreatePost/CreatePost";
 import userApi from "../../api/userApi";
+import { getAllPosts } from "../../api/posterApi";
 
 function Homepage() {
-  const [data, setData] = useState(null);
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
-  const [userName, setUserName] = useState("");
-  
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
+
   useEffect(() => {
-    fetchData();
+    fetchPosts();
     fetchAccount();
   }, []);
-
-  const fetchData = async () => {
-    try {
-      const posts = await getPosts();
-      setData(posts.reverse());
-      console.log("Data from API:", posts);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
 
   const fetchAccount = async () => {
     try {
       const response = await userApi.account();
-      setUserName(response.data.userName);
-      console.log("UserName from API:", response.data.userName);
+      setCurrentUserId(response.data.id);
     } catch (error) {
-      console.error("Error fetching user name:", error);
+      console.error("Error fetching user account data:", error);
+    }
+  };
+
+  const fetchPosts = async () => {
+    try {
+      const fetchedPosts = await getAllPosts();
+      if (Array.isArray(fetchedPosts)) {
+        const posts = fetchedPosts.flat();
+        const postsWithUserDetails = await Promise.all(posts.map(async post => {
+          try {
+            const userResponse = await userApi.getUserDetail(post.authorId);
+            return {
+              ...post,
+              username: userResponse.data.userName,
+            };
+          } catch (error) {
+            console.error(`Error fetching user details for authorId ${post.authorId}:`, error);
+            return post;
+          }
+        }));
+        setPosts(postsWithUserDetails.reverse());
+      } else {
+        console.error("Invalid posts data:", fetchedPosts);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
     }
   };
 
   const refreshHomepage = async () => {
     try {
-      const posts = await getPosts();
-      setData(posts.reverse());
-      console.log("Homepage refreshed:", posts);
+      const fetchedPosts = await getAllPosts();
+      if (Array.isArray(fetchedPosts)) {
+        setPosts(fetchedPosts.reverse());
+        console.log("Homepage refreshed:", fetchedPosts);
+      } else {
+        console.error("Invalid posts data:", fetchedPosts);
+      }
     } catch (error) {
       console.error("Error refreshing homepage:", error);
     }
@@ -56,6 +77,26 @@ function Homepage() {
 
   const toggleSearchBox = () => {
     setShowSearchBox(!showSearchBox);
+  };
+
+  const openCreatePost = () => {
+    setShowCreatePost(true);
+    setShowSidebarLeft(true);
+    setShowSearchBox(false);
+  };
+
+  const closeCreatePost = () => {
+    setShowCreatePost(false);
+  };
+
+  const handleSearch = async (name) => {
+    try {
+      const response = await userApi.searchUserByName(name);
+      return response.data;
+    } catch (error) {
+      console.error("Error searching users:", error);
+      return [];
+    }
   };
 
   const calculatePostTime = (postTime) => {
@@ -84,31 +125,42 @@ function Homepage() {
       <Grid container spacing={10}>
         <Grid item xs={3.5}>
           {showSidebarLeft ? (
-            <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} refreshHomepage={refreshHomepage} />
+            <SidebarLeft
+              toggleSidebar={toggleSidebar}
+              toggleSearchBox={toggleSearchBox}
+              openCreatePost={openCreatePost}
+            />
           ) : (
-            <SidebarSimple toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
+            <SidebarSimple
+              toggleSidebar={toggleSidebar}
+              toggleSearchBox={toggleSearchBox}
+            />
           )}
-          {showSearchBox && <SearchBox />}
+          {showSearchBox && <SearchBox onSearch={handleSearch} />}
         </Grid>
+
         <Grid item xs={5}>
-          {data &&
-            data.map((post) => (
-              <Post
-                key={post.postId}
-                image={post.postImg}
-                caption={post.postContent}
-                postTime={calculatePostTime(post.postTime)}
-                userName={userName}
-              />
-            ))}
+          {posts.map((post, index) => (
+            <Post
+              key={post.postId || index}
+              post={post}
+              calculatePostTime={calculatePostTime}
+              refreshHomepage={refreshHomepage}
+              currentUserId={currentUserId}
+            />
+          ))}
         </Grid>
+
         <Grid item xs={3}>
           <SidebarRight />
         </Grid>
       </Grid>
 
-      {/* Footer */}
       <div id="footer"></div>
+
+      {showCreatePost && (
+        <CreatePost onClose={closeCreatePost} refreshHomepage={refreshHomepage} />
+      )}
     </div>
   );
 }

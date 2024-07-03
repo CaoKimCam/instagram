@@ -6,6 +6,7 @@ import userApi from "../../api/userApi";
 const LogIn = () => {
   const navigate = useNavigate();
 
+  // Hàm xử lý đăng nhập
   const handleLogIn = async (event) => {
     event.preventDefault();
     const email = event.target.elements.email.value;
@@ -25,6 +26,8 @@ const LogIn = () => {
 
   return (
     <div>
+
+      {/* Khối bên trên */}
       <div id="rec1">
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/3e52829809ddb92b9149ab9035705c9a1e9cdb50596929b47d40295d30127ab0?"
@@ -59,6 +62,7 @@ const LogIn = () => {
         </button>
       </div>
 
+      {/* Khối bên dưới */}
       <div id="rec2">
         <p className="dont-have-acc">Don't have an account?</p>
         <a href="./signup" className="signup">

@@ -4,23 +4,33 @@ import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 import ProfileDetail from "../../components/ProfileDetail/ProfileDetail";
 import GridPost from "../../components/GridPost/GridPost";
 import Grid from "@mui/material/Grid";
-import { getPosts } from "../../api/posterApi";
+import { getMyPosts } from "../../api/posterApi";
 import userApi from "../../api/userApi";
+import { useNavigate } from "react-router-dom";
 
 function Profile() {
-  const [data, setData] = useState(null);
+  const [data, setData] = useState([]);
   const [userName, setUserName] = useState("");
+  const [followers, setFollowers] = useState(0);
+  const [followings, setFollowings] = useState(0);
+  const [postsCount, setPostsCount] = useState(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
     fetchAccount();
   }, []);
 
+  const handleClick = (postId) => {
+    console.log(postId);
+    navigate(`/post-detail/${postId}`);
+  };
+
   const fetchData = async () => {
     try {
-      const posts = await getPosts();
+      const posts = await getMyPosts();
       setData(posts.reverse());
-      console.log("Data from API:", posts);
+      setPostsCount(posts.length);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -30,9 +40,10 @@ function Profile() {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
-      console.log("UserName from API:", response.data.userName);
+      setFollowers(response.data.followers.length);
+      setFollowings(response.data.followings.length);
     } catch (error) {
-      console.error("Error fetching user name:", error);
+      console.error("Error fetching user account data:", error);
     }
   };
 
@@ -43,22 +54,25 @@ function Profile() {
           <SidebarLeft />
         </Grid>
         <Grid item xs={8}>
-
-          {/* Profile Detail */}
           {data && (
             <ProfileDetail
               userName={userName}
+              followers={followers}
+              followings={followings}
+              postsCount={postsCount}
             />
           )}
-
-          {/* Grid Post */}
           {data && (
-            <GridPost images={data.map(post => post.postImg)} />
+            <GridPost
+              posts={data.map(post => ({
+                image: post.postImg,
+                postId: post.postId
+              }))}
+              handleClick={handleClick}
+            />
           )}
         </Grid>
       </Grid>
-
-      {/* Footer */}
       <div id="footer"></div>
     </div>
   );

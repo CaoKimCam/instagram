@@ -28,9 +28,28 @@ export class PostService {
         private readonly commentRepos: MongoRepository<Comment>,
     ){}
 
-    // async getAllPosts(): Promise<Poster[]>{
-    //     return await this.postRepos.find();
-    // }
+    async TEST(userid: string): Promise<any[]>{
+        const id= new ObjectId(userid)
+        const posts = await this.postRepos.find();
+        const fullposts = await Promise.all(
+            posts.map(async post=>{
+                const reactIds= post.postLikeId;
+                const reacts= await this.reactRepos.findByIds(reactIds)
+                const listObjectIdsLike= reacts.map(react=>react.author)
+                const numberUserLikePost= reacts.length
+                const isCurrentUserLikePost= (reactIds.includes(id))
+                const users= await this.userRepos.findByIds(listObjectIdsLike)
+                const userNamesLikePost=users.map(user=> user.userName)
+                return{
+                    ...post,
+                    userNameLikePosts: userNamesLikePost,
+                    countReacts: numberUserLikePost,
+                    isLike: isCurrentUserLikePost,
+                }
+            })
+        )
+        return fullposts;
+    }
 
     async getAllPosts(usesId: string):Promise<any[]>{
         
@@ -74,7 +93,26 @@ export class PostService {
         const resolvedPostsFromFollowings = postfromFollowings ? await Promise.all(postfromFollowings) : [];
         
         posts=resolvedPostsFromFriends.concat(resolvedPostsFromFollowings)
-        return posts.length>0?posts:null;
+
+        // const posts = await this.postRepos.find();
+        const fullposts = await Promise.all(
+            posts.map(async post=>{
+                const reactIds= post.postLikeId;
+                const reacts= await this.reactRepos.findByIds(reactIds)
+                const listObjectIdsLike= reacts.map(react=>react.author)
+                const numberUserLikePost= reacts.length
+                const isCurrentUserLikePost= (reactIds.includes(new ObjectId(usesId)))
+                const users= await this.userRepos.findByIds(listObjectIdsLike)
+                const userNamesLikePost=users.map(user=> user.userName)
+                return{
+                    ...post,
+                    userNameLikePosts: userNamesLikePost,
+                    countReacts: numberUserLikePost,
+                    isLike: isCurrentUserLikePost,
+                }
+            })
+        )
+        return fullposts.length>0?fullposts:null;
     }
     async getPosts(id:string): Promise<Poster[]>{
         const user = await this.userRepos.findOneById(new ObjectId(id));
@@ -131,15 +169,14 @@ export class PostService {
         },
         order:{
             postTime:'DESC'
-        },
-        }
-        )
+        }})
         return publicPosts.length>0?publicPosts[0]:null;
     }
 
     //tạo ra 1 bài đăng
     async createPost(postDto: PostDto, postImg: string): Promise<Poster>{
         postDto.postImg=postImg;
+        postDto.state = Number(postDto.state);
         const savePost = await this.postRepos.save(postDto);
         const user = await this.userRepos.findOneById(savePost.authorId);
         if (user){//thêm post vào user
@@ -180,6 +217,7 @@ export class PostService {
         const toUpdate = await this.postRepos.findOneById(id);
         if (!toUpdate) {throw new NotFoundException(`Post with ID ${id} not found`);}
         this.logger.log(toUpdate);
+        postDto.state = Number(postDto.state);
         await this.postRepos.update({postId: id}, postDto);
         return Object.assign(toUpdate, postDto);
     }
