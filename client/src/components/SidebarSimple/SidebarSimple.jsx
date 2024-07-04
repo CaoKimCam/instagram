@@ -2,7 +2,7 @@ import React from "react";
 import "./style.css";
 import logoIcon from "../../assets/logo-icon.gif";
 
-function SidebarSimple({ toggleSidebar,toggleSearchBox }) {
+function SidebarSimple({ toggleSidebar, toggleSearchBox, userAvatar }) {
 
   // Hàm xử lý khi nhấn nút Search
   const handleSearchClick = () => {
@@ -70,6 +70,7 @@ function SidebarSimple({ toggleSidebar,toggleSearchBox }) {
               borderRadius: 9999,
             }}
           />
+          <img src={userAvatar} alt="" className="Avatar" style={{ width: 30, height: 30, background: "#D9D9D9", borderRadius: 9999, objectFit: "cover" }} />
         </div>
 
         {/* Settings */}

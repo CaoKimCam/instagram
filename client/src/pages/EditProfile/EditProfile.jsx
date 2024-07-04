@@ -3,6 +3,7 @@ import './EditProfile.css';
 import SidebarLeft from '../../components/SidebarLeft/SidebarLeft';
 import Grid from "@mui/material/Grid";
 import userApi from '../../api/userApi';
+import { useNavigate } from 'react-router-dom';
 
 function EditProfile() {
     const [userData, setUserData] = useState({
@@ -10,10 +11,10 @@ function EditProfile() {
         bio: '',
         avatar: null,
     });
-    const [avatarPreview, setAvatarPreview] = useState('#');
+    const [avatarPreview, setAvatarPreview] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Lấy thông tin tài khoản từ API
         userApi.account().then(response => {
             const { userName, userBio, userAvatar } = response.data;
             setUserData({
@@ -22,6 +23,8 @@ function EditProfile() {
                 avatar: null,
             });
             setAvatarPreview(userAvatar);
+        }).catch(error => {
+            console.error("Error fetching account data:", error);
         });
     }, []);
 
@@ -44,10 +47,12 @@ function EditProfile() {
 
     const handleSubmit = async () => {
         try {
-            await userApi.updateUser({
+            const data = {
                 userName: userData.username,
                 userBio: userData.bio,
-            }, userData.avatar);
+            };
+            console.log(data); // Log dữ liệu để kiểm tra
+            await userApi.updateUser(data, userData.avatar);
             alert("Profile updated successfully!");
         } catch (error) {
             console.error("Error updating profile:", error);
@@ -57,8 +62,9 @@ function EditProfile() {
 
     const handleDeleteAccount = async () => {
         try {
-            await userApi.deleteUser();
+            await userApi.deleteAccount();
             alert("Account deactivated successfully!");
+            navigate('/login');
         } catch (error) {
             console.error("Error deactivating account:", error);
             alert("Failed to deactivate account.");

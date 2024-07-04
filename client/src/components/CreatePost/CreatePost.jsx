@@ -9,6 +9,7 @@ function CreatePost({ onClose, refreshHomepage }) {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [postContent, setPostContent] = useState("");
   const [userName, setUserName] = useState("");
+  const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
   const authorId = '';
   const [status, setStatus] = useState("Public");
   const [showStatusOptions, setShowStatusOptions] = useState(false);
@@ -29,6 +30,7 @@ function CreatePost({ onClose, refreshHomepage }) {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
+      setCurrentUserAvatar(response.data.userAvatar);
     } catch (error) {
       console.error("Lỗi khi lấy tên người dùng:", error);
     }
@@ -127,7 +129,10 @@ function CreatePost({ onClose, refreshHomepage }) {
             {/* Phần viết chú thích */}
             <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
               <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
-                <div className="createAvatar"></div>
+                <img 
+                  src={currentUserAvatar} 
+                  alt="" 
+                  className="createAvatar" />
                 <div className="createUsername">{userName}</div>
                 <button
                   className="setStatus"

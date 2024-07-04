@@ -6,6 +6,7 @@ import { getPostDetail, updatePost } from "../../api/posterApi";
 function EditPost({ postId, initialContent, onClose, onEditComplete }) {
   const [postContent, setPostContent] = useState(initialContent);
   const [userName, setUserName] = useState("");
+  const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
   const [postImage, setPostImage] = useState("");
 
   useEffect(() => {
@@ -17,6 +18,7 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
+      setCurrentUserAvatar(response.data.userAvatar);
     } catch (error) {
       console.error("Error fetching user name:", error);
     }
@@ -81,7 +83,11 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
           {/* Phần caption */}
           <div style={{ display: "flex", flexDirection: "column", marginLeft: "20px" }}>
             <div style={{ display: "flex", flexDirection: "row", marginTop: "20px" }}>
-              <div className="editAvatar"></div>
+              <img 
+                src={currentUserAvatar} 
+                alt="" 
+                className="editAvatar"
+                style={{  }} />
               <div className="editUsername">{userName}</div>
             </div>
             <textarea

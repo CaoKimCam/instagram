@@ -20,7 +20,7 @@ const LogIn = () => {
       navigate('/');
     } catch (error) {
       console.error(error.response?.data || error.message);
-      // Hiển thị thông báo lỗi cho người dùng
+      alert("Account does not exist");
     }
   };
 

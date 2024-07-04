@@ -7,7 +7,7 @@ import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { NavLink } from "react-router-dom";
 
-function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
+function Post({ post, calculatePostTime, refreshHomepage, currentUserId, authorAvatar }) {
   const [showOptions, setShowOptions] = useState(false);
   const [showEditPost, setShowEditPost] = useState(false);
   const [liked, setLiked] = useState(false);
@@ -120,7 +120,7 @@ function Post({ post, calculatePostTime, refreshHomepage, currentUserId }) {
     <div className="post">
       <div className="post-header">
         <img
-          src="https://res.cloudinary.com/dpqnzt8qq/image/upload/v1717835313/ufomkmr3jiqjek6acvob.png"
+          src={authorAvatar}
           alt="avatar"
           className="avatar"
           style={{ objectFit: "cover" }}

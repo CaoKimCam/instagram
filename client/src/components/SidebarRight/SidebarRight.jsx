@@ -24,6 +24,8 @@ function SidebarRight() {
   // }, []);
 
   const [userName, setUserName] = useState("");
+  const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
+
   useEffect(() => {
     fetchAccount();
   }, []);
@@ -33,6 +35,7 @@ function SidebarRight() {
     try {
       const response = await userApi.account();
       setUserName(response.data.userName);
+      setCurrentUserAvatar(response.data.userAvatar);
     } catch (error) {
       console.error("Error fetching user name:", error);
     }
@@ -42,15 +45,11 @@ function SidebarRight() {
     <div id="sidebarRight" style={{ position: "relative" }}>
       {/* Profile */}
       <div className="profile">
-        <div
+        <img
+          src={currentUserAvatar}
+          alt=""
           className="avt"
-          style={{
-            width: 50,
-            height: 50,
-            background: "#D9D9D9",
-            borderRadius: 100,
-            zIndex: -1,
-          }}
+          style={{ width: 50, height: 50, background: "#D9D9D9", borderRadius: 100, zIndex: -1, objectFit: "cover" }}
         />
 
         <div

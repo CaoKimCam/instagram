@@ -59,16 +59,30 @@ export class UserService{
         return user;
     }
 
-    async updateAccount(userDto: UserDto, userId: ObjectId, avatar: string): Promise<User>{
-        const user = await this.userRepos.findOne({where:{id: userId}});
-        if (!user) {throw new NotFoundException(`User with ID ${userId} not found`);}
-        const newUser= user;
-        if (userDto.userName){
-            if (this.isUsernameTaken(userDto.userName)) throw new Error('Username is already taken!');
-            else newUser.userName=userDto.userName;
+    async updateAccount(userDto: UserDto, userId: ObjectId, avatar: string): Promise<User> {
+        const user = await this.userRepos.findOne({where: {id: userId}});
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
         }
-        if (avatar) newUser.userAvatar=avatar;
-        if (userDto.userBio) newUser.userBio=userDto.userBio;
+    
+        const newUser = { ...user };
+    
+        if (userDto.userName && userDto.userName !== user.userName) {
+            if (await this.isUsernameTaken(userDto.userName)) {
+                throw new Error('Username is already taken!');
+            } else {
+                newUser.userName = userDto.userName;
+            }
+        }
+    
+        if (avatar) {
+            newUser.userAvatar = avatar;
+        }
+    
+        if (userDto.userBio) {
+            newUser.userBio = userDto.userBio;
+        }
+    
         await this.userRepos.update({id: userId}, newUser);
         return Object.assign(user, newUser);
     }//cập nhật một trong các tt: tiểu sửl username, avatar

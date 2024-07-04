@@ -30,40 +30,41 @@ const userApi = {
     const url = `/users/follower/${followingId}`;
     return axiosClient.post(url);
   },
-
   // Hàm gửi yêu cầu hủy theo dõi
   unfollowUser: (followingId) => {
     const url = `/users/follower/${followingId}`;
     return axiosClient.delete(url);
   },
-
   // Hàm gửi yêu cầu thêm bạn thân
   addBestfriend: (name) => {
     const url = `/users/bff/${name}`;
     return axiosClient.post(url);
   },
-
   // Hàm gửi yêu cầu xóa bạn thân
   removeBestfriend: (name) => {
     const url = `/users/bff/${name}`;
     return axiosClient.delete(url);
   },
-
   // Hàm kiểm tra trạng thái bạn bè
   isFriend: (name) => {
     const url = `/users/friend/${name}`;
     return axiosClient.get(url);
   },
 
-  // Hàm cập nhật tài khoản người dùng
+  // Hàm cập nhật thông tin tài khoản
   updateUser: (data, avatar) => {
     const url = '/users';
     const formData = new FormData();
-    formData.append('userDto', JSON.stringify(data));
+    if (data.userName) {
+      formData.append('userName', data.userName);
+    }
+    if (data.userBio) {
+      formData.append('userBio', data.userBio);
+    }
     if (avatar) {
       formData.append('avatar', avatar);
     }
-    console.log('FormData:', formData.get('userDto'), formData.get('avatar'));
+    console.log('FormData:', formData.get('userName'), formData.get('userBio'), formData.get('avatar'));
     return axiosClient.put(url, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -71,8 +72,8 @@ const userApi = {
     });
   },
 
-  // Hàm xóa tài khoản người dùng
-  deleteUser: () => {
+  // Hàm xóa tài khoản
+  deleteAccount: () => {
     const url = '/users/account';
     return axiosClient.delete(url);
   },

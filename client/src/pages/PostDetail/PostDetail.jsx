@@ -17,6 +17,7 @@ function PostDetail() {
     const [postContent, setPostContent] = useState("");
     const [postImage, setPostImage] = useState("");
     const [userName, setUserName] = useState("");
+    const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
     const [postTime, setPostTime] = useState("");
     const [showOptions, setShowOptions] = useState(false);
     const [showEditPost, setShowEditPost] = useState(false);
@@ -36,6 +37,7 @@ function PostDetail() {
                     return {
                         ...comment,
                         authorName: authorDetail.data.userName,
+                        authorAvatar: authorDetail.data.userAvatar,
                     };
                 })
             );
@@ -50,7 +52,7 @@ function PostDetail() {
             // Fetch thông tin user hiện tại
             const accountResponse = await userApi.account();
             const currentUserId = accountResponse.data.id; // Hoặc key khác nếu id không đúng
-    
+
             // Fetch reacts
             const reacts = await reactApi.getAllReacts();
             if (reacts && Array.isArray(reacts)) {
@@ -82,6 +84,7 @@ function PostDetail() {
                 if (authorId) {
                     const userDetailResponse = await userApi.getUserDetail(authorId);
                     setUserName(userDetailResponse.data.userName);
+                    setCurrentUserAvatar(userDetailResponse.data.userAvatar);
                 }
                 await fetchComments(); // Fetch danh sách comment khi load bài đăng
                 await fetchReactStatus(); // Fetch số lượt like khi load bài đăng
@@ -183,7 +186,7 @@ function PostDetail() {
         try {
             const accountResponse = await userApi.account();
             const currentUserId = accountResponse.data.id;
-    
+
             if (!liked) {
                 if (currentUserId) {
                     const payload = { type: true, objectId: postId, author: currentUserId, time: new Date().toISOString() };
@@ -233,7 +236,12 @@ function PostDetail() {
                             {/* Phần caption của bài đăng */}
                             <div style={{ display: "flex", flexDirection: "column", height: "fit-content", width: 335, borderBottom: "1px solid #ccc" }}>
                                 <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
-                                    <div className="postDetailAvatar"></div>
+                                    <img
+                                        src={currentUserAvatar}
+                                        alt=""
+                                        className="postDetailAvatar"
+                                        style={{ objectFit: "cover" }}
+                                    />
                                     <div className="postDetailUsername">{userName}</div>
                                     <img
                                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/074e65548a4a3086d9bf392b7f72cda993c6880767874d394d37e12ed2bcc99b?"
@@ -271,7 +279,13 @@ function PostDetail() {
                             <div style={{ display: "flex", flexDirection: "column", width: 335 }}>
                                 {comments.map((comment) => (
                                     <div key={comment.id} style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
-                                        <div className="postDetailAvatar" style={{ alignSelf: "center" }}></div>
+                                        <img 
+                                            src={comment.authorAvatar} 
+                                            alt="" 
+                                            className="postDetailAvatar"
+                                            style={{ alignSelf: "center", objectFit: "cover" }} 
+                                        />
+                                        
                                         <div style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>
                                             <div style={{ fontSize: 14, fontWeight: 500 }}>{comment.authorName}</div>
                                             <p style={{ fontWeight: 400, fontSize: 14 }}>{comment.content}</p>

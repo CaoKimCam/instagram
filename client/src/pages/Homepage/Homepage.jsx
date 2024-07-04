@@ -16,6 +16,7 @@ function Homepage() {
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [posts, setPosts] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
+  const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
 
   useEffect(() => {
     fetchPosts();
@@ -26,6 +27,7 @@ function Homepage() {
     try {
       const response = await userApi.account();
       setCurrentUserId(response.data.id);
+      setCurrentUserAvatar(response.data.userAvatar);
     } catch (error) {
       console.error("Error fetching user account data:", error);
     }
@@ -42,6 +44,7 @@ function Homepage() {
             return {
               ...post,
               username: userResponse.data.userName,
+              authorAvatar: userResponse.data.userAvatar,
             };
           } catch (error) {
             console.error(`Error fetching user details for authorId ${post.authorId}:`, error);
@@ -129,11 +132,13 @@ function Homepage() {
               toggleSidebar={toggleSidebar}
               toggleSearchBox={toggleSearchBox}
               openCreatePost={openCreatePost}
+              userAvatar={currentUserAvatar}
             />
           ) : (
             <SidebarSimple
               toggleSidebar={toggleSidebar}
               toggleSearchBox={toggleSearchBox}
+              userAvatar={currentUserAvatar}
             />
           )}
           {showSearchBox && <SearchBox onSearch={handleSearch} />}
@@ -150,6 +155,7 @@ function Homepage() {
                         calculatePostTime={calculatePostTime}
                         refreshHomepage={refreshHomepage}
                         currentUserId={currentUserId}
+                        authorAvatar={post.authorAvatar}
                     />
                 ))
             )}
