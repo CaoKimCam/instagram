@@ -54,7 +54,28 @@ const userApi = {
     const url = `/users/friend/${name}`;
     return axiosClient.get(url);
   },
-  // Các phương thức khác như updateUser, deleteUser...
+
+  // Hàm cập nhật tài khoản người dùng
+  updateUser: (data, avatar) => {
+    const url = '/users';
+    const formData = new FormData();
+    formData.append('userDto', JSON.stringify(data));
+    if (avatar) {
+      formData.append('avatar', avatar);
+    }
+    console.log('FormData:', formData.get('userDto'), formData.get('avatar'));
+    return axiosClient.put(url, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
+
+  // Hàm xóa tài khoản người dùng
+  deleteUser: () => {
+    const url = '/users/account';
+    return axiosClient.delete(url);
+  },
 };
 
 export default userApi;

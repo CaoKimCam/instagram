@@ -33,7 +33,7 @@ function ProfileDetail({ userName, followers, followings, postsCount }) {
             {/* Tên người dùng, nút chỉnh sửa profile, nút đăng xuất */}
             <div className="row1">
               <h1 className="profileUsername">{userName}</h1>
-              <button className="editProfile">Edit profile</button>
+              <a href="./edit-profile" className="editProfile"><button className="editProfile">Edit profile</button></a>
               <button className="logout" onClick={handleLogout}>Log out</button>
             </div>
 

@@ -140,15 +140,19 @@ function Homepage() {
         </Grid>
 
         <Grid item xs={5}>
-          {posts.map((post, index) => (
-            <Post
-              key={post.postId || index}
-              post={post}
-              calculatePostTime={calculatePostTime}
-              refreshHomepage={refreshHomepage}
-              currentUserId={currentUserId}
-            />
-          ))}
+            {posts.length === 0 ? (
+                <p style={{ marginTop: 30 }}>No posts available. Follow your friends to see new posts.</p>
+            ) : (
+                posts.map((post, index) => (
+                    <Post
+                        key={post.postId || index}
+                        post={post}
+                        calculatePostTime={calculatePostTime}
+                        refreshHomepage={refreshHomepage}
+                        currentUserId={currentUserId}
+                    />
+                ))
+            )}
         </Grid>
 
         <Grid item xs={3}>
