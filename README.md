@@ -1,55 +1,78 @@
-# instagram-backend
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
 
-instagram-backend
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
 
-# Folder video: https://www.youtube.com/watch?v=UhihFdEIkmc&list=PLnRJxWEhhmzriVI5YiYI01O4cSzR5AHH_&index=8
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-1. Set up
+## Description
 
-- Create a new instance
-- Hot reload
-- Chạy chương trình:
-  npm run start:dev
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
-2. Module
+## Installation
 
-- Create a new module: tạo tay hoặc tạo = lệnh (controller, module, service)
+```bash
+$ npm install
+```
 
-* 1 module gổm 3 tp chính:
+## Running the app
 
-- Module:
-- Controller: các phương thức GET,PUT,POST,DELETE... Vai trò: nhận request từ client về server, và response data (data này lấy từ service) từ server về client
-- Service:
+```bash
+# development
+$ npm run start
 
-3. Provider (file service)
+# watch mode
+$ npm run start:dev
 
-- Trong controller khởi tạo đối tượng productService, đối tượng này sẽ chấm tới method của nó trong controller.
+# production mode
+$ npm run start:prod
+```
 
-4. Response data
+## Test
 
-- Trạng thái status code,... để response data
+```bash
+# unit tests
+$ npm run test
 
-5. Get Product List
+# e2e tests
+$ npm run test:e2e
 
-- Tạo danh sách các product và get product từ response đã tạo
+# test coverage
+$ npm run test:cov
+```
 
-6. Get Detail Product
-7. Data Transfer Object (DTO)
+## Support
 
-- để lấy data từ request client gửi lên server, ta phải có 1 cái DTO
-- nói đơn giản là dây sạc kết nối nguồn điện (client) với điện thoại (server)
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-8. Pipes
+## Stay in touch
 
-# npm i --save class-validator class-transformer
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-- Ví dụ: MinLength, ...
-- Cách nữa: nếu muốn dùng gloabl:
+## License
 
-9. Post
+Nest is [MIT licensed](LICENSE).
 
-10. Comment
+User mongodb:
+kimcam xKqjVMVSFvhfcvCH
 
-11. React
-
-12. User
+mongodb+srv://kimcam:<xKqjVMVSFvhfcvCH>@mydatabase.2z3h7gq.mongodb.net/?retryWrites=true&w=majority&appName=MyDatabase
