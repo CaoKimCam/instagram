@@ -1,14 +1,6 @@
-
-FROM node:latest
-
-WORKDIR /app
-
-COPY package*.json ./
-
+FROM node:20-alpine
+WORKDIR /var/www/server
+COPY . /var/www/server/
 RUN npm install
-
-COPY . .
-
-EXPOSE 3000
-
-CMD ["npm", "run", "start:dev"]
+RUN npm run build
+CMD ["npm","run","start:dev"]
