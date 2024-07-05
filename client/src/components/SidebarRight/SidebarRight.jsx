@@ -1,41 +1,57 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+// import axios from "axios";
 import "./style.css";
+import userApi from "../../api/userApi";
 
 function SidebarRight() {
-  const [suggestedUsers, setSuggestedUsers] = useState([]);
+  // const [suggestedUsers, setSuggestedUsers] = useState([]);
 
+  // Fake api danh sách gợi ý kết bạn
+  // useEffect(() => {
+  //   const fetchSuggestedUsers = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         "https://661b85d965444945d04fa64d.mockapi.io/users"
+  //       );
+  //       setSuggestedUsers(response.data);
+  //       console.log("Suggested Users:", response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching suggested users:", error);
+  //     }
+  //   };
+
+  //   fetchSuggestedUsers();
+  // }, []);
+
+  const [userName, setUserName] = useState("");
   useEffect(() => {
-    const fetchSuggestedUsers = async () => {
-      try {
-        const response = await axios.get(
-          "https://661b85d965444945d04fa64d.mockapi.io/users"
-        );
-        setSuggestedUsers(response.data);
-        console.log("Suggested Users:", response.data);
-      } catch (error) {
-        console.error("Error fetching suggested users:", error);
-      }
-    };
-
-    fetchSuggestedUsers();
+    fetchAccount();
   }, []);
 
+  // Lấy dữ liệu tài khoản đăng nhập từ API
+  const fetchAccount = async () => {
+    try {
+      const response = await userApi.account();
+      setUserName(response.data.userName);
+    } catch (error) {
+      console.error("Error fetching user name:", error);
+    }
+  };
+
   return (
-    <div style={{position: "relative", zIndex: -1 }}>
+    <div id="sidebarRight" style={{ position: "relative" }}>
       {/* Profile */}
       <div className="profile">
-        <a href="/profile">
-          <div
-            className="avt"
-            style={{
-              width: 50,
-              height: 50,
-              background: "#D9D9D9",
-              borderRadius: 100,
-            }}
-          />
-        </a>
+        <div
+          className="avt"
+          style={{
+            width: 50,
+            height: 50,
+            background: "#D9D9D9",
+            borderRadius: 100,
+            zIndex: -1,
+          }}
+        />
 
         <div
           style={{
@@ -45,20 +61,16 @@ function SidebarRight() {
             transform: "translateY(-5%)",
           }}
         >
-          <p className="userName">
-            <a
-              href="/profile"
-              style={{ textDecoration: "none", color: "#000" }}
-            >
-              sugaringbananaa
-            </a>
-          </p>
-          <p className="sidebar-fullName">HNBC</p>
+          <a href="./profile" style={{ textDecoration: "none", color: "#000", cursor: "pointer" }}>
+            <p className="userName">
+              {userName}
+            </p>
+          </a>
         </div>
       </div>
 
       {/* Suggested for you */}
-      <h2>Suggested for you</h2>
+      {/* <h2 style={{ marginLeft: 50 }}>Suggested for you</h2>
 
       <div
         className="wrapped"
@@ -70,7 +82,7 @@ function SidebarRight() {
             style={{ display: "flex", flexDirection: "row", marginBottom: 10 }}
             key={user.id}
           >
-            <img src={user.avt} alt="" className="suggestedAvt" style={{ width: 50, height: 50, borderRadius: 100 }} />
+            <img src={user.avt} alt="" className="suggestedAvt" style={{ width: 50, height: 50, borderRadius: 100, zIndex: -1, }} />
             <p
               className="suggestedName"
               style={{
@@ -85,8 +97,8 @@ function SidebarRight() {
             <button className="follow">Follow</button>
           </div>
         ))}
-      </div>
-    </div>
+      </div> */}
+    </div >
   );
 }
 

@@ -3,6 +3,7 @@
     margin: 0;
     box-sizing: border-box;
     font-family: Segoe UI;
+    letter-spacing: 0.1px;
 }
 
 #main {
@@ -11,7 +12,6 @@
     flex-direction: row;
 }
 
-/* Start: Content */
 #content {
     width: 45%;
     left: 25%;
@@ -21,5 +21,3 @@
     flex-direction: column;
     font-size: 14px;
 }
-
-/* End: Content */

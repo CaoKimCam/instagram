@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { Int32, ObjectId } from 'mongodb';
 import { Column, Entity, ObjectIdColumn} from 'typeorm'
 
 @Entity('posts')
@@ -24,10 +24,9 @@ export class Poster{
     @Column()
     mimetype: string;
 
-    @Column()
-    state: boolean;//tạo 1 enum
-    //các chế độ: private, public,...
-
+    @Column({default:0})
+    state: Number;//tạo 1 enum
+    //các chế độ: 1 public 2 follow 3 friend 4 best-friend 5 private
     @Column({default: true})
     isShow: boolean;//ẩn, hiển
 

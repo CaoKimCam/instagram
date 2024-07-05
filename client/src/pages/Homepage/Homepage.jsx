@@ -3,37 +3,121 @@ import "./Homepage.css";
 import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 import Post from "../../components/Post/Post";
 import Grid from "@mui/material/Grid";
-import axios from "axios";
 import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import SearchBox from "../../components/SearchBox/SearchBox";
+import CreatePost from "../../components/CreatePost/CreatePost";
+import userApi from "../../api/userApi";
+import { getAllPosts } from "../../api/posterApi";
 
 function Homepage() {
-  const [data, setData] = useState(null);
   const [showSidebarLeft, setShowSidebarLeft] = useState(true);
   const [showSearchBox, setShowSearchBox] = useState(false);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axios.get(
-          "https://661b85d965444945d04fa64d.mockapi.io/posts"
-        );
-        setData(response.data);
-        console.log("Data from API:", response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [posts, setPosts] = useState([]);
+  const [currentUserId, setCurrentUserId] = useState(null);
 
-    fetchData();
+  useEffect(() => {
+    fetchPosts();
+    fetchAccount();
   }, []);
 
+  const fetchAccount = async () => {
+    try {
+      const response = await userApi.account();
+      setCurrentUserId(response.data.id);
+    } catch (error) {
+      console.error("Error fetching user account data:", error);
+    }
+  };
+
+  const fetchPosts = async () => {
+    try {
+      const fetchedPosts = await getAllPosts();
+      if (Array.isArray(fetchedPosts)) {
+        const posts = fetchedPosts.flat();
+        const postsWithUserDetails = await Promise.all(posts.map(async post => {
+          try {
+            const userResponse = await userApi.getUserDetail(post.authorId);
+            return {
+              ...post,
+              username: userResponse.data.userName,
+            };
+          } catch (error) {
+            console.error(`Error fetching user details for authorId ${post.authorId}:`, error);
+            return post;
+          }
+        }));
+        setPosts(postsWithUserDetails.reverse());
+      } else {
+        console.error("Invalid posts data:", fetchedPosts);
+      }
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
+  };
+
+  const refreshHomepage = async () => {
+    try {
+      const fetchedPosts = await getAllPosts();
+      if (Array.isArray(fetchedPosts)) {
+        setPosts(fetchedPosts.reverse());
+        console.log("Homepage refreshed:", fetchedPosts);
+      } else {
+        console.error("Invalid posts data:", fetchedPosts);
+      }
+    } catch (error) {
+      console.error("Error refreshing homepage:", error);
+    }
+  };
+
   const toggleSidebar = () => {
-    setShowSidebarLeft(!showSidebarLeft); // Chuyển giữa hiển thị SidebarLeft và SidebarSimple khi nhấn nút Search
+    setShowSidebarLeft(!showSidebarLeft);
   };
 
   const toggleSearchBox = () => {
-    setShowSearchBox(!showSearchBox); // Chuyển đổi trạng thái hiển thị của SearchBox
+    setShowSearchBox(!showSearchBox);
+  };
+
+  const openCreatePost = () => {
+    setShowCreatePost(true);
+    setShowSidebarLeft(true);
+    setShowSearchBox(false);
+  };
+
+  const closeCreatePost = () => {
+    setShowCreatePost(false);
+  };
+
+  const handleSearch = async (name) => {
+    try {
+      const response = await userApi.searchUserByName(name);
+      return response.data;
+    } catch (error) {
+      console.error("Error searching users:", error);
+      return [];
+    }
+  };
+
+  const calculatePostTime = (postTime) => {
+    const currentTime = new Date().getTime();
+    const postTimeInMs = new Date(postTime).getTime();
+    const diffInMs = currentTime - postTimeInMs;
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+
+    if (diffInHours < 24) {
+      if (diffInHours === 0) {
+        return `${diffInMinutes} minutes ago`;
+      } else {
+        return `${diffInHours} hours ago`;
+      }
+    } else if (diffInHours >= 24 && diffInHours < 48) {
+      return "yesterday";
+    } else {
+      const postDate = new Date(postTime);
+      return postDate.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+    }
   };
 
   return (
@@ -41,33 +125,42 @@ function Homepage() {
       <Grid container spacing={10}>
         <Grid item xs={3.5}>
           {showSidebarLeft ? (
-            <SidebarLeft toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
+            <SidebarLeft
+              toggleSidebar={toggleSidebar}
+              toggleSearchBox={toggleSearchBox}
+              openCreatePost={openCreatePost}
+            />
           ) : (
-            <SidebarSimple toggleSidebar={toggleSidebar} toggleSearchBox={toggleSearchBox} />
+            <SidebarSimple
+              toggleSidebar={toggleSidebar}
+              toggleSearchBox={toggleSearchBox}
+            />
           )}
-          {showSearchBox && <SearchBox />}
+          {showSearchBox && <SearchBox onSearch={handleSearch} />}
         </Grid>
+
         <Grid item xs={5}>
-          {data &&
-            data.map((post) => (
-              <Post
-                key={post.id}
-                avatar={post.avatar}
-                username={post.username}
-                time={post.time}
-                image={post.image}
-                numberLike={post.numberLike}
-                userComment={post.userComment}
-              />
-            ))}
+          {posts.map((post, index) => (
+            <Post
+              key={post.postId || index}
+              post={post}
+              calculatePostTime={calculatePostTime}
+              refreshHomepage={refreshHomepage}
+              currentUserId={currentUserId}
+            />
+          ))}
         </Grid>
+
         <Grid item xs={3}>
           <SidebarRight />
         </Grid>
       </Grid>
 
-      {/* Footer */}
       <div id="footer"></div>
+
+      {showCreatePost && (
+        <CreatePost onClose={closeCreatePost} refreshHomepage={refreshHomepage} />
+      )}
     </div>
   );
 }

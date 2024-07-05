@@ -1,23 +1,13 @@
-* {
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI';
-    letter-spacing: 0.1px;
-}
-
-#post {
-    width: 100px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    font-size: 14px;
+.post {
+    width: 500px;
+    border-bottom: 1px solid #ccc;
 }
 
 .post-header {
     width: 500px;
     display: flex;
     flex-direction: row;
+    position: relative;
 }
 
 .post-header .avatar {
@@ -25,6 +15,7 @@
     height: 50px;
     border-radius: 100px;
     margin: 10px 10px 10px 0;
+    z-index: -1;
 }
 
 .image {
@@ -39,10 +30,16 @@
     margin-top: 10px;
     margin-left: 10px;
     line-height: 50px;
+    z-index: -1;
+}
+
+.post-header .username {
+    font-weight: 600;
 }
 
 .post-header .more {
     margin-left: auto;
+    cursor: pointer;
 }
 
 .post-footer {
@@ -60,22 +57,42 @@
     margin: 0 10px 0 0;
 }
 
+.heart {
+    width: 50px;
+}
+
 .save {
     width: 35px;
     float: right;
 }
 
-.comment-user {
+.caption-user {
     width: 500px;
     display: flex;
-    margin-bottom: 20px;
 }
 
-#post .comment .user-comment {
+#post .caption .user-caption {
     margin-left: 10px;
 }
 
-#post .more {
-    width: 20px;
-    display: inline;
-}
+.post-header .options-menu {
+    width: 170px;
+    position: absolute;
+    right: 10px;
+    top: 50px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+  
+  .option {
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+  }
+  
+  .option:hover {
+    background-color: #f0f0f0;
+  }
+  

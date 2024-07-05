@@ -12,6 +12,7 @@ import { CloudinaryService } from "../cloudinary/cloudinary.service";
 import { ReactModule } from "../react/react.module";
 import { CommentModule } from "../comment/comment.module";
 import { PostModule } from "../poster/post.module";
+import { FollowService } from "./follow.service";
 
 @Module({
     imports: [
@@ -31,8 +32,8 @@ import { PostModule } from "../poster/post.module";
         forwardRef(()=>ReactModule), forwardRef(()=>CommentModule), forwardRef(()=>PostModule)
     ],
     controllers: [UserController],
-    providers: [UserService, JwtStategy, CloudinaryService, CloudinaryProvider],
-    exports:[JwtModule, PassportModule, UserService]
+    providers: [UserService, JwtStategy, CloudinaryService, CloudinaryProvider, FollowService],
+    exports:[JwtModule, PassportModule, UserService, FollowService]
 })
 
 export class UserModule{};

@@ -19,9 +19,16 @@ export class PostController{
         private readonly productService: PostService,
         private readonly cloudinaryService: CloudinaryService,
         ){}
-
+        
     @UseGuards(JwtAuthGuard)
-    @Get()
+    @Get('/allposts')
+    async getAllPosts(@Request() req): Promise<Poster[]>{
+        const id=req.user.id;
+        return await this.productService.getAllPosts(id);
+    }
+        
+    @UseGuards(JwtAuthGuard)
+    @Get('/myposts')
     async getPosts(@Request() req): Promise<Poster[]>{
         const id=req.user.id;
         return await this.productService.getPosts(id);
@@ -32,12 +39,13 @@ export class PostController{
     @UseInterceptors(FileInterceptor('file'))
     async createProduct(@UploadedFile() file: Express.Multer.File, @Body(new ValidationPipe) postDto: PostDto, @Request() req): Promise<any>{
         postDto.authorId=req.user.id;
+        postDto.state = Number(postDto.state);
         const postImg= (await this.cloudinaryService.uploadFile(file)).secure_url;
         return await this.productService.createPost(postDto, postImg);
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('/:id')
+    @Get('/myposts/:id')
     async detailProduct(@Param ('id') id:ObjectId): Promise<Poster>{
         const id_string= id.toString();
         return await this.productService.detailPost(id_string); 
@@ -47,6 +55,7 @@ export class PostController{
     @Put('/:id')
     async updateProduct(@Body() postDto: PostDto, @Param('id') id: ObjectId, @Request() req): Promise<Poster>{
         postDto.authorId=req.user.id;
+        postDto.state = Number(postDto.state);
         return await this.productService.updatePost(postDto, id);
     }
 
@@ -55,4 +64,12 @@ export class PostController{
     async deleteProduct(@Param('id') id:ObjectId): Promise<boolean>{
         return await this.productService.deletePost(id);
     }
+
+    //getpublicPost
+    @Get('/other/:name')
+    async getPublicPost(@Param('name') name:string){
+        return await this.productService.getPublicPosts(name)
+    }
+
+    
 }

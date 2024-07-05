@@ -6,6 +6,9 @@ export class User{
     @ObjectIdColumn()
     id: ObjectId;
 
+    @Column({default: true})
+    state:Boolean;
+
     @Column()
     userName: string;
     @Column()
@@ -18,20 +21,16 @@ export class User{
     @Column()
     userBio: string;
 
+    @Column({ type: 'array', default: [] })
+    bestfriend: ObjectId[]=[];
 
-    @Column()
+    @Column({ type: 'array', default: [] })
     followers: ObjectId[]=[];//người theo dõi mình
-    @Column()
+    @Column({ type: 'array', default: [] })
     followings: ObjectId[]=[];//người mình đang theo dõi
-    @Column()
-    friend: ObjectId[]=[];//bạn bè
-    @Column()
-    bestFriend:ObjectId[]=[];//người tuỳ chỉnh xem bài viết
 
     @Column()
     postSaved: ObjectId[]=[];//bài viết đã lưu
-
-
     @Column()
     postIds: ObjectId[]=[];//bài viết mình đăng
     @Column()

@@ -30,8 +30,8 @@ export class UserService{
     async signUp(signUpDto: SignUpDto): Promise<{token:string}>{
         const {name, email, password} = signUpDto;
         const hashedPassword = await bcrypt.hash(password, 10);
-        if (this.isUsernameTaken(name)){throw new Error ("Username is already taken!!")}
-        if (this.isEmailTaken(email)){throw new Error ("Email is already taken!!")}
+        if (await this.isUsernameTaken(signUpDto.name)===true) throw new Error ("Username is already taken!!");
+        if (await this.isEmailTaken(signUpDto.email)===true) throw new Error ("Email is already taken!!");
         const newUser = this.userRepos.create({
             userName: name,
             userEmail: email,
@@ -94,10 +94,26 @@ export class UserService{
         return result.affected > 0;
     }
 
-    
+    async searchByName(username:string){
+        var listUser= await this.userRepos.find({
+            where:{
+                userName: new RegExp(username, "i"),
+            }}
+        )
+        
+        const listafter=listUser.map(user=>(
+            {
+                userName:user.userName,
+                userAvatar:user.userAvatar,
+                id:user.id,
+            }
+        ))
+        
+        return listafter
+    }
     // hàm phụ
     async isUsernameTaken(username: string): Promise<boolean>{
-        const existingUser = await this.userRepos.findOne({where:{userName:username}})
+        const existingUser = await this.userRepos.findOne({where:{userName:username.trim().toString()}})
         return !!existingUser;
     }
     async isEmailTaken(email: string): Promise<boolean>{

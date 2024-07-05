@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req, Request, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { User } from "./user.entity";
-import { ValidationPipe } from "src/validation.pipe";
 import { UserDto } from "src/dto/user.dto";
 import { ObjectId } from "mongodb";
 import { SignUpDto } from "src/dto/user/signup.dto";
@@ -12,6 +11,7 @@ import { ResponseData } from "src/global/globalClass";
 import { HttpMessage, HttpStatus } from "src/global/globalEnum";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CloudinaryService } from "../cloudinary/cloudinary.service";
+import { FollowService } from "./follow.service";
 
 @Controller('users')
 @ApiTags('USERS')
@@ -19,17 +19,11 @@ export class UserController{
     constructor(
         private readonly userService: UserService,
         private readonly cloudinaryService: CloudinaryService,
+        private readonly flService: FollowService
     ){}
 
-    @UseGuards(JwtAuthGuard)
-    @Post('/test')
-    async get(@Request() req):Promise<any>{
-        const user = req.user;
-        return await user;
-    }
-
     @Post('/signup')
-    async signUp(@Body() signUpDto: SignUpDto): Promise <{token: string}>{
+    async signUp(@Body() signUpDto: SignUpDto){
         return await this.userService.signUp(signUpDto);
     }
 
@@ -56,6 +50,12 @@ export class UserController{
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('/:id')
+    async detailFriend(@Param('id') id:string): Promise<User>{
+        return await this.userService.detailAccount(id); 
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Put()
     @UseInterceptors(FileInterceptor('avatar'))
     async updateAccount(@Body() userDto: UserDto, @Request() req, @UploadedFile() avatar: Express.Multer.File): Promise<User>{
@@ -68,10 +68,55 @@ export class UserController{
     }
 
     @UseGuards(JwtAuthGuard)
-    @Delete()
+    @Delete('/account')
     async deleteAccount(@Request() req): Promise<any>{
         const user=req.user;
         const id=user.id;
         return await this.userService.deleteAccount(new ObjectId(id));
     }
+
+    //tính năng liên quan đến follow
+    @UseGuards(JwtAuthGuard)
+    @Post('/follower/:followingId')//accept theo dõi của người theo dõi
+    async acceptFollow(@Request() req, @Param('followingId') followingId: string){
+        const followerId= new ObjectId(req.user.id);
+        return this.flService.acceptFollow(followerId, new ObjectId(followingId));
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete('/follower/:followingId')//xoá theo dõi
+    async unfollowByFollower(@Request() req, @Param('followingId') followingId: string){
+        const followerId= new ObjectId(req.user.id);
+        return this.flService.unfollowUser(followerId, new ObjectId(followingId));
+    }
+
+    //---bestfriend
+        //addtobestfriend
+    @UseGuards(JwtAuthGuard)
+    @Post('/bff/:name')//thêm
+    async addBestfriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.addBestFriend(current, name)
+    }
+        //remove to bff
+    @UseGuards(JwtAuthGuard)
+    @Delete('/bff/:name')//xoá
+    async removeBestfriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.removeBestFriend(current, name)
+    }
+        //check trạng thái friend
+    @UseGuards(JwtAuthGuard)
+    @Get('/friend/:name')
+    async isFriend(@Request() req, @Param('name') name: string){
+        const current= new ObjectId(req.user.id);
+        return this.flService.isFriend(current, name)
+    }
+
+    //---search
+    @Get('/search/:name')
+    async searchListUserByName(@Param('name') name: string){
+        return this.userService.searchByName(name)
+    }
+
 }

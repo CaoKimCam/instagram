@@ -1,20 +1,31 @@
 import axiosClient from './axiosClient';
 
-// Hàm lấy danh sách bài viết
-export const getPosts = async () => {
+// Hàm lấy tất cả các bài viết
+export const getAllPosts = async () => {
   try {
-    const response = await axiosClient.get('/posters');
+    const response = await axiosClient.get('/posters/allposts');
     return response.data;
   } catch (error) {
-    console.error('Error fetching posts:', error);
+    console.error('Error fetching all posts:', error);
     throw error;
   }
 };
 
-// Hàm lấy chi tiết một bài viết
+// Hàm lấy tất cả bài viết của người dùng hiện tại
+export const getMyPosts = async () => {
+  try {
+    const response = await axiosClient.get('/posters/myposts');
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching my posts:', error);
+    throw error;
+  }
+};
+
+// Hàm lấy chi tiết một bài viết cụ thể
 export const getPostDetail = async (postId) => {
   try {
-    const response = await axiosClient.get(`/posters/${postId}`);
+    const response = await axiosClient.get(`posters/myposts/${postId}`);
     return response.data;
   } catch (error) {
     console.error(`Error fetching post with ID ${postId}:`, error);
@@ -23,12 +34,13 @@ export const getPostDetail = async (postId) => {
 };
 
 // Hàm tạo một bài viết mới
-export const createPost = async (postContent, imageUrl, authorId) => {
+export const createPost = async (postDto, file) => {
   try {
     const formData = new FormData();
-    formData.append('postContent', postContent);
-    formData.append('authorId', authorId);
-    formData.append('file', imageUrl);
+    formData.append('file', file);
+    for (const key in postDto) {
+      formData.append(key, postDto[key]);
+    }
 
     const response = await axiosClient.post('/posters', formData, {
       headers: {
@@ -44,13 +56,9 @@ export const createPost = async (postContent, imageUrl, authorId) => {
 };
 
 // Hàm cập nhật một bài viết
-export const updatePost = async (postId, postContent, imageUrl, state) => {
+export const updatePost = async (postId, postDto) => {
   try {
-    const response = await axiosClient.put(`/posters/${postId}`, {
-      postContent,
-      imageUrl,
-      state,
-    });
+    const response = await axiosClient.put(`/posters/${postId}`, postDto);
     return response.data;
   } catch (error) {
     console.error(`Error updating post with ID ${postId}:`, error);
@@ -65,6 +73,17 @@ export const deletePost = async (postId) => {
     return response.data;
   } catch (error) {
     console.error(`Error deleting post with ID ${postId}:`, error);
+    throw error;
+  }
+};
+
+// Hàm lấy tất cả các bài viết công khai của một người dùng khác
+export const getPublicPost = async (name) => {
+  try {
+    const response = await axiosClient.get(`/posters/other/${name}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching public posts for user ${name}:`, error);
     throw error;
   }
 };
