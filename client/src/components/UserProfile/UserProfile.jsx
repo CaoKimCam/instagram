@@ -1,16 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./style.css";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 function UserProfile({ user, handleFollowClick, isFollowing, isFriend, handleStarClick, isFavorite }) {
-  const { userName, followers, followings, userAvatar } = user;
+  const { userName, followers = [], followings = [], userAvatar } = user;
 
-  // useEffect(() => {
-  //   console.log("isFriend in UserProfile:", isFriend);
-  //   console.log("isFollowing in UserProfile:", isFollowing);
-  //   console.log("isFavorite in UserProfile:", isFavorite);
-  // }, [isFriend, isFollowing, isFavorite]); // Đảm bảo useEffect này nhận các giá trị mới của isFriend và isFollowing và isFavorite
+  useEffect(() => {
+    console.log("isFriend in UserProfile:", isFriend);
+    console.log("isFollowing in UserProfile:", isFollowing);
+    console.log("isFavorite in UserProfile:", isFavorite);
+  }, [isFriend, isFollowing, isFavorite]);
 
   return (
     <div style={{ backgroundColor: "#fefefe" }}>

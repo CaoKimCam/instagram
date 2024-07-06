@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import "./OtherUser.css";
 import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
 import UserProfile from "../../components/UserProfile/UserProfile";
 import GridPost from "../../components/GridPost/GridPost";
 import Grid from "@mui/material/Grid";
 import userApi from "../../api/userApi";
-import { getPostFromOther } from "../../api/posterApi"; // Đổi từ getAllPosts thành getPostFromOther
-import { useNavigate } from "react-router-dom";
+import { getPostFromOther } from "../../api/posterApi";
 
 function OtherUser() {
   const [user, setUser] = useState(null);
@@ -15,51 +14,60 @@ function OtherUser() {
   const [isFollowing, setIsFollowing] = useState(false);
   const [isFriend, setIsFriend] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [currentUserFollowing, setCurrentUserFollowing] = useState([]);
+  const [currentUserBestFriends, setCurrentUserBestFriends] = useState([]);
   const { id: userId } = useParams();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Lấy thông tin người dùng đang hiển thị
         const userResponse = await userApi.getUserDetail(userId);
         setUser(userResponse.data);
 
-        const publicPosts = await getPostFromOther(userResponse.data.userName); // Sử dụng getPostFromOther để lấy bài viết của user khác
-        console.log("Fetched public posts:", publicPosts);
-        
-        // Flatten the array and map posts to have image as postImg
+        // Lấy danh sách public posts của người dùng
+        const publicPosts = await getPostFromOther(userResponse.data.userName);
         const formattedPosts = publicPosts.flat().map(post => ({
           ...post,
           image: post.postImg
         }));
-        console.log("Formatted posts:", formattedPosts);
         setPosts(formattedPosts);
 
-        const friendResponse = await userApi.isFriend(userResponse.data.userName);
-        setIsFriend(friendResponse.data);
+        // Lấy danh sách following của tài khoản đang đăng nhập
+        const currentUser = await userApi.account();
+        const followingList = currentUser.data.followings || [];
+        setCurrentUserFollowing(followingList.map(id => id.toString()));
 
-        const isUserFollowing = localStorage.getItem('isFollowing_' + userId) === 'true';
-        setIsFollowing(isUserFollowing);
+        // Lấy danh sách bạn thân của tài khoản đang đăng nhập
+        const bestFriendsList = currentUser.data.bestfriend || [];
+        setCurrentUserBestFriends(bestFriendsList.map(id => id.toString()));
 
-        const isUserFavorite = localStorage.getItem('isFavorite_' + userResponse.data.userName) === 'true';
-        setIsFavorite(isUserFavorite);
+        // Kiểm tra xem người dùng hiện tại đã theo dõi người dùng khác chưa
+        setIsFollowing(followingList.includes(userId));
+
+        // Kiểm tra xem người dùng hiện tại có là bạn thân của người dùng khác không
+        setIsFavorite(bestFriendsList.includes(userId));
+
+        // Kiểm tra xem người dùng hiện tại có là bạn của người dùng khác không
+        const checkIsFriend = await userApi.isFriend(userResponse.data.userName);
+        setIsFriend(checkIsFriend.data);
+
       } catch (error) {
         console.error("Error fetching user details or posts:", error);
       }
     };
 
     fetchData();
-  }, [userId]);
+  }, [userId, currentUserFollowing, currentUserBestFriends]);
 
   const handleFollowClick = async () => {
     try {
       if (!isFollowing) {
         await userApi.acceptFollow(userId);
-        localStorage.setItem('isFollowing_' + userId, 'true');
         setIsFollowing(true);
       } else {
         await userApi.unfollowUser(userId);
-        localStorage.removeItem('isFollowing_' + userId);
         setIsFollowing(false);
       }
     } catch (error) {
@@ -71,11 +79,9 @@ function OtherUser() {
     try {
       if (!isFavorite) {
         await userApi.addBestfriend(user.userName);
-        localStorage.setItem('isFavorite_' + user.userName, 'true');
         setIsFavorite(true);
       } else {
         await userApi.removeBestfriend(user.userName);
-        localStorage.removeItem('isFavorite_' + user.userName);
         setIsFavorite(false);
       }
     } catch (error) {
@@ -105,7 +111,6 @@ function OtherUser() {
                 handleStarClick={handleStarClick}
                 isFavorite={isFavorite}
               />
-              {console.log("Rendering GridPost with posts:", posts)}
               <GridPost posts={posts} handleClick={handleClick} />
             </>
           ) : (

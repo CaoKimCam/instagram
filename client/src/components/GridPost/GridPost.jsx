@@ -2,7 +2,6 @@ import React from 'react';
 import './style.css';
 
 function GridPost({ posts, handleClick }) {
-  console.log('GridPost - posts:', posts);
 
   if (!posts) {
     return null;
