@@ -1,55 +1,70 @@
-# instagram-backend
+# Getting Started with Create React App
 
-instagram-backend
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-# Folder video: https://www.youtube.com/watch?v=UhihFdEIkmc&list=PLnRJxWEhhmzriVI5YiYI01O4cSzR5AHH_&index=8
+## Available Scripts
 
-1. Set up
+In the project directory, you can run:
 
-- Create a new instance
-- Hot reload
-- Chạy chương trình:
-  npm run start:dev
+### `npm start`
 
-2. Module
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-- Create a new module: tạo tay hoặc tạo = lệnh (controller, module, service)
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-* 1 module gổm 3 tp chính:
+### `npm test`
 
-- Module:
-- Controller: các phương thức GET,PUT,POST,DELETE... Vai trò: nhận request từ client về server, và response data (data này lấy từ service) từ server về client
-- Service:
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-3. Provider (file service)
+### `npm run build`
 
-- Trong controller khởi tạo đối tượng productService, đối tượng này sẽ chấm tới method của nó trong controller.
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
 
-4. Response data
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
 
-- Trạng thái status code,... để response data
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-5. Get Product List
+### `npm run eject`
 
-- Tạo danh sách các product và get product từ response đã tạo
+**Note: this is a one-way operation. Once you `eject`, you can't go back!**
 
-6. Get Detail Product
-7. Data Transfer Object (DTO)
+If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-- để lấy data từ request client gửi lên server, ta phải có 1 cái DTO
-- nói đơn giản là dây sạc kết nối nguồn điện (client) với điện thoại (server)
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-8. Pipes
+You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-# npm i --save class-validator class-transformer
+## Learn More
 
-- Ví dụ: MinLength, ...
-- Cách nữa: nếu muốn dùng gloabl:
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-9. Post
+To learn React, check out the [React documentation](https://reactjs.org/).
 
-10. Comment
+### Code Splitting
 
-11. React
+This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
 
-12. User
+### Analyzing the Bundle Size
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+
+### Making a Progressive Web App
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+
+### Advanced Configuration
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+
+### Deployment
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+
+### `npm run build` fails to minify
+
+This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
