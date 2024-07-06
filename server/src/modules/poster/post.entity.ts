@@ -18,12 +18,6 @@ export class Poster{
     @Column()
     postTime: Date;
 
-    @Column()
-    buffer: Buffer;
-
-    @Column()
-    mimetype: string;
-
     @Column({default:0})
     state: Number;//tạo 1 enum
     //các chế độ: 1 public 2 follow 3 friend 4 best-friend 5 private

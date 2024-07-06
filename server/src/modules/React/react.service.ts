@@ -29,6 +29,8 @@ export class ReactService {
         })
     }
     async createReacts(reactDto: ReactDto): Promise<any>{//React
+        reactDto.objectId= new ObjectId(reactDto.objectId)
+        reactDto.author= new ObjectId(reactDto.author)
         const saveReact = await this.reactRepos.save(reactDto);
 
         //cập nhật lượt like của người dùng
@@ -60,7 +62,7 @@ export class ReactService {
                 await this.postRepos.update({postId:saveReact.objectId},newPost);
                 var savePost = Object.assign(post, newPost);   
             }
-            this.logger.log(post);
+            this.logger.log(savePost);
         }
         return saveReact;
     }

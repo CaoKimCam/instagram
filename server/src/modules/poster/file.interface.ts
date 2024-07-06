@@ -4,5 +4,4 @@ export interface FileUpload{
     encoding: string;
     mimetype: string;
     size: number;
-    buffer: Buffer;
 }
