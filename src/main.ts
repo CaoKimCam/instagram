@@ -21,7 +21,7 @@ async function bootstrap() {
   app.enableCors({
     origin: 'https://photos-sharing-web-frontend-78530fa09992.herokuapp.com/', // URL của frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: false,
+    credentials: true,
   });
   const PORT= process.env.PORT||3000
   await app.listen(PORT);
