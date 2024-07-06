@@ -19,8 +19,8 @@ function Homepage() {
   const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
 
   useEffect(() => {
-    fetchAccount();
     fetchPosts();
+    fetchAccount();
   }, []);
 
   const fetchAccount = async () => {
@@ -37,7 +37,8 @@ function Homepage() {
     try {
       const fetchedPosts = await getAllPosts();
       if (Array.isArray(fetchedPosts)) {
-        const postsWithUserDetails = await Promise.all(fetchedPosts.map(async (post) => {
+        const posts = fetchedPosts.flat();
+        const postsWithUserDetails = await Promise.all(posts.map(async post => {
           try {
             const userResponse = await userApi.getUserDetail(post.authorId);
             return {
@@ -60,9 +61,33 @@ function Homepage() {
   };
 
   const refreshHomepage = async () => {
-    await fetchPosts();
+    try {
+      const fetchedPosts = await getAllPosts();
+      if (Array.isArray(fetchedPosts)) {
+        const posts = fetchedPosts.flat();
+        const postsWithUserDetails = await Promise.all(posts.map(async post => {
+          try {
+            const userResponse = await userApi.getUserDetail(post.authorId);
+            return {
+              ...post,
+              username: userResponse.data.userName,
+              authorAvatar: userResponse.data.userAvatar,
+            };
+          } catch (error) {
+            console.error(`Error fetching user details for authorId ${post.authorId}:`, error);
+            return post;
+          }
+        }));
+        setPosts(postsWithUserDetails.reverse());
+        console.log("Homepage refreshed:", postsWithUserDetails);
+      } else {
+        console.error("Invalid posts data:", fetchedPosts);
+      }
+    } catch (error) {
+      console.error("Error refreshing homepage:", error);
+    }
   };
-
+  
   const toggleSidebar = () => {
     setShowSidebarLeft(!showSidebarLeft);
   };
@@ -134,20 +159,20 @@ function Homepage() {
         </Grid>
 
         <Grid item xs={5}>
-          {posts.length === 0 ? (
-            <p style={{ marginTop: 30 }}>No posts available. Follow your friends to see new posts.</p>
-          ) : (
-            posts.map((post, index) => (
-              <Post
-                key={post.postId || index}
-                post={post}
-                calculatePostTime={calculatePostTime}
-                refreshHomepage={refreshHomepage}
-                currentUserId={currentUserId}
-                authorAvatar={post.authorAvatar}
-              />
-            ))
-          )}
+            {posts.length === 0 ? (
+                <p style={{ marginTop: 30 }}>No posts available. Follow your friends to see new posts.</p>
+            ) : (
+                posts.map((post, index) => (
+                    <Post
+                        key={post.postId || index}
+                        post={post}
+                        calculatePostTime={calculatePostTime}
+                        refreshHomepage={refreshHomepage}
+                        currentUserId={currentUserId}
+                        authorAvatar={post.authorAvatar}
+                    />
+                ))
+            )}
         </Grid>
 
         <Grid item xs={3}>
