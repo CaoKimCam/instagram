@@ -50,12 +50,55 @@ export class PostService {
         )
         return fullposts;
     }
+    async getPostFromOtherByUserName(currentId:ObjectId, name: string): Promise<any>{
+        const other = await this.userRepos.findOne({
+            where: {userName: name}
+        })
+        const publicPosts= await this.getPublicPosts(name)
+        const followingPosts= await this.getFollowPost(name)
+        var bestfriendPosts
+        var friendPosts
+        if (other.bestfriend.includes(currentId)) bestfriendPosts=this.getBestFriendPosts(name)
+        if (this.isFriend(currentId.toString(), other.id.toString())) friendPosts=this.getFriendPosts(name)
+        var posts=[]
+        if (publicPosts && publicPosts.length>0)posts=publicPosts
+        if (followingPosts && followingPosts.length>0)posts=posts.concat(followingPosts)
+        if (bestfriendPosts && bestfriendPosts.length>0) posts=posts.concat(bestfriendPosts)
+        if (friendPosts&& friendPosts.length>0) posts=posts.concat(friendPosts)
 
+        posts.sort((a,b)=>b.postTime-a.postTime)
+        // if (posts){
+            const fullposts = await Promise.all( 
+                posts.map(async post=>{
+                    var numberUserLikePost=0;
+                    var isCurrentUserLikePost=[];
+                    var userNamesLikePost=[];
+                    if (post.postLikeId){
+                        const reactIds= post.postLikeId;
+                        const reacts= await this.reactRepos.findByIds(reactIds)
+                        const listObjectIdsLike= reacts.map(react=>react.author)
+                        numberUserLikePost= reacts.length
+                        isCurrentUserLikePost= (reactIds.includes(new ObjectId(currentId)))
+                        const users= await this.userRepos.findByIds(listObjectIdsLike)
+                        userNamesLikePost=users.map(user=> user.userName)
+                        return{
+                            ...post,
+                            userNameLikePosts: userNamesLikePost,
+                            countReacts: numberUserLikePost,
+                            isLike: isCurrentUserLikePost,
+                        }
+                    }
+                    
+                })
+            )
+        // }
+        
+        // return posts;
+        return fullposts.length>0?fullposts:null;
+    }
     async getAllPosts(usesId: string):Promise<any[]>{
         
         const currentUser=await this.userRepos.findOneById(usesId)
-        // const followings = currentUser.followings;
-        // const followers = currentUser.followers;
         var friendIds;
         var friends;
         var onlyFollowings;
@@ -74,7 +117,7 @@ export class PostService {
             var postfromFriends=friendIds.map(async friendId=>
                 {
                 const name = (await this.userRepos.findOneById(new ObjectId(friendId))).userName
-                return (!this.isBestFriend(currentUser.id.toString(),friendId.toString()))? 
+                return (!this.isFriend(currentUser.id.toString(),friendId.toString()))? 
                 this.getFriendPosts(name)
                 : this.getBestFriendPosts(name)
                 })
@@ -91,7 +134,6 @@ export class PostService {
         // Đợi cho tất cả các Promise được giải quyết
         const resolvedPostsFromFriends = postfromFriends ? await Promise.all(postfromFriends) : [];
         const resolvedPostsFromFollowings = postfromFollowings ? await Promise.all(postfromFollowings) : [];
-        
         posts=resolvedPostsFromFriends.concat(resolvedPostsFromFollowings)
 
         // const posts = await this.postRepos.find();
@@ -256,10 +298,10 @@ export class PostService {
         return result.affected > 0;
     }
     //hàm phụ:
-    async isBestFriend(current: string, other: string): Promise<Boolean>{
+    async isFriend(current: string, other: string): Promise<Boolean>{
         const currentId= new ObjectId(current);
         const friendId= new ObjectId(other);
         const friend= await this.userRepos.findOneById(friendId);
         return friend.bestfriend.includes(currentId)
-    }   
+    }    
 }

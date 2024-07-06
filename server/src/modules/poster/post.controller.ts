@@ -26,6 +26,14 @@ export class PostController{
         const id=req.user.id;
         return await this.productService.getAllPosts(id);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @Get('/other/:name')
+    async getPostFromOther(@Param ('name') name:string,@Request() req): Promise<any>{
+        const id= req.user.id;
+        const id_string = id.toString();
+        return await this.productService.getPostFromOtherByUserName(id,name)
+    }
         
     @UseGuards(JwtAuthGuard)
     @Get('/myposts')
