@@ -65,7 +65,6 @@ export class PostService {
         if (followingPosts && followingPosts.length>0)posts=posts.concat(followingPosts)
         if (bestfriendPosts && bestfriendPosts.length>0) posts=posts.concat(bestfriendPosts)
         if (friendPosts&& friendPosts.length>0) posts=posts.concat(friendPosts)
-
         posts.sort((a,b)=>b.postTime-a.postTime)
         // if (posts){
             const fullposts = await Promise.all( 
@@ -96,13 +95,13 @@ export class PostService {
         // return posts;
         return fullposts.length>0?fullposts:null;
     }
-    async getAllPosts(usesId: string):Promise<any[]>{
+    async getAllPosts(usesId: string):Promise<any>{
         
         const currentUser=await this.userRepos.findOneById(usesId)
         var friendIds;
         var friends;
         var onlyFollowings;
-        var posts;
+        var posts=[];
         if (currentUser.followers&&currentUser.followings)
         {
             friendIds=currentUser.followers.filter(id=>{
@@ -113,48 +112,59 @@ export class PostService {
         if(currentUser.followings) onlyFollowings= currentUser.followings.filter(id=>{
             return !friendIds.includes(id)
         })
-        if(friendIds) {
+        if(friendIds&&friendIds.length>0) {
+            this.logger.log("hi")
             var postfromFriends=friendIds.map(async friendId=>
                 {
                 const name = (await this.userRepos.findOneById(new ObjectId(friendId))).userName
-                return (!this.isFriend(currentUser.id.toString(),friendId.toString()))? 
-                this.getFriendPosts(name)
-                : this.getBestFriendPosts(name)
-                })
-        }
+                if(this.isFriend(currentUser.id.toString(),friendId.toString()))
+                    {
+                        this.logger.log(this.isFriend(currentUser.id.toString(),friendId.toString()))
 
-        if(onlyFollowings){
+                        return this.getFriendPosts(name);
+                    }
+                else return null;
+                })
+            postfromFriends=postfromFriends.filter(post => (post !== null)||post.length>0);
+        }
+        if(onlyFollowings&&onlyFollowings.length>0){
+            // this.logger.log(onlyFollowings)
             var postfromFollowings=onlyFollowings.map(async followingId=>{
                 const name = (await this.userRepos.findOneById(new ObjectId(followingId))).userName
-                this.logger.log("hi", await this.getFollowPost(name))
-                return await this.getFollowPost(name);
+                return (this.getFollowPost(name)&&this.getFollowPost.length>0)? await this.getFollowPost(name):null;
             })
+            postfromFollowings=postfromFollowings.filter(post => (post!==null));
         }
-
         // Đợi cho tất cả các Promise được giải quyết
-        const resolvedPostsFromFriends = postfromFriends ? await Promise.all(postfromFriends) : [];
-        const resolvedPostsFromFollowings = postfromFollowings ? await Promise.all(postfromFollowings) : [];
-        posts=resolvedPostsFromFriends.concat(resolvedPostsFromFollowings)
-
-        // const posts = await this.postRepos.find();
-        const fullposts = await Promise.all(
-            posts.map(async post=>{
-                const reactIds= post.postLikeId;
-                const reacts= await this.reactRepos.findByIds(reactIds)
-                const listObjectIdsLike= reacts.map(react=>react.author)
-                const numberUserLikePost= reacts.length
-                const isCurrentUserLikePost= (reactIds.includes(new ObjectId(usesId)))
-                const users= await this.userRepos.findByIds(listObjectIdsLike)
-                const userNamesLikePost=users.map(user=> user.userName)
-                return{
-                    ...post,
-                    userNameLikePosts: userNamesLikePost,
-                    countReacts: numberUserLikePost,
-                    isLike: isCurrentUserLikePost,
-                }
-            })
-        )
-        return fullposts.length>0?fullposts:null;
+        if (friendIds&&friendIds.length>0)var resolvedPostsFromFriends = postfromFriends ? await Promise.all(postfromFriends) : [];
+        if (onlyFollowings.length>0 &&onlyFollowings)var resolvedPostsFromFollowings = postfromFollowings ? await Promise.all(postfromFollowings) : [];
+        
+        if (resolvedPostsFromFriends&&resolvedPostsFromFriends.length>0) posts=resolvedPostsFromFriends
+        if (resolvedPostsFromFollowings&&resolvedPostsFromFollowings.length>0)posts=posts.concat(resolvedPostsFromFollowings)
+        if (posts.length===0) return;
+        posts=posts.filter(post=>post!==null)
+        // posts.sort((a,b)=>b.postTime-a.postTime)
+        // if (posts.length>0&&posts){
+        //     var fullposts = await Promise.all(
+        //         posts.map(async post=>{
+        //             const reactIds= post.postLikeId;
+        //             const reacts= await this.reactRepos.findByIds(reactIds)
+        //             const listObjectIdsLike= reacts.map(react=>react.author)
+        //             const numberUserLikePost= reacts.length
+        //             const isCurrentUserLikePost= (reactIds.includes(new ObjectId(usesId)))
+        //             const users= await this.userRepos.findByIds(listObjectIdsLike)
+        //             const userNamesLikePost=users.map(user=> user.userName)
+        //             return{
+        //                 ...post,
+        //                 userNameLikePosts: userNamesLikePost,
+        //                 countReacts: numberUserLikePost,
+        //                 isLike: isCurrentUserLikePost,
+        //             }
+        //         })
+        //     )
+        // }
+        return posts
+        // return fullposts.length>0?fullposts:null;
     }
     async getPosts(id:string): Promise<Poster[]>{
         const user = await this.userRepos.findOneById(new ObjectId(id));
@@ -167,7 +177,8 @@ export class PostService {
         const user = await this.userRepos.findOne({where:{userName: name}})
         var publicPosts= await this.postRepos.findByIds(user.postIds)
         publicPosts=publicPosts.filter(post=>{
-            if(post.state===0) return post
+            if(post.state===0) return post 
+            else return null
         })
         return publicPosts;
     }
@@ -178,7 +189,7 @@ export class PostService {
         followingPosts=followingPosts.filter(post=>{
             if(post.state===1) return post
         })
-        return followingPosts;
+        return followingPosts.length>0?followingPosts:null;
     }
 
     async getFriendPosts(name: string): Promise<any>{
