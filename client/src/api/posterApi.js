@@ -33,6 +33,17 @@ export const getPostDetail = async (postId) => {
   }
 };
 
+// Hàm lấy bài viết của một người dùng khác theo tên
+export const getPostFromOther = async (name) => {
+  try {
+    const response = await axiosClient.get(`/posters/other/${name}`);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching posts for user ${name}:`, error);
+    throw error;
+  }
+};
+
 // Hàm tạo một bài viết mới
 export const createPost = async (postDto, file) => {
   try {

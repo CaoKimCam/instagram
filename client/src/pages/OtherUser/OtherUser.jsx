@@ -6,7 +6,7 @@ import UserProfile from "../../components/UserProfile/UserProfile";
 import GridPost from "../../components/GridPost/GridPost";
 import Grid from "@mui/material/Grid";
 import userApi from "../../api/userApi";
-import { getAllPosts } from "../../api/posterApi";
+import { getPostFromOther } from "../../api/posterApi"; // Đổi từ getAllPosts thành getPostFromOther
 import { useNavigate } from "react-router-dom";
 
 function OtherUser() {
@@ -24,7 +24,7 @@ function OtherUser() {
         const userResponse = await userApi.getUserDetail(userId);
         setUser(userResponse.data);
 
-        const publicPosts = await getAllPosts();
+        const publicPosts = await getPostFromOther(userResponse.data.userName); // Sử dụng getPostFromOther để lấy bài viết của user khác
         console.log("Fetched public posts:", publicPosts);
         
         // Flatten the array and map posts to have image as postImg

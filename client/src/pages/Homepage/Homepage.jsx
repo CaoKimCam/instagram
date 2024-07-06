@@ -19,8 +19,8 @@ function Homepage() {
   const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
 
   useEffect(() => {
-    fetchPosts();
     fetchAccount();
+    fetchPosts();
   }, []);
 
   const fetchAccount = async () => {
@@ -37,8 +37,7 @@ function Homepage() {
     try {
       const fetchedPosts = await getAllPosts();
       if (Array.isArray(fetchedPosts)) {
-        const posts = fetchedPosts.flat();
-        const postsWithUserDetails = await Promise.all(posts.map(async post => {
+        const postsWithUserDetails = await Promise.all(fetchedPosts.map(async (post) => {
           try {
             const userResponse = await userApi.getUserDetail(post.authorId);
             return {
@@ -61,17 +60,7 @@ function Homepage() {
   };
 
   const refreshHomepage = async () => {
-    try {
-      const fetchedPosts = await getAllPosts();
-      if (Array.isArray(fetchedPosts)) {
-        setPosts(fetchedPosts.reverse());
-        console.log("Homepage refreshed:", fetchedPosts);
-      } else {
-        console.error("Invalid posts data:", fetchedPosts);
-      }
-    } catch (error) {
-      console.error("Error refreshing homepage:", error);
-    }
+    await fetchPosts();
   };
 
   const toggleSidebar = () => {
@@ -145,20 +134,20 @@ function Homepage() {
         </Grid>
 
         <Grid item xs={5}>
-            {posts.length === 0 ? (
-                <p style={{ marginTop: 30 }}>No posts available. Follow your friends to see new posts.</p>
-            ) : (
-                posts.map((post, index) => (
-                    <Post
-                        key={post.postId || index}
-                        post={post}
-                        calculatePostTime={calculatePostTime}
-                        refreshHomepage={refreshHomepage}
-                        currentUserId={currentUserId}
-                        authorAvatar={post.authorAvatar}
-                    />
-                ))
-            )}
+          {posts.length === 0 ? (
+            <p style={{ marginTop: 30 }}>No posts available. Follow your friends to see new posts.</p>
+          ) : (
+            posts.map((post, index) => (
+              <Post
+                key={post.postId || index}
+                post={post}
+                calculatePostTime={calculatePostTime}
+                refreshHomepage={refreshHomepage}
+                currentUserId={currentUserId}
+                authorAvatar={post.authorAvatar}
+              />
+            ))
+          )}
         </Grid>
 
         <Grid item xs={3}>
