@@ -19,7 +19,7 @@ async function bootstrap() {
 
 
   app.enableCors({
-    origin: 'http://localhost:3001', // URL của frontend
+    origin: 'https://photos-sharing-web-frontend-78530fa09992.herokuapp.com/', // URL của frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: false,
   });
