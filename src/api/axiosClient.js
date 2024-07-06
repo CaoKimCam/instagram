@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:3000',
+  baseURL: 'https://photos-sharing-website-backend-0e896e8a6dc9.herokuapp.com',
   headers: {
     'Content-Type': 'application/json',
   },
