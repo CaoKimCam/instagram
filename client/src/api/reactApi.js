@@ -4,7 +4,7 @@ const reactApi = {
   // Lấy danh sách Reacts (cho admin)
   getAllReacts: async () => {
     try {
-      const response = await axiosClient.get('/likes/reacts/alls');
+      const response = await axiosClient.get('/likes/allreacts/');
       return response.data;
     } catch (error) {
       throw error;
@@ -34,20 +34,20 @@ const reactApi = {
   // Lấy chi tiết một React
   getReactDetail: async (reactId) => {
     try {
-      const response = await axiosClient.get(`/likes/react/${reactId}`);
-      return response.data;
+        const response = await axiosClient.get(`/likes/react/${reactId}`);
+        return response.data;
     } catch (error) {
-      throw error;
+        throw error;
     }
   },
 
   // Xóa một React
   deleteReact: async (reactId) => {
     try {
-      const response = await axiosClient.delete(`/likes/${reactId}`);
-      return response.data;
+        const response = await axiosClient.delete(`/likes/${reactId}`);
+        return response.data;
     } catch (error) {
-      throw error;
+        throw error;
     }
   },
 };

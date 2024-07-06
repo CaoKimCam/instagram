@@ -1,34 +1,34 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./style.css";
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
 function UserProfile({ user, handleFollowClick, isFollowing, isFriend, handleStarClick, isFavorite }) {
-  const { userName, followers, followings } = user;
+  const { userName, followers, followings, userAvatar } = user;
 
-  useEffect(() => {
-    console.log("isFriend in UserProfile:", isFriend);
-    console.log("isFollowing in UserProfile:", isFollowing);
-    console.log("isFavorite in UserProfile:", isFavorite);
-  }, [isFriend, isFollowing, isFavorite]); // Đảm bảo useEffect này nhận các giá trị mới của isFriend và isFollowing và isFavorite
+  // useEffect(() => {
+  //   console.log("isFriend in UserProfile:", isFriend);
+  //   console.log("isFollowing in UserProfile:", isFollowing);
+  //   console.log("isFavorite in UserProfile:", isFavorite);
+  // }, [isFriend, isFollowing, isFavorite]); // Đảm bảo useEffect này nhận các giá trị mới của isFriend và isFollowing và isFavorite
 
   return (
     <div style={{ backgroundColor: "#fefefe" }}>
       <div id="userDetail-profile">
         <div style={{ display: "flex", flexDirection: "row" }}>
-          <div
+          <img
+            src={userAvatar}
+            alt=""
             className="userDetail-profileAvt"
             style={{
-              width: 150,
-              height: 150,
+              width: 200,
+              height: 200,
               backgroundColor: "#ccc",
               borderRadius: "100%",
               marginTop: 30,
-              backgroundSize: "cover",
-              backgroundPosition: "center",
-              backgroundImage: `url(${user.avatarUrl || 'default-avatar-url'})`,
+              objectFit: "cover",
             }}
-          ></div>
+          />
           <div style={{ display: "flex", flexDirection: "column", marginLeft: 20 }}>
             <div className="userDetail-row1">
               <h1 className="userDetail-profileUsername">{userName}</h1>

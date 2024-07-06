@@ -2,7 +2,7 @@ import React from "react";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
 
-function SidebarLeft({ toggleSidebar, toggleSearchBox, openCreatePost }) {
+function SidebarLeft({ toggleSidebar, toggleSearchBox, openCreatePost, userAvatar }) {
   const navigate = useNavigate();
 
   // Hàm xử lý khi nhấn nút Search
@@ -87,15 +87,7 @@ function SidebarLeft({ toggleSidebar, toggleSearchBox, openCreatePost }) {
 
         {/* Profile */}
         <div className="icon">
-          <div
-            className="Avatar"
-            style={{
-              width: 30,
-              height: 30,
-              background: "#D9D9D9",
-              borderRadius: 9999,
-            }}
-          />
+          <img src={userAvatar} alt="" className="Avatar" style={{ width: 30, height: 30, background: "#D9D9D9", borderRadius: 9999, objectFit: "cover" }} />
           <p>
             <a
               href="./profile"

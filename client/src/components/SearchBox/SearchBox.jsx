@@ -42,17 +42,19 @@ const SearchBox = ({ onSearch }) => {
         {searchResults.length > 0 ? (
           searchResults.map((user) => (
             <div key={user.userName} style={{ margin: 20, display: "flex", alignItems: "center", cursor: "pointer" }} onClick={() => handleUserClick(user.id)}>
-              <div
+              <img 
+                src={user.userAvatar} 
+                alt="" 
                 className="avt"
                 style={{
                   width: 40,
                   height: 40,
-                  // background: `url(${user.userAvatar})`,
                   backgroundColor: "#ccc",
-                  backgroundSize: "cover",
+                  objectFit: "cover",
                   borderRadius: 100,
-                }}
+                }} 
               />
+
               <div style={{ marginLeft: 0 }}>
                 <p className="userName">{user.userName}</p>
               </div>

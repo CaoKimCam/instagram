@@ -6,28 +6,38 @@ import UserProfile from "../../components/UserProfile/UserProfile";
 import GridPost from "../../components/GridPost/GridPost";
 import Grid from "@mui/material/Grid";
 import userApi from "../../api/userApi";
-import { getPublicPost } from "../../api/posterApi";
+import { getAllPosts } from "../../api/posterApi";
+import { useNavigate } from "react-router-dom";
 
 function OtherUser() {
   const [user, setUser] = useState(null);
   const [posts, setPosts] = useState([]);
-  const [isFollowing, setIsFollowing] = useState(false); // Trạng thái theo dõi
-  const [isFriend, setIsFriend] = useState(false); // Trạng thái bạn bè
-  const [isFavorite, setIsFavorite] = useState(false); // Trạng thái bạn thân
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFriend, setIsFriend] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
   const { id: userId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const userResponse = await userApi.getUserDetail(userId);
         setUser(userResponse.data);
-  
-        const publicPosts = await getPublicPost(userResponse.data.userName);
-        setPosts(publicPosts);
-  
+
+        const publicPosts = await getAllPosts();
+        console.log("Fetched public posts:", publicPosts);
+        
+        // Flatten the array and map posts to have image as postImg
+        const formattedPosts = publicPosts.flat().map(post => ({
+          ...post,
+          image: post.postImg
+        }));
+        console.log("Formatted posts:", formattedPosts);
+        setPosts(formattedPosts);
+
         const friendResponse = await userApi.isFriend(userResponse.data.userName);
         setIsFriend(friendResponse.data);
-  
+
         const isUserFollowing = localStorage.getItem('isFollowing_' + userId) === 'true';
         setIsFollowing(isUserFollowing);
 
@@ -37,7 +47,7 @@ function OtherUser() {
         console.error("Error fetching user details or posts:", error);
       }
     };
-  
+
     fetchData();
   }, [userId]);
 
@@ -73,6 +83,11 @@ function OtherUser() {
     }
   };
 
+  const handleClick = (postId) => {
+    console.log(postId);
+    navigate(`/post-detail/${postId}`);
+  };
+
   return (
     <div id="main">
       <Grid container spacing={0}>
@@ -86,11 +101,12 @@ function OtherUser() {
                 user={user}
                 handleFollowClick={handleFollowClick}
                 isFollowing={isFollowing}
-                isFriend={isFriend} // Truyền trạng thái bạn bè vào UserProfile
-                handleStarClick={handleStarClick} // Truyền hàm handleStarClick vào UserProfile
-                isFavorite={isFavorite} // Truyền trạng thái bạn thân vào UserProfile
+                isFriend={isFriend}
+                handleStarClick={handleStarClick}
+                isFavorite={isFavorite}
               />
-              <GridPost posts={posts} />
+              {console.log("Rendering GridPost with posts:", posts)}
+              <GridPost posts={posts} handleClick={handleClick} />
             </>
           ) : (
             <p>Loading...</p>

@@ -6,6 +6,7 @@
     margin-top: 30px;
     border: 1.5px solid #CCC;
     position: relative;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 #signup-rec2 {
@@ -16,6 +17,7 @@
     margin-top: 20px;
     border: 1.5px solid #CCC;
     flex-direction: row;
+    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 #signup-rec1 .logo {
@@ -164,6 +166,7 @@
     font-weight: 500;
     text-align: center;
     line-height: 100%;
+    cursor: pointer;
 }
 
 .have-an-acc {
