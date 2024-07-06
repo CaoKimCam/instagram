@@ -73,11 +73,9 @@ export class PostController{
         return await this.productService.deletePost(id);
     }
 
-    //getpublicPost
-    @Get('/other/:name')
-    async getPublicPost(@Param('name') name:string){
-        return await this.productService.getPublicPosts(name)
-    }
-
-    
+    // //getpublicPost
+    // @Get('/other/:name')
+    // async getPublicPost(@Param('name') name:string){
+    //     return await this.productService.getPublicPosts(name)
+    // } 
 }
