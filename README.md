@@ -1,3 +1,13 @@
+Ứng dụng chia sẻ hình ảnh trên nền tảng mạng xã hội.
+
+Chức năng chính:
+- Đăng bài viết
+- Tương tác bài viết (tym, comment)
+- Chỉnh sửa xóa bài viết
+- Theo dõi/ Bỏ theo dõi
+- Xem dòng thời gian
+- Xem bài viết của người khác
+
 # Photos-sharing-website
 Branch cục bộ: main
 - Chạy frontend:
