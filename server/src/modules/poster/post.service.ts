@@ -266,14 +266,22 @@ export class PostService {
         };
     }
 
-    async updatePost(postDto: PostDto, id: ObjectId): Promise<Poster>{//cho updateImage, content hoặc state
+    async updatePost(postDto: PostDto, id: ObjectId): Promise<Poster> {
         const toUpdate = await this.postRepos.findOneById(id);
-        if (!toUpdate) {throw new NotFoundException(`Post with ID ${id} not found`);}
-        this.logger.log(toUpdate);
-        postDto.state = Number(postDto.state);
-        await this.postRepos.update({postId: id}, postDto);
-        return Object.assign(toUpdate, postDto);
-    }
+        if (!toUpdate) {
+          throw new NotFoundException(`Post with ID ${id} not found`);
+        }
+      
+        if (postDto.postContent !== undefined) {
+          toUpdate.postContent = postDto.postContent;
+        }
+        if (postDto.state !== undefined) {
+          toUpdate.state = postDto.state;
+        }
+      
+        await this.postRepos.save(toUpdate);
+        return toUpdate;
+      }
 
     async deletePost(postId:ObjectId): Promise<boolean>{
         const post = await this.postRepos.findOneById(new ObjectId(postId))

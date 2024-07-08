@@ -70,6 +70,7 @@ export const createPost = async (postDto, file) => {
 export const updatePost = async (postId, postDto) => {
   try {
     const response = await axiosClient.put(`/posters/${postId}`, postDto);
+    console.log('Response from API:', response.data);
     return response.data;
   } catch (error) {
     console.error(`Error updating post with ID ${postId}:`, error);

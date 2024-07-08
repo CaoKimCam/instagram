@@ -1,70 +1,120 @@
 .edit-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Màu nền có độ mờ 50% */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000; /* Z-index cao hơn so với các thành phần khác trên trang */
-  }
-  
-  #editPost {
-    background-color: #fff;
-    border-radius: 20px;
-    overflow: hidden;
-    position: relative;
-    z-index: 1001; /* Z-index cao hơn overlay */
-    max-width: 820px;
-    width: 100%;
-  }
-  
-  .editPostHeader {
-    display: flex;
-    flex-direction: row;
-    font-weight: 500;
-    font-size: 16px;
-    padding: 10px 0;
-    border-bottom: 1px solid #ccc;
-  }
-  
-  .editPostContent {
-    display: flex;
-    flex-direction: row;
-  }
-  
-  .editImage {
-    width: 476px;
-    height: 476px;
-    object-fit: cover;
-    border-radius: 0 0 0 20px;
-  }
-  
-  .editAvatar {
-    width: 40px;
-    height: 40px;
-    background-color: #ccc;
-    border-radius: 100px;
-    margin-left: 20px;
-    object-fit: cover;
-  }
-  
-  .editUsername {
-    font-weight: 500;
-    font-size: 14px;
-    margin-left: 10px;
-    margin-top: 10px;
-  }
-  
-  .postContent {
-    width: 100%;
-    height: 100%;
-    border: none;
-    outline: none;
-    resize: none;
-    font-size: 16px;
-    margin-top: 10px;
-  }
-  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Màu nền có độ mờ 50% */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* Z-index cao hơn so với các thành phần khác trên trang */
+}
+
+#editPost {
+  background-color: #fff;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  z-index: 1001;
+  /* Z-index cao hơn overlay */
+  max-width: 820px;
+  width: 100%;
+}
+
+.editPostHeader {
+  display: flex;
+  flex-direction: row;
+  font-weight: 500;
+  font-size: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #ccc;
+}
+
+.editPostContent {
+  display: flex;
+  flex-direction: row;
+}
+
+.editImage {
+  width: 476px;
+  height: 476px;
+  object-fit: cover;
+  border-radius: 0 0 0 20px;
+}
+
+.editAvatar {
+  width: 40px;
+  height: 40px;
+  background-color: #ccc;
+  border-radius: 100px;
+  margin-left: 20px;
+  object-fit: cover;
+}
+
+.editUsername {
+  font-weight: 500;
+  font-size: 14px;
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.postContent {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  resize: none;
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.setStatus {
+  max-width: 200px;
+  width: fit-content;
+  height: 30px;
+  margin-left: auto;
+  margin-right: 20px;
+  border: none;
+  color: #000;
+  padding: 0 5px 5px 10px;
+  background-color: #e4e6eb;
+  font-weight: 500;
+  font-size: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  align-self: center;
+}
+
+.edit-status-options {
+  width: 100px;
+  position: absolute;
+  right: 30px;
+  top: 100px;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.public:hover,
+.follower:hover,
+.friend:hover,
+.best-friend:hover,
+.only-me:hover {
+  background-color: #e4e6eb;
+  cursor: pointer;
+}
+
+.public,
+.follower,
+.friend,
+.best-friend,
+.only-me {
+  padding: 7%;
+}
