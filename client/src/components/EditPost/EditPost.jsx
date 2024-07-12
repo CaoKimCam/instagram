@@ -6,7 +6,6 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 function EditPost({ postId, initialContent, onClose, onEditComplete }) {
   const [postContent, setPostContent] = useState(initialContent);
-  const [originalPostContent, setOriginalPostContent] = useState(initialContent); // Lưu giá trị ban đầu
   const [userName, setUserName] = useState("");
   const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
   const [postImage, setPostImage] = useState("");
@@ -42,7 +41,6 @@ function EditPost({ postId, initialContent, onClose, onEditComplete }) {
     try {
       const response = await getPostDetail(postId);
       setPostContent(response.post.postContent);
-      setOriginalPostContent(response.post.postContent); // Lưu giá trị ban đầu
       setPostImage(response.post.postImg);
       const initialStatus = Object.keys(statusMapping).find(key => statusMapping[key] === response.post.state);
       setStatus(initialStatus);
