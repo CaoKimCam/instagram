@@ -1,9 +1,11 @@
+/* CSS cho SidebarSimple */
 #sidebar-simple {
     width: 110px;
     height: 100vh;
     position: fixed;
     border-right: 1.5px solid #ccc;
     font-size: 18px;
+    background-color: #efefef;
 }
 
 #sidebar-simple .logoGif {
@@ -50,3 +52,39 @@ p {
     font-size: 16px;
 }
 
+@media (max-width: 1024px) {
+    #sidebar-simple .logoGif{ 
+        display: none;
+    }
+    #sidebar-simple {
+        width: 100%;
+        height: 60px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        border-right: none;
+        border-top: 1.5px solid #ccc;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        align-items: center;
+    }
+
+    #sidebar-simple .sidebar-simple-icon {
+        flex-direction: row;
+        margin: 0;
+    }
+
+    #sidebar-simple .icon {
+        padding: 10px;
+    }
+
+    .divAvatar {
+        display: none;
+    }
+    #sidebar-simple .sidebar-simple-icon .icon img,
+    #sidebar-simple .sidebar-simple-icon .icon .Avatar {
+        height: 30px;
+        margin: 0 10px;
+    }
+}

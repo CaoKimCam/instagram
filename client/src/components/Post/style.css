@@ -87,13 +87,78 @@
     z-index: 10;
   }
   
-  .option {
+.option {
     text-align: center;
     padding: 10px;
     cursor: pointer;
-  }
+}
   
-  .option:hover {
+.option:hover {
     background-color: #f0f0f0;
-  }
+}
+
+@media (max-width: 1024px) {
+    .post-header {
+        width: 480px;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+        margin: 0 10px;
+    }
+    
+    .post-footer {
+        margin: 10px 10px 0 10px;
+    }
+    
+    .react {
+        width: 480px;
+    }
+    
+    .heart,
+    .comment,
+    .share {
+        width: 35px;
+        margin: 0 10px 0 0;
+    }
+    
+    .heart {
+        width: 50px;
+    }
+    
+    .save {
+        width: 35px;
+        float: right;
+    }
+    
+    .caption-user {
+        width: 500px;
+        display: flex;
+        margin-bottom: 20px;
+    }
+    
+    #post .caption .user-caption {
+        margin-left: 10px;
+    }
+    
+    .post-header .options-menu {
+        width: 170px;
+        position: absolute;
+        right: 10px;
+        top: 50px;
+        background-color: white;
+        border: 1px solid #ccc;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+      }
+      
+    .option {
+        text-align: center;
+        padding: 10px;
+        cursor: pointer;
+    }
+      
+    .option:hover {
+        background-color: #f0f0f0;
+    }
+}
   

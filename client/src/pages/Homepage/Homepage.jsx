@@ -1,22 +1,31 @@
 import React, { useState, useEffect } from "react";
 import "./Homepage.css";
 import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
-import Post from "../../components/Post/Post";
-import Grid from "@mui/material/Grid";
-import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
+import Grid from "@mui/material/Grid";
+import Post from "../../components/Post/Post";
+import SidebarRight from "../../components/SidebarRight/SidebarRight";
 import SearchBox from "../../components/SearchBox/SearchBox";
 import CreatePost from "../../components/CreatePost/CreatePost";
 import userApi from "../../api/userApi";
 import { getAllPosts } from "../../api/posterApi";
 
 function Homepage() {
-  const [showSidebarLeft, setShowSidebarLeft] = useState(true);
+  const [showSidebarLeft, setShowSidebarLeft] = useState(window.innerWidth > 1024);
   const [showSearchBox, setShowSearchBox] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [posts, setPosts] = useState([]);
   const [currentUserId, setCurrentUserId] = useState(null);
   const [currentUserAvatar, setCurrentUserAvatar] = useState(null);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setShowSidebarLeft(window.innerWidth > 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetchPosts();
@@ -87,7 +96,7 @@ function Homepage() {
       console.error("Error refreshing homepage:", error);
     }
   };
-  
+
   const toggleSidebar = () => {
     setShowSidebarLeft(!showSidebarLeft);
   };
@@ -140,7 +149,7 @@ function Homepage() {
   return (
     <div id="main">
       <Grid container spacing={10}>
-        <Grid item xs={3.5}>
+        <Grid item xs={12} md={3.5}>
           {showSidebarLeft ? (
             <SidebarLeft
               toggleSidebar={toggleSidebar}
@@ -158,24 +167,24 @@ function Homepage() {
           {showSearchBox && <SearchBox onSearch={handleSearch} />}
         </Grid>
 
-        <Grid item xs={5}>
-            {posts.length === 0 ? (
-                <p style={{ marginTop: 30 }}>No posts available. Follow your friends to see new posts.</p>
-            ) : (
-                posts.map((post, index) => (
-                    <Post
-                        key={post.postId || index}
-                        post={post}
-                        calculatePostTime={calculatePostTime}
-                        refreshHomepage={refreshHomepage}
-                        currentUserId={currentUserId}
-                        authorAvatar={post.authorAvatar}
-                    />
-                ))
-            )}
+        <Grid item xs={12} md={5}>
+          {posts.length === 0 ? (
+            <p style={{ marginTop: 30 }}>No posts available. Follow your friends to see new posts.</p>
+          ) : (
+            posts.map((post, index) => (
+              <Post
+                key={post.postId || index}
+                post={post}
+                calculatePostTime={calculatePostTime}
+                refreshHomepage={refreshHomepage}
+                currentUserId={currentUserId}
+                authorAvatar={post.authorAvatar}
+              />
+            ))
+          )}
         </Grid>
 
-        <Grid item xs={3}>
+        <Grid item xs={12} md={3}>
           <SidebarRight />
         </Grid>
       </Grid>

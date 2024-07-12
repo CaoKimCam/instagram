@@ -62,7 +62,7 @@ function SidebarSimple({ toggleSidebar, toggleSearchBox, userAvatar }) {
         {/* Profile */}
         <div className="icon">
           <div
-            className="Avatar"
+            className="divAvatar"
             style={{
               width: 30,
               height: 30,
