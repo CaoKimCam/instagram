@@ -1,44 +1,41 @@
-#rec1 {
-    width: 350px;
-    height: 408px;
+#rec1, #rec2 {
+    width: 100%;
+    max-width: 400px;
+    margin: 10px auto;
     display: flex;
-    flex-direction: column;
-    margin: auto;
-    margin-top: 50px;
     border: 1.5px solid #CCC;
     position: relative;
     box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    align-items: center;
+}
+
+#rec1 {
+    padding: 20px;
 }
 
 #rec2 {
-    width: 350px;
-    height: 63px;
-    display: flex;
-    margin: auto;
-    margin-top: 20px;
-    border: 1.5px solid #CCC;
-    box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.3);
+    height: auto;
+    flex-direction: row;
+    justify-content: center;
 }
 
 #rec1 .logo {
     width: 175px;
     height: 51px;
-    position: absolute;
-    left: 50%;
-    right: 50%;
-    transform: translate(-50%, -50%);
-    margin-top: 50px;
+    margin-top: 20px;
 }
 
 .form {
     width: 100%;
     text-align: center;
-    margin-top: 100px;
+    margin-top: 20px;
 }
 
 #rec1 .email,
 #rec1 .password {
-    width: 260px;
+    width: 100%;
+    max-width: 260px;
     height: 36px;
     margin: 5px 0;
     border: 1.5px solid #CCC;
@@ -49,90 +46,148 @@
 }
 
 .submit {
-    width: 260px;
+    width: 100%;
+    max-width: 260px;
     height: 36px;
-    justify-content: center;
     border: 0 solid #4192EF;
     border-radius: 6px;
     background: #4192EF;
     color: #fff;
     font-weight: 700;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 #rec1 .-or- {
-    width: 350px;
-    margin-top: 280px;
+    width: 100%;
+    max-width: 350px;
+    margin-top: 20px;
+    display: flex;
     justify-content: center;
-    position: absolute;
-    left: 50%;
-    right: 50%;
-    transform: translate(-50%, -50%);
+    align-items: center;
 }
 
 #rec1 .line1,
 #rec1 .line2 {
     border: 1px solid #ccc;
-}
-
-#rec1 .line1 {
-    margin-left: 45px;
-    float: left;
-    width: 30%;
-}
-
-#rec1 .line2 {
-    margin-right: 45px;
-    float: right;
-    width: 30%;
+    flex: 1;
 }
 
 #rec1 .or {
-    margin-top: -9px;
     text-align: center;
-    width: 100%;
     font-family: "Segoe UI";
     font-size: 13px;
     color: #ccc;
     letter-spacing: 0.16px;
+    margin: 0 10px;
 }
 
 .logo-facebook {
     width: 25px;
     height: 25px;
-    display: flex;
-    margin: 60px auto 0 auto;
+    margin: 20px auto;
 }
 
 #rec1 .forgot-pwd {
     width: 100%;
-    margin-top: 360px;
     border: none;
-    justify-content: center;
-    position: absolute;
-    left: 50%;
-    right: 50%;
-    transform: translate(-50%, -50%);
     background-color: #fff;
     color: #00376B;
     font-size: 12px;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .dont-have-acc {
-    padding-left: 55px;
     font-family: "Segoe UI";
     letter-spacing: 0.16px;
     line-height: 60px;
+    text-align: center;
+    margin-left: 12px;
 }
 
 #rec2 .signup {
     padding: 12px;
-    text-align: left;
+    text-align: center;
     color: #385185;
     font-size: 16px;
     font-family: Segoe UI;
     font-weight: 500;
-    line-height: 37px;
     letter-spacing: 0.16px;
     text-decoration: none;
+}
+
+@media (min-width: 768px) {
+    #rec1, #rec2 {
+        width: 100%;
+    }
+}
+
+@media (min-width: 1024px) {
+    #rec1, #rec2 {
+        width: 150%;
+        transform: translateX(-10%);
+    }
+
+    #rec1 {
+        height: auto;
+        padding: 40px;
+    }
+
+    #rec2 {
+        height: auto;
+        padding: 20px;
+    }
+
+    #rec1 .logo {
+        width: 250px;
+        height: 75px;
+    }
+
+    .form {
+        margin-top: 40px;
+    }
+
+    #rec1 .email,
+    #rec1 .password {
+        max-width: 320px;
+        height: 48px;
+        font-size: 18px;
+    }
+
+    .submit {
+        max-width: 320px;
+        height: 48px;
+        font-size: 18px;
+    }
+
+    #rec1 .-or- {
+        max-width: 400px;
+    }
+
+    #rec1 .line1,
+    #rec1 .line2 {
+        border-width: 2px;
+    }
+
+    #rec1 .or {
+        font-size: 16px;
+    }
+
+    .logo-facebook {
+        width: 35px;
+        height: 35px;
+    }
+
+    #rec1 .forgot-pwd {
+        font-size: 14px;
+    }
+
+    .dont-have-acc {
+        font-size: 18px;
+    }
+
+    #rec2 .signup {
+        font-size: 18px;
+    }
 }
