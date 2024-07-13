@@ -23,10 +23,6 @@
 }
 
 @media (min-width: 1024px) {
-    #main {
-        padding: 20px;
-    }
-
     #content {
         width: 50%;
         margin-left: 25%;
