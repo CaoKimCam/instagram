@@ -2,11 +2,13 @@ import React from "react";
 import "./style.css";
 import logoIcon from "../../assets/logo-icon.gif";
 
-function SidebarSimple({ toggleSearchBox, userAvatar, openCreatePost }) {
+function SidebarSimple({ toggleSidebar, toggleSearchBox, userAvatar, openCreatePost }) {
 
   // Hàm xử lý khi nhấn nút Search
   const handleSearchClick = () => {
-    // toggleSidebar();
+    if (window.innerWidth > 1025) {
+      toggleSidebar();
+    }
     toggleSearchBox();
   };
 
@@ -66,7 +68,7 @@ function SidebarSimple({ toggleSearchBox, userAvatar, openCreatePost }) {
         {/* Profile */}
         <div className="icon">
           <a href="./profile">
-            <div
+            {/* <div
               className="divAvatar"
               style={{
                 width: 30,
@@ -74,7 +76,7 @@ function SidebarSimple({ toggleSearchBox, userAvatar, openCreatePost }) {
                 background: "#D9D9D9",
                 borderRadius: 9999,
               }}
-            />
+            /> */}
             <img src={userAvatar} alt="" className="Avatar" style={{ width: 30, height: 30, background: "#D9D9D9", borderRadius: 9999, objectFit: "cover" }} />
           </a>
         </div>
