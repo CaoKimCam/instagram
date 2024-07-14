@@ -107,7 +107,6 @@ function Homepage() {
 
   const openCreatePost = () => {
     setShowCreatePost(true);
-    setShowSidebarLeft(true);
     setShowSearchBox(false);
   };
 
@@ -162,6 +161,7 @@ function Homepage() {
               toggleSidebar={toggleSidebar}
               toggleSearchBox={toggleSearchBox}
               userAvatar={currentUserAvatar}
+              openCreatePost={openCreatePost}
             />
           )}
           {showSearchBox && <SearchBox onSearch={handleSearch} />}
@@ -184,7 +184,7 @@ function Homepage() {
           )}
         </Grid>
 
-        <Grid item xs={12} md={3}>
+        <Grid item xs={12} md={3} className="sidebarRight">
           <SidebarRight />
         </Grid>
       </Grid>

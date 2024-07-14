@@ -2,13 +2,17 @@ import React from "react";
 import "./style.css";
 import logoIcon from "../../assets/logo-icon.gif";
 
-function SidebarSimple({ toggleSidebar, toggleSearchBox, userAvatar }) {
+function SidebarSimple({ toggleSearchBox, userAvatar, openCreatePost }) {
 
   // Hàm xử lý khi nhấn nút Search
   const handleSearchClick = () => {
-    toggleSidebar();
+    // toggleSidebar();
     toggleSearchBox();
   };
+
+  const handleOpenCreatePost = () => {
+    openCreatePost();
+  }
 
   return (
     <div id="sidebar-simple">
@@ -52,7 +56,7 @@ function SidebarSimple({ toggleSidebar, toggleSearchBox, userAvatar }) {
         </div>
 
         {/* Create */}
-        <div className="icon">
+        <div className="icon" onClick={handleOpenCreatePost}>
           <img
             src="https://cdn.builder.io/api/v1/image/assets/TEMP/461acdfcd36914838f13cc932028dc4ebb142f7d899dfcd00325a1ed09fc0ecf?"
             alt="create"
@@ -61,16 +65,18 @@ function SidebarSimple({ toggleSidebar, toggleSearchBox, userAvatar }) {
 
         {/* Profile */}
         <div className="icon">
-          <div
-            className="divAvatar"
-            style={{
-              width: 30,
-              height: 30,
-              background: "#D9D9D9",
-              borderRadius: 9999,
-            }}
-          />
-          <img src={userAvatar} alt="" className="Avatar" style={{ width: 30, height: 30, background: "#D9D9D9", borderRadius: 9999, objectFit: "cover" }} />
+          <a href="./profile">
+            <div
+              className="divAvatar"
+              style={{
+                width: 30,
+                height: 30,
+                background: "#D9D9D9",
+                borderRadius: 9999,
+              }}
+            />
+            <img src={userAvatar} alt="" className="Avatar" style={{ width: 30, height: 30, background: "#D9D9D9", borderRadius: 9999, objectFit: "cover" }} />
+          </a>
         </div>
 
         {/* Settings */}

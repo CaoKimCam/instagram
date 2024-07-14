@@ -87,7 +87,7 @@ function CreatePost({ onClose, refreshHomepage }) {
 
           {/* Header */}
           <div className="header">
-            <div style={{ margin: "auto", transform: "translateX(100%)" }}>
+            <div className="createTitle">
               Create new post
             </div>
 
@@ -111,11 +111,13 @@ function CreatePost({ onClose, refreshHomepage }) {
           <div className="content">
 
             {/* Chọn file từ máy tính */}
-            <div style={{ maxWidth: 476, borderRight: "1px solid #ccc", position: "relative" }}>
-              <div {...getRootProps({ className: "dropzone", style: { width: 476 } })}>
-                <input {...getInputProps()} />
-                <button className="select" onClick={openFileDialog}>Select from computer</button>
-              </div>
+            <div className="createImageContainer">
+              {!uploadedFile && (
+                <div {...getRootProps({ className: "dropzone" })}>
+                  <input {...getInputProps()} />
+                  <button className="select" onClick={openFileDialog}>Select from computer</button>
+                </div>
+              )}
               {uploadedFile && (
                 <img
                   id="createImage"
@@ -127,8 +129,8 @@ function CreatePost({ onClose, refreshHomepage }) {
             </div>
 
             {/* Phần viết chú thích */}
-            <div style={{ display: "flex", flexDirection: "column", position: "relative" }}>
-              <div style={{ display: "flex", flexDirection: "row", marginTop: 20 }}>
+            <div className="typeCaption" style={{ display: "flex", flexDirection: "column", position: "relative" }}>
+              <div style={{ display: "flex", flexDirection: "row", marginTop: 20, width: "100%" }}>
                 <img 
                   src={currentUserAvatar} 
                   alt="" 
