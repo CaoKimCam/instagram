@@ -1,28 +1,32 @@
+/* style.css */
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: Segoe UI;
+}
+
+#profile {
+    width: 100%;
+    padding: 20px;
+    background-color: #fefefe;
+}
+
 .row1 {
-    display: flex; 
-    flex-direction: row; 
+    display: flex;
+    flex-direction: row;
     align-items: center;
-    width: 500px;
     margin-top: 40px;
+    flex-wrap: wrap;
 }
 
 .profileUsername {
     font-size: 20px;
     font-weight: 400;
-    margin-left: 70px;
+    margin-left: 20px;
 }
 
-.editProfile {
-    width: 100px;
-    height: 30px;
-    border: none;
-    background-color: #dcdcdc;
-    font-weight: 500;
-    border-radius: 10px;
-    margin-left: auto;
-    cursor: pointer;
-}
-
+.editProfile,
 .logout {
     width: 100px;
     height: 30px;
@@ -30,27 +34,158 @@
     background-color: #dcdcdc;
     font-weight: 500;
     border-radius: 10px;
-    margin-left: 10px;
     cursor: pointer;
 }
 
 .row2 {
-    display: flex; 
-    flex-direction: row; 
+    display: flex;
+    flex-direction: row;
     margin-top: 20px;
+    flex-wrap: wrap;
 }
 
-.posts, .followers, .following {
+.posts,
+.followers,
+.following {
     font-weight: 400;
-    margin-left: auto;
-}
-
-.posts {
-    margin-left: 70px;
+    margin-left: 20px;
 }
 
 .profileBio {
-    margin-left: 70px;
+    margin-left: 20px;
     margin-top: 20px;
     font-weight: 400;
+}
+
+@media (max-width: 480px) {
+    .profileWrap {
+        flex-direction: column !important;
+    }
+
+    .profileAvt {
+        width: 100px !important;
+        height: 100px !important;
+        margin-left: 10px;
+        margin-top: 0 !important;
+    }
+
+    .profileUsername {
+        margin-top: 0px;
+    }
+
+    .row1 {
+        margin: 0;
+        margin-left: 20px;
+    }
+
+    .editProfile,
+    .logout {
+        width: 100px;
+        height: 30px;
+        border: none;
+        background-color: #dcdcdc;
+        font-weight: 500;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-left: 10px !important;
+    }
+
+    .posts,
+    .followers,
+    .following {
+        font-weight: 400;
+        margin-left: 20px;
+    }
+
+    .profileBio {
+        margin-left: 20px;
+        margin-top: 20px;
+        font-weight: 400;
+    }
+}
+
+/* @media (max-width: 911px) {
+    #profile {
+        width: 100%;
+    }
+
+    .profileWrap {
+        width: 100vw;
+    }
+
+    .profileAvt {
+        width: 100px !important;
+        height: 100px !important;
+        margin-left: 10px;
+        margin-top: 0 !important;
+    }
+
+    .editProfile,
+    .logout {
+        width: 100px;
+        height: 30px;
+        border: none;
+        background-color: #dcdcdc;
+        font-weight: 500;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .profileUsername {
+        font-weight: 400;
+        margin-left: 20px;
+    }
+
+    .posts,
+    .followers,
+    .following {
+        font-weight: 400;
+        margin-left: 20px;
+    }
+
+    .profileBio {
+        margin-left: 20px;
+        margin-top: 20px;
+        font-weight: 400;
+    }
+} */
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    #profile {
+        width: 99%;
+    }
+
+    .editProfile,
+    .logout {
+        width: 100px;
+        height: 30px;
+        border: none;
+        background-color: #dcdcdc;
+        font-weight: 500;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    /* .editProfile {
+        margin-left: 150px !important;
+    } */
+
+    .profileUsername {
+        font-weight: 400;
+        margin-left: 20px;
+    }
+
+    .posts,
+    .followers,
+    .following {
+        font-weight: 400;
+        margin-left: 20px;
+    }
+
+    .profileBio {
+        margin-left: 20px;
+        margin-top: 20px;
+        font-weight: 400;
+    }
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Profile.css";
 import SidebarLeft from "../../components/SidebarLeft/SidebarLeft";
+import SidebarSimple from "../../components/SidebarSimple/SidebarSimple";
 import ProfileDetail from "../../components/ProfileDetail/ProfileDetail";
 import GridPost from "../../components/GridPost/GridPost";
 import Grid from "@mui/material/Grid";
@@ -16,7 +17,17 @@ function Profile() {
   const [followers, setFollowers] = useState(0);
   const [followings, setFollowings] = useState(0);
   const [postsCount, setPostsCount] = useState(0);
+  const [showSidebarLeft, setShowSidebarLeft] = useState(window.innerWidth > 1024);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setShowSidebarLeft(window.innerWidth > 1024);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -54,10 +65,10 @@ function Profile() {
   return (
     <div id="main">
       <Grid container spacing={0}>
-        <Grid item xs={3}>
-          <SidebarLeft />
+        <Grid item xs={12} md={3}>
+          {showSidebarLeft ? <SidebarLeft /> : <SidebarSimple />}
         </Grid>
-        <Grid item xs={8}>
+        <Grid item xs={12} md={8}>
           {data && (
             <ProfileDetail
               userName={userName}
